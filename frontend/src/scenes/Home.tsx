@@ -1,13 +1,60 @@
+import RecentFileList from "../components/RecentFileList";
 import StorageStats from "../components/StorageStats";
+import { FileData } from "../components/RecentFileList";
+
+const listOfRecentFiles = [
+  {
+    id: "asd",
+    name: "test1 asd as das das dasd asd asd asd ",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/nu4swVQ.jpeg"
+  } as FileData,
+  {
+    id: "asd",
+    name: "test2",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/b9NyUGm.png"
+  } as FileData,
+  {
+    id: "asd",
+    name: "test3",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/nu4swVQ.jpeg"
+  } as FileData,
+  {
+    id: "asd",
+    name: "test4",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/b9NyUGm.png"
+  } as FileData,
+  {
+    id: "asd",
+    name: "test5",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/b9NyUGm.png"
+  } as FileData,
+  {
+    id: "asd",
+    name: "test6",
+    size: 1235,
+    createdDate: new Date(2022,11, 12),
+    imageLink: "https://i.imgur.com/b9NyUGm.png"
+  } as FileData
+]
 
 const home = () => {
   return (
-    <div className="grid grid-cols-4">
+    <div className="grid md:grid-cols-4">
       <div className="flex bg-primary-300">
         {/* navigation */}
       </div>
-      <div className=" flex col-span-2 bg-primary-600">
-        {/* recent files */}
+      <div className=" flex md:col-span-2 p-2">
+        <RecentFileList files={listOfRecentFiles}/>
       </div>
       <div className="p-2 min-w-[200px]">
         <StorageStats

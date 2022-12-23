@@ -20,7 +20,7 @@ const StorageStats = (props: StorageProps) => {
     <>
       <div className="p-6 flex w-full justify-center bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md shadow-md">
         <div>
-          <div className="text-textColor dark:text-textColor-dark text-center pb-4 text-lg">
+          <div className="text-textColor dark:text-textColor-dark pb-4 text-lg font-medium">
             Storage Statistics
           </div>
           <div>
