@@ -1,0 +1,52 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: "class",
+  theme: {
+    extend: {},
+    colors:{
+      transparent: "transparent",
+      current: "currentColor",
+      primary: {
+          100: "#d7e9ff",
+          200: "#b0d3ff",
+          300: "#88bcff",
+          400: "#61a6ff",
+          500: "#3990ff",
+          600: "#2e73cc",
+          700: "#225699",
+          800: "#173a66",
+          900: "#0b1d33",
+          default: "#3990ff"
+      },
+      secondary:{
+        light: {
+
+        },
+        dark: {
+
+        }
+      },
+      backgroundSurface:{
+        DEFAULT: "#ffffff",
+        dark: "#2a2c3e"
+      },
+      background:{
+        DEFAULT:"#fafafb",
+        dark:"#1b1c2a"
+      },
+      textColor:{
+        DEFAULT: "#131313",
+        dark: "#E7E7E7"
+      },
+      secondaryTextColor:{
+        DEFAULT: "#F3F3F3",
+        dark: "#383838"
+      },
+      videoColor:"#fcd31a",
+      gifsColor:"#46e4ff",
+      otherColor:"#e92229"
+    }
+  },
+  plugins: [],
+}
