@@ -25,6 +25,13 @@ i18n
               date: 'Date',
               size: 'Size',
               name: 'File name'
+          },
+          navigation: {
+              dashboard: 'Dashboard',
+              files: 'Files',
+              settings: 'Settings',
+              profile: 'Profile',
+              logout: 'Log Out'
           }
         }
       }

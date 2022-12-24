@@ -37,7 +37,7 @@ module.exports = {
       },
       textColor:{
         DEFAULT: "#131313",
-        dark: "#E7E7E7"
+        dark: "#F0F0F0"
       },
       secondaryTextColor:{
         DEFAULT: "#F3F3F3",
@@ -45,7 +45,8 @@ module.exports = {
       },
       videoColor:"#fcd31a",
       gifsColor:"#46e4ff",
-      otherColor:"#e92229"
+      otherColor:"#e92229",
+      navigationIconColor: "#777777"
     }
   },
   plugins: [],

@@ -1,6 +1,7 @@
 import RecentFileList from "../components/RecentFileList";
 import StorageStats from "../components/StorageStats";
 import { FileData } from "../components/RecentFileList";
+import SideNavigation from "../components/SideNavigation";
 
 const listOfRecentFiles = [
   {
@@ -51,7 +52,7 @@ const home = () => {
   return (
     <div className="grid md:grid-cols-4">
       <div className="flex bg-primary-300">
-        {/* navigation */}
+        <SideNavigation/>
       </div>
       <div className=" flex md:col-span-2 p-2">
         <RecentFileList files={listOfRecentFiles}/>
