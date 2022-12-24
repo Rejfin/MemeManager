@@ -4,6 +4,7 @@ import {
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import FileTypeStatCard from "./FileTypeStatCard";
+import { useTranslation } from 'react-i18next';
 
 interface StorageProps {
   storageSize: number;
@@ -13,15 +14,16 @@ interface StorageProps {
   otherSize: number;
 }
 
-const darkMode = localStorage.getItem("dark_mode") || false;
-
 const StorageStats = (props: StorageProps) => {
+  const darkMode = localStorage.getItem("dark_mode") || false;
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="p-6 flex w-full justify-center bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md shadow-md">
         <div>
           <div className="text-textColor dark:text-textColor-dark pb-4 text-lg font-medium">
-            Storage Statistics
+            {t('storage_stats.title')}
           </div>
           <div>
             <CircularProgressbarWithChildren
@@ -92,7 +94,7 @@ const StorageStats = (props: StorageProps) => {
           </div>
           <div>
             <FileTypeStatCard
-              name={"Images"}
+              name={t('storage_stats.images')}
               image={
                 <svg
                   className="w-9 inline-block fill-primary-500 text-primary-500"
@@ -105,7 +107,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={"Videos"}
+              name={t('storage_stats.videos')}
               image={
                 <svg
                   className="w-9 inline-block fill-videoColor text-videoColor"
@@ -117,7 +119,7 @@ const StorageStats = (props: StorageProps) => {
               }
             />
             <FileTypeStatCard
-              name={"Gifs"}
+              name={t('storage_stats.gifs')}
               image={
                 <svg
                   className="w-9 mr-2 inline-block fill-gifsColor text-gifsColor"
@@ -130,7 +132,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={"Other"}
+              name={t('storage_stats.other')}
               image={
                 <svg
                   className="w-9 inline-block fill-otherColor text-otherColor"

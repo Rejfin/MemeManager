@@ -1,5 +1,6 @@
 import "./App.css";
 import Home from "./scenes/Home"
+import './i18n';
 
 function App() {
   return (

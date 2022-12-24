@@ -32,7 +32,7 @@ module.exports = {
         dark: "#2a2c3e"
       },
       background:{
-        DEFAULT:"#fafafb",
+        DEFAULT:"#F5F5F5",
         dark:"#1b1c2a"
       },
       textColor:{
