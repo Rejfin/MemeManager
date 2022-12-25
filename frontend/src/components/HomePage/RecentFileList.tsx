@@ -1,16 +1,5 @@
 import { useTranslation } from "react-i18next";
-
-export interface FileData {
-  id: string;
-  name: string;
-  size: number;
-  createdDate: Date;
-  imageLink: string;
-}
-
-interface FileListProps {
-  files: FileData[];
-}
+import { FileData, FileListProps } from "../../Utils/FileTypes";
 
 const ListItem = (props: FileData, secondBackground: boolean) => {
   return (

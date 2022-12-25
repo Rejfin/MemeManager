@@ -1,6 +1,6 @@
 import RecentFileList from "../components/HomePage/RecentFileList";
 import StorageStats from "../components/HomePage/StorageStats";
-import { FileData } from "../components/HomePage/RecentFileList";
+import { FileData } from "../Utils/FileTypes";
 
 const listOfRecentFiles = [
   {
@@ -34,13 +34,6 @@ const listOfRecentFiles = [
   {
     id: "asd",
     name: "test5",
-    size: 1235,
-    createdDate: new Date(2022,11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png"
-  } as FileData,
-  {
-    id: "asd",
-    name: "test6",
     size: 1235,
     createdDate: new Date(2022,11, 12),
     imageLink: "https://i.imgur.com/b9NyUGm.png"

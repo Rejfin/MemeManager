@@ -151,7 +151,7 @@ const SideNavigation = () => {
           {/* logout */}
           <NavLink
             className={({ isActive }) =>
-              "block p-2 pl-4 rounded-xl" +
+              "block p-2 pl-4 rounded-xl absolute bottom-9" +
               (isActive ? " bg-primary-300 text-textColor-dark" : "")
             }
             to={"logout"}
