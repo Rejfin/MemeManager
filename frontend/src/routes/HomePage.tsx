@@ -1,7 +1,6 @@
-import RecentFileList from "../components/RecentFileList";
-import StorageStats from "../components/StorageStats";
-import { FileData } from "../components/RecentFileList";
-import SideNavigation from "../components/SideNavigation";
+import RecentFileList from "../components/HomePage/RecentFileList";
+import StorageStats from "../components/HomePage/StorageStats";
+import { FileData } from "../components/HomePage/RecentFileList";
 
 const listOfRecentFiles = [
   {
@@ -48,16 +47,13 @@ const listOfRecentFiles = [
   } as FileData
 ]
 
-const home = () => {
+const HomePage = () => {
   return (
-    <div className="grid md:grid-cols-4">
-      <div className="flex bg-primary-300">
-        <SideNavigation/>
-      </div>
-      <div className=" flex md:col-span-2 p-2">
+    <div className="grid md:grid-cols-3 lg:grid-cols-4">
+      <div className=" flex md:col-span-2 lg:col-span-3 p-2">
         <RecentFileList files={listOfRecentFiles}/>
       </div>
-      <div className="p-2 min-w-[200px]">
+      <div className="p-2 w-full">
         <StorageStats
           storageSize={98756432}
           imageSize={13756432}
@@ -69,4 +65,4 @@ const home = () => {
     </div>
   );
 };
-export default home;
+export default HomePage;
