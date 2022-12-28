@@ -4,7 +4,8 @@ import {
 } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import FileTypeStatCard from "./FileTypeStatCard";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 interface StorageProps {
   storageSize: number;
@@ -15,15 +16,21 @@ interface StorageProps {
 }
 
 const StorageStats = (props: StorageProps) => {
-  const darkMode = localStorage.getItem("dark_mode") || false;
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") != null
+  );
   const { t } = useTranslation();
+
+  window.addEventListener("theme", () => {
+    setDarkMode(localStorage.getItem("theme") != null);
+  });
 
   return (
     <>
-      <div className="p-6 flex w-full justify-center bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md shadow-md">
+      <div className="p-6 flex w-full h-fit justify-center bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md shadow-md">
         <div>
           <div className="text-textColor dark:text-textColor-dark pb-4 text-lg font-medium">
-            {t('storage_stats.title')}
+            {t("storage_stats.title")}
           </div>
           <div>
             <CircularProgressbarWithChildren
@@ -32,6 +39,7 @@ const StorageStats = (props: StorageProps) => {
               strokeWidth={8}
               background={true}
               backgroundPadding={3}
+              className="circular-trail"
               styles={buildStyles({
                 pathColor: "#e92229",
                 trailColor: darkMode ? "#2b344c" : "#f0f8ff",
@@ -81,10 +89,10 @@ const StorageStats = (props: StorageProps) => {
                       strokeLinecap: "butt",
                     })}
                   >
-                    <div className="font-bold md:text-3xl lg:text-5xl text-textColor dark:text-textColor-dark">
+                    <div className="font-bold text-3xl md:text-xl lg:text-4xl text-textColor dark:text-textColor-dark">
                       30.4
                     </div>
-                    <div className="md:text-1xl lg:text-3xl text-textColor dark:text-textColor-dark">
+                    <div className="text-3xl md:text-xl lg:text-xl text-textColor dark:text-textColor-dark">
                       of 120GB
                     </div>
                   </CircularProgressbarWithChildren>
@@ -94,7 +102,7 @@ const StorageStats = (props: StorageProps) => {
           </div>
           <div>
             <FileTypeStatCard
-              name={t('storage_stats.images')}
+              name={t("storage_stats.images")}
               image={
                 <svg
                   className="w-9 inline-block fill-primary-500 text-primary-500"
@@ -107,7 +115,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={t('storage_stats.videos')}
+              name={t("storage_stats.videos")}
               image={
                 <svg
                   className="w-9 inline-block fill-videoColor text-videoColor"
@@ -119,7 +127,7 @@ const StorageStats = (props: StorageProps) => {
               }
             />
             <FileTypeStatCard
-              name={t('storage_stats.gifs')}
+              name={t("storage_stats.gifs")}
               image={
                 <svg
                   className="w-9 mr-2 inline-block fill-gifsColor text-gifsColor"
@@ -132,7 +140,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={t('storage_stats.other')}
+              name={t("storage_stats.other")}
               image={
                 <svg
                   className="w-9 inline-block fill-otherColor text-otherColor"

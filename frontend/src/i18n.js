@@ -13,6 +13,7 @@ i18n
     resources: {
       en: {
         translation: {
+          app_name: 'Meme Manager',
           storage_stats: {
               title: 'Storage Statistics',
               images: 'Images',
@@ -31,7 +32,9 @@ i18n
               files: 'Files',
               settings: 'Settings',
               profile: 'Profile',
-              logout: 'Log Out'
+              logout: 'Log Out',
+              darkMode: 'Dark mode',
+              lightMode: 'Light mode'
           }
         }
       }

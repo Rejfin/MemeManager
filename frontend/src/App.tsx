@@ -1,7 +1,6 @@
-import "./App.css";
 import "./i18n";
 import BaseScreen from "./routes/BaseScreen";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HomePage from "./routes/HomePage";
 import FilesPage from "./routes/FilesPage";
 import ErrorPage from "./routes/ErrorPage";
@@ -10,7 +9,7 @@ import ProfilePage from "./routes/ProfilePage";
 
 function App() {
   return (
-    <div className="bg-background dark:bg-background-dark w-screen h-screen">
+    <div className="bg-background dark:bg-background-dark w-screen h-screen max-w-[100%] min-h-screen">
       <Routes>
         <Route element={<BaseScreen />}>
           <Route index element={<HomePage />} />

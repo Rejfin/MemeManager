@@ -1,18 +1,16 @@
 import { Outlet } from "react-router-dom";
 import SideNavigation from "../components/SideNavigation";
-import "../App.css"
+import "../App.css";
 
 const BaseScreen = () => {
-    return ( 
-        <div className="base-container md:h-screen">
-            <div className="side-navigation md:h-screen">
-                <SideNavigation/>
-            </div>
-            <div className="side-content">
-                <Outlet/>
-            </div>
-        </div>
-    );
-}
- 
+  return (
+    <div className="bg-background dark:bg-background-dark h-full min-h-full flex flex-col md:flex-row">
+      <SideNavigation/>
+      <div className="bg-background dark:bg-background-dark h-full min-h-full flex-1 p-3">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
 export default BaseScreen;
