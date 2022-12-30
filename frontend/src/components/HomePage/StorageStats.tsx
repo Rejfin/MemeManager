@@ -30,7 +30,7 @@ const StorageStats = (props: StorageProps) => {
       <div className="p-6 flex w-full h-fit justify-center bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md shadow-md">
         <div>
           <div className="text-textColor dark:text-textColor-dark pb-4 text-lg font-medium">
-            {t("storage_stats.title")}
+            {t("storageStats.title")}
           </div>
           <div>
             <CircularProgressbarWithChildren
@@ -102,7 +102,7 @@ const StorageStats = (props: StorageProps) => {
           </div>
           <div>
             <FileTypeStatCard
-              name={t("storage_stats.images")}
+              name={t("storageStats.images")}
               image={
                 <svg
                   className="w-9 inline-block fill-primary-500 text-primary-500"
@@ -115,7 +115,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={t("storage_stats.videos")}
+              name={t("storageStats.videos")}
               image={
                 <svg
                   className="w-9 inline-block fill-videoColor text-videoColor"
@@ -127,7 +127,7 @@ const StorageStats = (props: StorageProps) => {
               }
             />
             <FileTypeStatCard
-              name={t("storage_stats.gifs")}
+              name={t("storageStats.gifs")}
               image={
                 <svg
                   className="w-9 mr-2 inline-block fill-gifsColor text-gifsColor"
@@ -140,7 +140,7 @@ const StorageStats = (props: StorageProps) => {
               className={"py-4"}
             />
             <FileTypeStatCard
-              name={t("storage_stats.other")}
+              name={t("storageStats.other")}
               image={
                 <svg
                   className="w-9 inline-block fill-otherColor text-otherColor"

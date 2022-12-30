@@ -141,7 +141,7 @@ const SideNavigation = () => {
             !isNavOpen && "md:scale-0"
           }`}
         >
-          {t("app_name")}
+          {t("appName")}
         </h1>
       </div>
 

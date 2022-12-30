@@ -13,15 +13,16 @@ i18n
     resources: {
       en: {
         translation: {
-          app_name: 'Meme Manager',
-          storage_stats: {
+          appName: 'Meme Manager',
+          appDescription: 'Self hosted aplication to manage your meme collection',
+          storageStats: {
               title: 'Storage Statistics',
               images: 'Images',
               videos: 'Videos',
               gifs: 'Gifs',
               other: 'Other'
           },
-          recent_file_list: {
+          recentFileList: {
               title: 'Recent files',
               date: 'Date',
               size: 'Size',
@@ -35,6 +36,16 @@ i18n
               logout: 'Log Out',
               darkMode: 'Dark mode',
               lightMode: 'Light mode'
+          },
+          auth: {
+            login: 'Login',
+            logIn: 'Log in',
+            register: 'Register',
+            password: 'Password',
+            repeatPassword: 'Repeat password',
+            dontHaveAcc: 'You don\'t have an account?',
+            createNewAccount: 'Create new',
+            alreadyHaveAcc: 'You already have an account?',
           }
         }
       }

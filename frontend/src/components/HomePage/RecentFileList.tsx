@@ -29,14 +29,14 @@ const RecentFileList = ({ files }: FileListProps) => {
   const fileList = files.map((file: FileData, index: number) => ListItem(file, index % 2 === 0));
   return (
     <div className="rounded-md bg-backgroundSurface dark:bg-backgroundSurface-dark w-full shadow-md">
-      <div className="p-6 text-textColor dark:text-textColor-dark text-lg font-medium">{t('recent_file_list.title')}</div>
+      <div className="p-6 text-textColor dark:text-textColor-dark text-lg font-medium">{t('recentFileList.title')}</div>
       <ul>
-        <li key={"list_title"} className="grid grid-cols-4 md:grid-cols-7 content-center content-justify">
+        <li key={"listTitle"} className="grid grid-cols-4 md:grid-cols-7 content-center content-justify">
           <div className="col-span-3 md:col-span-5 text-center self-center text-textColor dark:text-textColor-dark">
-          {t('recent_file_list.name')}
+          {t('recentFileList.name')}
           </div>
-          <div className="hidden md:block text-center self-center text-textColor dark:text-textColor-dark">{t('recent_file_list.date')}</div>
-          <div className="hidden lg:block text-center self-center text-textColor dark:text-textColor-dark">{t('recent_file_list.size')}</div>
+          <div className="hidden md:block text-center self-center text-textColor dark:text-textColor-dark">{t('recentFileList.date')}</div>
+          <div className="hidden lg:block text-center self-center text-textColor dark:text-textColor-dark">{t('recentFileList.size')}</div>
         </li>
         {fileList}
       </ul>

@@ -6,6 +6,7 @@ import FilesPage from "./routes/FilesPage";
 import ErrorPage from "./routes/ErrorPage";
 import SettingsPage from "./routes/SettingsPage";
 import ProfilePage from "./routes/ProfilePage";
+import AuthPage from "./routes/AuthPage";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
+        <Route path="login" element={<AuthPage isRegisterPage={false}/>}/>
+        <Route path="register" element={<AuthPage isRegisterPage={true}/>}/>
       </Routes>
     </div>
   );
