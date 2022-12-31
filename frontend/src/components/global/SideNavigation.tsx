@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
-import Logo from "../assets/logo.webp";
-import { ReactComponent as Control } from "../assets/icon-control-navigation.svg";
-import { ReactComponent as DashboardIcon } from "../assets/icon-dashboard.svg";
-import { ReactComponent as SettingsIcon } from "../assets/icon-settings.svg";
-import { ReactComponent as ProfileIcon } from "../assets/icon-profile.svg";
-import { ReactComponent as LogoutIcon } from "../assets/icon-logout.svg";
-import { ReactComponent as FilesIcon } from "../assets/icon-files.svg";
-import { ReactComponent as DarkModeIcon } from "../assets/icon-dark-mode.svg";
-import { ReactComponent as LightModeIcon } from "../assets/icon-light-mode.svg";
+import { NavLink, useLocation } from "react-router-dom";
+import Logo from "../../assets/logo.webp";
+import { ReactComponent as Control } from "../../assets/icon-control-navigation.svg";
+import { ReactComponent as DashboardIcon } from "../../assets/icon-dashboard.svg";
+import { ReactComponent as SettingsIcon } from "../../assets/icon-settings.svg";
+import { ReactComponent as ProfileIcon } from "../../assets/icon-profile.svg";
+import { ReactComponent as LogoutIcon } from "../../assets/icon-logout.svg";
+import { ReactComponent as FilesIcon } from "../../assets/icon-files.svg";
+import { ReactComponent as DarkModeIcon } from "../../assets/icon-dark-mode.svg";
+import { ReactComponent as LightModeIcon } from "../../assets/icon-light-mode.svg";
 
 interface NavEntry {
   title: string;
@@ -19,6 +19,7 @@ interface NavEntry {
 }
 
 const NavElement = (props: { navEntry: NavEntry; navOpen: Boolean }) => {
+  const location = useLocation();
   return (
     <NavLink
       className={({ isActive }) =>
@@ -32,7 +33,7 @@ const NavElement = (props: { navEntry: NavEntry; navOpen: Boolean }) => {
             : ""
         }`
       }
-      to={props.navEntry.path || ""}
+      to={props.navEntry.path || location.pathname}
       onClick={props.navEntry.func || (() => {})}
     >
       {({ isActive }) => (

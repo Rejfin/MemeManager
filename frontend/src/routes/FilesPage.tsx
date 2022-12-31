@@ -4,76 +4,6 @@ import { FileData } from "../Utils/FileTypes";
 
 const listOfFiles = [
   {
-    id: "20",
-    name: "test1 asd as das das dasd asd asd asd ",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/nu4swVQ.jpeg",
-  } as FileData,
-  {
-    id: "19",
-    name: "test2",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
-    id: "18",
-    name: "test3",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/nu4swVQ.jpeg",
-  } as FileData,
-  {
-    id: "17",
-    name: "test4",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
-    id: "16",
-    name: "test5",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
-    id: "15",
-    name: "test1 asd as das das dasd asd asd asd ",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/nu4swVQ.jpeg",
-  } as FileData,
-  {
-    id: "14",
-    name: "test2",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
-    id: "13",
-    name: "test3",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/nu4swVQ.jpeg",
-  } as FileData,
-  {
-    id: "12",
-    name: "test4",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
-    id: "11",
-    name: "test5",
-    size: 1235,
-    createdDate: new Date(2022, 11, 12),
-    imageLink: "https://i.imgur.com/b9NyUGm.png",
-  } as FileData,
-  {
     id: "10",
     name: "test1 asd as das das dasd asd asd asd ",
     size: 1235,
@@ -148,13 +78,16 @@ const listOfFiles = [
 const FilesPage = () => {
   return (
     <>
-      <div className="flex-auto h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4">
-        <div>
-          <SearchComponent/>
+      <div className="flex-row h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4">
+        <div className="pb-4">
+          <SearchComponent />
         </div>
-
-        <FileRoll files={listOfFiles} date={new Date(2022, 11, 12)} />
-        <FileRoll files={listOfFiles} date={new Date(2022, 11, 13)} />
+        <div className="h-[calc(100%-3.5rem)] overflow-y-auto">
+          <FileRoll files={listOfFiles} date={new Date(2022, 11, 12)} />
+          <FileRoll files={listOfFiles} date={new Date(2022, 11, 13)} />
+          <FileRoll files={listOfFiles} date={new Date(2022, 11, 14)} />
+          <FileRoll files={listOfFiles} date={new Date(2022, 11, 15)} />
+        </div>
       </div>
     </>
   );
