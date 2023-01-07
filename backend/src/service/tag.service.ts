@@ -1,4 +1,3 @@
-import { Tag } from '../models/tag.model';
 import { TagRepository } from '../repository/tag.repository';
 
 export class TagService {
@@ -9,15 +8,15 @@ export class TagService {
         this.tagRepository = new TagRepository();
     }
 
-    async getTags() {
-        return await this.tagRepository.getTags();
+    async getTags(userId: string) {
+        return await this.tagRepository.getTags(userId);
     }
 
-    async createTag(tag: Tag) {
-        if(tag.name != null){
-            const savedTag = await this.tagRepository.getTag(tag.name.toLowerCase())
+    async createTag(tagName: string, userId: string) {
+        if(tagName != null){
+            const savedTag = await this.tagRepository.getTag(tagName.toLowerCase())
             if(savedTag === null){
-                return await this.tagRepository.createTag(tag);
+                return await this.tagRepository.createTag(tagName, userId);
             }else{
                 return savedTag
             }

@@ -9,7 +9,7 @@ export class AuthController {
         this.authService = new AuthService();
     }
 
-    async registerUser(user: User, res: any) {
+    async registerUser(user: {login: string, password: string}, res: any) {
         const data =  await this.authService.registerUser(user);
         if (data == null) {
             res.sendStatus(400);
@@ -22,12 +22,12 @@ export class AuthController {
           }
     }
 
-    async signInUser(user: User, res: any){
-        const isLoginSuccess = await this.authService.signInUser(user);
+    async signInUser(user: {login: string, password: string}, res: any){
+        const mUser = await this.authService.signInUser(user);
         
-        if(isLoginSuccess){
-            const token = this.authService.createJwtToken(user);
-            const refreshToken = await this.authService.createRefreshToken(user, user);
+        if(mUser){
+            const token = this.authService.createJwtToken({userId: mUser.id, login: mUser.login});
+            const refreshToken = await this.authService.createRefreshToken({userId: mUser.id, login: mUser.login}, mUser.id);
             res.status(200).json({token: token, refreshToken: refreshToken});
         }else{
             res.sendStatus(401);

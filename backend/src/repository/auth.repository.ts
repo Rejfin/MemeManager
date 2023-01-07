@@ -15,7 +15,7 @@ export class AuthRepository {
         this.tokenRepository = this.db.sequelize.getRepository(RefreshToken);
     }
 
-    async registerUser(user: User) {
+    async registerUser(user: {login: string, password: string}) {
         const mUser = await this.authRespository.findOne({ where: { login: user.login } })
         if(mUser){
             return {created: false}
@@ -25,23 +25,27 @@ export class AuthRepository {
         return {created: true}
     }
 
-    async signinUser(user: User){
+    async signinUser(user: {login: string, password: string}){
         const mUser = await this.authRespository.findOne({ where: { login: user.login } })
         if(mUser){
-            return await bcrypt.compare(user.password, mUser.password);
+            const isPassOk = await bcrypt.compare(user.password, mUser.password);
+            if(isPassOk){
+                return mUser
+            }else{
+                return null
+            }
         }else{
-            return false;
+            return null;
         }
     }
 
-    async saveTokenToUser(token: RefreshToken, user: User){
-        const mUser = await this.authRespository.findOne({ where: { login: user.login } })
-        const mToken = await this.tokenRepository.create({token: token, userId: mUser.id})
-        mUser.$add('tokens', mToken.id)
+    async saveTokenToUser(token: RefreshToken, userId: string){
+        const user = await this.authRespository.findOne({ where: { id: userId} })
+        const mToken = await this.tokenRepository.create({token: token, userId: userId})
+        user.$add('tokens', mToken.id)
     }
 
-    async findRefreshToken(token: string){
-        const mRefreshToken = await this.tokenRepository.findOne({where: {token: token}})
-        return mRefreshToken
+    async findRefreshToken(token: string){ 
+        return await this.tokenRepository.findOne({where: {token: token}})
     }
 }

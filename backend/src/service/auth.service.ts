@@ -9,7 +9,7 @@ export class AuthService {
     this.authRepository = new AuthRepository();
   }
 
-  async registerUser(user: User) {
+  async registerUser(user: {login: string, password: string}) {
     if (user.login && user.password) {
       return await this.authRepository.registerUser(user);
     } else {
@@ -17,19 +17,20 @@ export class AuthService {
     }
   }
 
-  async signInUser(user: User) {
+  async signInUser(user: {login: string, password: string}) {
     if (user.login && user.password) {
-      return await this.authRepository.signinUser(user);
+      const mUser = await this.authRepository.signinUser(user);
+      return mUser;
     } else {
-      return false;
+      return null;
     }
   }
 
-  async createRefreshToken(payload: object, user: User): Promise<string> {
+  async createRefreshToken(payload: object, userId: string): Promise<string> {
     const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET;
     const REFRESH_EXP = process.env.JWT_REFRESH_EXP;
     const token = jwt.sign(payload, REFRESH_TOKEN, { expiresIn: REFRESH_EXP });
-    await this.authRepository.saveTokenToUser(token, user);
+    await this.authRepository.saveTokenToUser(token, userId);
     return token;
   }
 

@@ -12,9 +12,9 @@ export class TagRepository {
         this.tagRespository = this.db.sequelize.getRepository(Tag);
     }
 
-    async getTags() {
+    async getTags(userId: string) {
         try {
-            const tags = await this.tagRespository.findAll();
+            const tags = await this.tagRespository.findAll({where: {userId: userId}, attributes: ['id', 'name']});
             return tags;
         } catch (err) {
             console.log(err);
@@ -31,10 +31,10 @@ export class TagRepository {
         }
     }
 
-    async createTag(tag: Tag) {
+    async createTag(tagName: string, userId: string) {
         let data = {}
         try {
-            data = await this.tagRespository.create(tag);
+            data = await this.tagRespository.create({name: tagName, userId: userId});
         } catch(err) {
             console.log(err)
         }

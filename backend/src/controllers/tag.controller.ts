@@ -9,11 +9,16 @@ export class TagController {
         this.tagService = new TagService();
     }
 
-    async getTags() {
-        return await this.tagService.getTags();
+    async getTags(userId: string) {
+        return await this.tagService.getTags(userId);
     }
 
-    async createTag(tag: Tag) {
-        return await this.tagService.createTag(tag);
+    async createTag(tag: string, userId: string) {
+        const newTag =  await this.tagService.createTag(tag, userId);
+        if(newTag){
+            return {id: newTag.id, name: newTag.name}
+        }else{
+            return null
+        }
     }
 }

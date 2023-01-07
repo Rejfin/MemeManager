@@ -39,16 +39,16 @@ class App {
       this.authController.refreshAccessToken(req.body, res)
     });
 
+    this.express.get("/api/tags", authMiddleware, (req: any, res) => {
+      this.tagController.getTags(req.user.userId).then((data) => res.json(data));
+    });
+
+    this.express.post("/api/tags", authMiddleware, (req: any, res) => {
+      this.tagController.createTag(req.body.name, req.user.userId).then((data) => res.json(data));
+    });
+
     this.express.get("/api/memes", authMiddleware, (req, res) => {
       this.memeController.getMemes().then((data) => res.json(data));
-    });
-
-    this.express.get("/api/tags", (req, res) => {
-      this.tagController.getTags().then((data) => res.json(data));
-    });
-
-    this.express.post("/api/tags", (req, res) => {
-      this.tagController.createTag(req.body.tag).then((data) => res.json(data));
     });
 
     // handle undefined routes
