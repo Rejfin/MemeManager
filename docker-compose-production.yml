@@ -21,6 +21,8 @@ services:
       dockerfile: Api.Dockerfile.production
     ports:
       - "8000:8000"
+    volumes:
+      - "./memes:app/src/memes"
     networks:
       - private
     depends_on:

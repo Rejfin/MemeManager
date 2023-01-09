@@ -14,16 +14,17 @@ export class MemeController {
   async createMeme(req: any) {
     const fileData = {
       userId: req.user.userId,
-      name: req.file.originalname,
+      name: req.file.filename,
       originalName: req.file.originalname,
       type: req.file.mimetype,
       size: req.file.size,
       uploadDate: new Date(),
       tags: req.body.tags
     };
-    console.log(fileData.tags);
-    
-
     return await this.memeService.createMeme(fileData);
+  }
+
+  async getMeme(userId: string, memeId: string){
+    return await this.memeService.getMeme(userId, memeId)
   }
 }

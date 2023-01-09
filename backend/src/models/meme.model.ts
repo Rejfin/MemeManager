@@ -40,6 +40,9 @@ export class Meme extends Model {
   @Column(DataType.UUID)
   userId!: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    hooks: true,
+    onDelete: 'CASCADE',
+  })
   user!: User;
 }

@@ -12,7 +12,10 @@ export class RefreshToken extends Model {
   @Column(DataType.STRING)
   token!: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, {
+    hooks: true,
+    onDelete: 'CASCADE',
+  })
   user!: User;
 
   @ForeignKey(() => User)

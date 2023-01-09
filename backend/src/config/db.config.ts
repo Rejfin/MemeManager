@@ -13,12 +13,9 @@ export const connect = () => {
     const database = process.env.PG_DB || 'meme-manager';
     const dialect = 'postgres';
 
-    const operatorsAliases: any = false;
-
     const sequelize = new Sequelize(database!, userName!, password, {
         host: hostName,
-        dialect,
-        operatorsAliases,
+        dialect: dialect,
         repositoryMode: true,
         pool: {
             max: 10,

@@ -22,4 +22,10 @@ export class MemeService {
   }) {
     return await this.memeRepository.createMeme(fileData);
   }
+
+  async getMeme(userId: string, memeId: string){
+    return await this.memeRepository.getMeme(userId, memeId)
+  }
 }
+
+

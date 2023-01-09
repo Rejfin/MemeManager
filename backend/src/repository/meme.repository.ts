@@ -4,22 +4,22 @@ import { Tag } from "../models/tag.model";
 
 export class MemeRepository {
   private db: any = {};
-  private memeRespository: any;
+  private memeRepository: any;
   private tagRepository: any;
 
   constructor() {
     this.db = connect();
     // For Development
-    // this.db.sequelize.sync({ force: true }).then(() => {
-    //   console.log("Drop and re-sync db.");
-    // });
-    this.memeRespository = this.db.sequelize.getRepository(Meme);
+    this.db.sequelize.sync({ force: true }).then(() => {
+      console.log("Drop and re-sync db.");
+    });
+    this.memeRepository = this.db.sequelize.getRepository(Meme);
     this.tagRepository = this.db.sequelize.getRepository(Tag);
   }
 
   async getMemes(userId: string) {
     try {
-      const memes = await this.memeRespository.findAll({
+      const memes = await this.memeRepository.findAll({
         where: { userId: userId },
         include: [
           {
@@ -46,7 +46,7 @@ export class MemeRepository {
     uploadDate: Date;
     tags: [];
   }) {
-    const meme = await this.memeRespository.create(fileData);
+    const meme = await this.memeRepository.create(fileData);
     if (fileData.tags) {
       console.log(fileData.tags);
 
@@ -57,5 +57,9 @@ export class MemeRepository {
       });
     }
     return meme;
+  }
+
+  async getMeme(userId: string, memeId: string){
+    return await this.memeRepository.findOne({where: {userId: userId, id: memeId}})
   }
 }
