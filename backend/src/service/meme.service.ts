@@ -1,14 +1,25 @@
-import { MemeRepository } from '../repository/meme.repository';
+import { MemeRepository } from "../repository/meme.repository";
 
 export class MemeService {
+  private memeRepository: MemeRepository;
 
-    private memeRepository: MemeRepository;
+  constructor() {
+    this.memeRepository = new MemeRepository();
+  }
 
-    constructor() {
-        this.memeRepository = new MemeRepository();
-    }
+  async getMemes(userId: string) {
+    return await this.memeRepository.getMemes(userId);
+  }
 
-    async getMemes() {
-        return await this.memeRepository.getMemes();
-    }
+  async createMeme(fileData: {
+    userId: string;
+    name: string;
+    originalName: string;
+    type: string;
+    size: number;
+    uploadDate: Date;
+    tags: []
+  }) {
+    return await this.memeRepository.createMeme(fileData);
+  }
 }

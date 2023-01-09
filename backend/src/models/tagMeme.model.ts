@@ -6,7 +6,7 @@ import {
 import { Meme } from "./meme.model";
 import { Tag } from "./tag.model";
 
-@Table
+@Table({timestamps: false})
 export class TagMeme extends Model {
   @ForeignKey(() => Meme)
   memeId!: string;

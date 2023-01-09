@@ -4,6 +4,8 @@ import { AuthController } from "./controllers/auth.controller";
 import { MemeController } from "./controllers/meme.controller";
 import { TagController } from "./controllers/tag.controller";
 import { authMiddleware } from "./middlewares/authMiddleware";
+const multer  = require('multer')
+const upload = multer({ dest: './memes/' })
 
 class App {
   public express: express.Application;
@@ -47,9 +49,15 @@ class App {
       this.tagController.createTag(req.body.name, req.user.userId).then((data) => res.json(data));
     });
 
-    this.express.get("/api/memes", authMiddleware, (req, res) => {
-      this.memeController.getMemes().then((data) => res.json(data));
+    this.express.get("/api/memes", authMiddleware, (req: any, res) => {
+      this.memeController.getMemes(req.user.userId).then((data) => res.json(data));
     });
+
+    this.express.post("/api/memes", [authMiddleware, upload.single('meme')], (req: any, res: any) => {
+      // console.log(req.file);
+      // res.sendStatus(200);
+      this.memeController.createMeme(req).then((data) => res.json(data))
+    })
 
     // handle undefined routes
     this.express.use("*", (req, res) => {

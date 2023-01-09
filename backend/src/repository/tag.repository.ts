@@ -24,7 +24,7 @@ export class TagRepository {
 
     async getTag(tagName: string) {
         try {
-            return await this.tagRespository.findOne({where: {name: tagName}});
+            return await this.tagRespository.findOne({where: {name: tagName}, attributes: ['id', 'name']});
         } catch (err) {
             console.log(err);
             return null;

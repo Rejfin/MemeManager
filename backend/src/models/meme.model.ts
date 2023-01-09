@@ -7,13 +7,13 @@ import {
   Default,
   BelongsToMany,
   ForeignKey,
-  BelongsTo
+  BelongsTo,
 } from "sequelize-typescript";
 import { Tag } from "./tag.model";
 import { TagMeme } from "./tagMeme.model";
 import { User } from "./user.model";
 
-@Table({timestamps: false})
+@Table({ timestamps: false })
 export class Meme extends Model {
   @PrimaryKey
   @Default(DataType.UUIDV4)
@@ -24,13 +24,13 @@ export class Meme extends Model {
   name!: string;
 
   @Column
+  originalName!: string;
+
+  @Column
   type!: string;
 
   @Column
   uploadDate!: Date;
-
-  @Column
-  createdDate!: Date;
 
   @BelongsToMany(() => Tag, () => TagMeme)
   tags!: Tag[];
