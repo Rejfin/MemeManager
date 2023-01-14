@@ -1,4 +1,4 @@
-import { FileListHistoryProps } from "../../Utils/FileTypes";
+import { FileListHistoryProps } from "../../utils/FileTypes";
 
 const FileRoll = (props: FileListHistoryProps) => {
   return (

@@ -1,6 +1,6 @@
 import FileRoll from "../components/FilesPage/FileRoll";
 import SearchComponent from "../components/FilesPage/SearchComponent";
-import { FileData } from "../Utils/FileTypes";
+import { FileData } from "../utils/FileTypes";
 
 const listOfFiles = [
   {

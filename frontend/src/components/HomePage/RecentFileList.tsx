@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { FileData, FileListProps } from "../../Utils/FileTypes";
+import { FileData, FileListProps } from "../../utils/FileTypes";
 
 const ListItem = (props: FileData, secondBackground: boolean) => {
   return (

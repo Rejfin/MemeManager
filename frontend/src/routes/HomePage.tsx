@@ -1,6 +1,6 @@
 import RecentFileList from "../components/HomePage/RecentFileList";
 import StorageStats from "../components/HomePage/StorageStats";
-import { FileData } from "../Utils/FileTypes";
+import { FileData } from "../utils/FileTypes";
 
 const listOfRecentFiles = [
   {

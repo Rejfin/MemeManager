@@ -7,6 +7,7 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import { fileMiddleware } from "./middlewares/fileMiddleware";
 const multer  = require('multer')
 const upload = multer({ dest: __dirname + '/memes/' })
+const cors = require('cors')
 
 class App {
   public express: express.Application;
@@ -16,6 +17,7 @@ class App {
 
   constructor() {
     this.express = express();
+    this.express.use(cors())
     this.middleware();
     this.routes();
     this.memeController = new MemeController();
