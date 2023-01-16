@@ -9,15 +9,22 @@ export class AuthService {
     this.authRepository = new AuthRepository();
   }
 
-  async registerUser(user: {login: string, password: string}) {
-    if (user.login && user.password) {
+  async registerUser(user: { login: string; password: string }) {
+    if (
+      (user.login &&
+        user.password &&
+        user.login.length >= 4 &&
+        user.password.length >= 6) &&
+      /[0-9]+/.test(user.password) &&
+      /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(user.password)
+    ) {
       return await this.authRepository.registerUser(user);
     } else {
       return null;
     }
   }
 
-  async signInUser(user: {login: string, password: string}) {
+  async signInUser(user: { login: string; password: string }) {
     if (user.login && user.password) {
       const mUser = await this.authRepository.signinUser(user);
       return mUser;
@@ -43,15 +50,15 @@ export class AuthService {
 
   async renewAccessToken(refreshToken: string): Promise<string | null> {
     const mRefreshToken = this.authRepository.findRefreshToken(refreshToken);
-    if(!mRefreshToken){
-      return null
+    if (!mRefreshToken) {
+      return null;
     }
     const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET;
     jwt.verify(refreshToken, REFRESH_TOKEN, (err: any, data: any) => {
       if (err) {
         return null;
       }
-      return this.createJwtToken(data)
+      return this.createJwtToken(data);
     });
     return null;
   }

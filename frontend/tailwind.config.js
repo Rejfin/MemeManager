@@ -3,7 +3,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      border: ['focus'],
+    },
     colors:{
       transparent: "transparent",
       current: "currentColor",
@@ -46,7 +48,9 @@ module.exports = {
       videoColor:"#fcd31a",
       gifsColor:"#46e4ff",
       otherColor:"#e92229",
-      navigationIconColor: "#777777"
+      navigationIconColor: "#777777",
+      errorColor: "#DA4747",
+      inputBorderColor: "#747474",
     }
   },
   plugins: [],

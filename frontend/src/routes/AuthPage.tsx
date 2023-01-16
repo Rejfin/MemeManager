@@ -6,50 +6,105 @@ import AuthService from "../services/auth.service";
 import { useState } from "react";
 import AlertDialog from "../components/global/AlertDialog";
 
-const LoginPage = (props: { isRegisterPage: boolean }) => {
+const AuthPage = (props: { isRegisterPage: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [login, setLogin] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [showAlertDialog, setShowAlertDialog] = useState(false);
-  const [errorText, setError] = useState("")
+  const [repeatPasswordError, setRepeatPasswordError] = useState("");
+  const [dialogText, setDialogText] = useState("");
+
+  const isLoginFieldValid = (): boolean => {
+    if (login.length === 0) {
+      setLoginError(t("auth.emptyFieldError") || "");
+      return false;
+    } else if (login.length < 4) {
+      setLoginError(t("auth.loginToShortError") || "");
+      return false;
+    }
+    setLoginError("");
+    return true;
+  };
+
+  const isPasswordFieldValid = (): boolean => {
+    if (password.length === 0) {
+      setPasswordError(t("auth.emptyFieldError") || "");
+      return false;
+    } else if (
+      props.isRegisterPage &&
+      (password.length < 6 ||
+        !/[0-9]+/.test(password) ||
+        !/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password))
+    ) {
+      setPasswordError(t("auth.passwordError") || "");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  const isRepeatedPasswordFieldValid = (): boolean => {
+    if (repeatPassword.length === 0) {
+      setRepeatPasswordError(t("auth.emptyFieldError") || "");
+      return false;
+    } else if (repeatPassword !== password) {
+      setRepeatPasswordError(t("auth.repeatedPasswordNotMatchError") || "");
+      return false;
+    }
+    setRepeatPasswordError("");
+    return true;
+  };
 
   const handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (props.isRegisterPage) {
-      AuthService.register(login, password).then(() => {
-        setLogin("");
-        setPassword("");
-        setRepeatPassword("");
-        navigate("/login");
-      });
+      if (
+        isLoginFieldValid() &&
+        isPasswordFieldValid() &&
+        isRepeatedPasswordFieldValid()
+      ) {
+        AuthService.register(login, password)
+          .then(() => {
+            setLogin("");
+            setPassword("");
+            setRepeatPassword("");
+            navigate("/login");
+          })
+          .catch((data) => {
+            setPassword("");
+            setDialogText(data.message);
+          });
+      }
     } else {
-      AuthService.login(login, password)
-        .then(() => {
-          navigate("/");
-        })
-        .catch((data) => {
-          setPassword("");
-          setError(data.message)
-          setShowAlertDialog(true);
-        });
+      if (isLoginFieldValid() && isPasswordFieldValid()) {
+        AuthService.login(login, password)
+          .then(() => {
+            navigate("/");
+          })
+          .catch((data) => {
+            setPassword("");
+            setDialogText(data.message);
+          });
+      }
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       {/* Alert Dialog */}
-      {showAlertDialog && (
+      {dialogText && (
         <AlertDialog
           title={"Authentication Error"}
-          text={errorText}
+          text={dialogText}
           positiveButton={{
             text: "OK",
             func: () => {
-              setShowAlertDialog(false);
+              setDialogText("");
             },
           }}
         />
@@ -68,15 +123,13 @@ const LoginPage = (props: { isRegisterPage: boolean }) => {
             </h2>
           </div>
         </div>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-y-4 items-center justify-center pt-5 max-w-2xl"
-        >
+        <form className="flex flex-col gap-y-4 items-center justify-center pt-5 w-96 max-w-sm">
           <InputField
             id="login"
             inputType={"text"}
             placeholder={t("auth.login")}
             value={login}
+            error={loginError}
             onChange={(value) => {
               setLogin(value);
             }}
@@ -86,6 +139,7 @@ const LoginPage = (props: { isRegisterPage: boolean }) => {
             inputType={"password"}
             placeholder={t("auth.password")}
             value={password}
+            error={passwordError}
             onChange={(value) => {
               setPassword(value);
             }}
@@ -97,22 +151,25 @@ const LoginPage = (props: { isRegisterPage: boolean }) => {
                 inputType={"password"}
                 placeholder={t("auth.repeatPassword")}
                 value={repeatPassword}
+                error={repeatPasswordError}
                 onChange={(value) => {
                   setRepeatPassword(value);
                 }}
               />
-              <input
-                type="submit"
-                value={t("auth.register") || ""}
+              <button
+                onClick={handleSubmit}
                 className="bg-primary-500 text-textColor-dark rounded-lg py-3 w-60"
-              />
+              >
+                {t("auth.register") || ""}
+              </button>
             </>
           ) : (
-            <input
-              type="submit"
-              value={t("auth.logIn") || ""}
+            <button
+              onClick={handleSubmit}
               className="bg-primary-500 text-textColor-dark rounded-lg py-3 w-60"
-            />
+            >
+              {t("auth.logIn") || ""}
+            </button>
           )}
         </form>
       </div>
@@ -147,4 +204,4 @@ const LoginPage = (props: { isRegisterPage: boolean }) => {
   );
 };
 
-export default LoginPage;
+export default AuthPage;

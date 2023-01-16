@@ -46,6 +46,10 @@ i18n
             dontHaveAcc: 'You don\'t have an account?',
             createNewAccount: 'Create new',
             alreadyHaveAcc: 'You already have an account?',
+            loginToShortError: 'Your login must be atleast 4 charaters',
+            emptyFieldError: 'This field can\'t be emty',
+            repeatedPasswordNotMatchError: 'Your repeated password is not the same as your password',
+            passwordError: 'Your password must have at least 6 characters including one special character and one number',
           }
         }
       }
