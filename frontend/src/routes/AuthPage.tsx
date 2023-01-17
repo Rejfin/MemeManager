@@ -1,4 +1,4 @@
-import InputField from "../components/global/InputField/InputField";
+import InputField from "../components/global/InputField";
 import Logo from "../assets/logo.webp";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
@@ -77,7 +77,14 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           })
           .catch((data) => {
             setPassword("");
-            setDialogText(data.message);
+            setRepeatPassword("");
+            if (data.response.status === 400) {
+              setDialogText(t("auth.registerError") || "");
+            } else if (data.response.status === 403) {
+              setDialogText(t("auth.userAlreadyExist") || "");
+            } else {
+              setDialogText(t("auth.unexpectedAuthError") || "");
+            }
           });
       }
     } else {
@@ -88,7 +95,11 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           })
           .catch((data) => {
             setPassword("");
-            setDialogText(data.message);
+            if (data.response.status === 401) {
+              setDialogText(t("auth.authError") || "");
+            } else {
+              setDialogText(t("auth.unexpectedAuthError") || "");
+            }
           });
       }
     }

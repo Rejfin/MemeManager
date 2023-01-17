@@ -50,6 +50,10 @@ i18n
             emptyFieldError: 'This field can\'t be emty',
             repeatedPasswordNotMatchError: 'Your repeated password is not the same as your password',
             passwordError: 'Your password must have at least 6 characters including one special character and one number',
+            authError: 'Not correct login details, make sure you have entered correct login and password',
+            unexpectedAuthError: 'An unexpected problem occurred during the authorization process',
+            registerError: 'There was a problem during registration, make sure your login and password meet the rules',
+            userAlreadyExist: 'A user with this login already exists, if this is your account try to log into it',
           }
         }
       }

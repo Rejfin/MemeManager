@@ -11,10 +11,8 @@ export class AuthService {
 
   async registerUser(user: { login: string; password: string }) {
     if (
-      (user.login &&
-        user.password &&
-        user.login.length >= 4 &&
-        user.password.length >= 6) &&
+      user.login.length >= 4 &&
+      user.password.length >= 6 &&
       /[0-9]+/.test(user.password) &&
       /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(user.password)
     ) {
@@ -25,12 +23,8 @@ export class AuthService {
   }
 
   async signInUser(user: { login: string; password: string }) {
-    if (user.login && user.password) {
-      const mUser = await this.authRepository.signinUser(user);
-      return mUser;
-    } else {
-      return null;
-    }
+    const mUser = await this.authRepository.signinUser(user);
+    return mUser;
   }
 
   async createRefreshToken(payload: object, userId: string): Promise<string> {
