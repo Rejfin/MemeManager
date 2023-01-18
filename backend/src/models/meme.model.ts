@@ -30,6 +30,9 @@ export class Meme extends Model {
   type!: string;
 
   @Column
+  size!: number;
+
+  @Column
   uploadDate!: Date;
 
   @BelongsToMany(() => Tag, () => TagMeme)

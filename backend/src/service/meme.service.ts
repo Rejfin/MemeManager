@@ -7,8 +7,13 @@ export class MemeService {
     this.memeRepository = new MemeRepository();
   }
 
-  async getMemes(userId: string) {
-    return await this.memeRepository.getMemes(userId);
+  async getMemes(userId: string, latest: boolean) {
+    if(latest){
+      return await this.memeRepository.getLatestMemes(userId);
+    }else{
+      return await this.memeRepository.getMemes(userId);
+    }
+    
   }
 
   async createMeme(fileData: {
@@ -23,8 +28,8 @@ export class MemeService {
     return await this.memeRepository.createMeme(fileData);
   }
 
-  async getMeme(userId: string, memeId: string){
-    return await this.memeRepository.getMeme(userId, memeId)
+  async getMeme(memeId: string, userId?: string){
+    return await this.memeRepository.getMeme(memeId, userId);
   }
 }
 

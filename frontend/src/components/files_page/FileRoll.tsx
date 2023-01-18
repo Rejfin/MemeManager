@@ -1,4 +1,4 @@
-import { FileListHistoryProps } from "../../utils/FileTypes";
+import { FileListHistoryProps } from "../../utils/fileTypes";
 
 const FileRoll = (props: FileListHistoryProps) => {
   return (
@@ -16,7 +16,7 @@ const FileRoll = (props: FileListHistoryProps) => {
           {props.files.map((file) => (
             <img
               className="h-[120px] inline-block pt-2"
-              src={file.imageLink}
+              src={file.name}
               alt={file.name}
             />
           ))}

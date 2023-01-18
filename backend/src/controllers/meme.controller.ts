@@ -7,8 +7,12 @@ export class MemeController {
     this.memeService = new MemeService();
   }
 
-  async getMemes(userId: string) {
-    return await this.memeService.getMemes(userId);
+  async getMemes(req: any) {
+    const userId = req.user.userId;
+    console.log(req.query.latest === "1");
+    
+    const getLatest = req.query.latest === "1";
+    return await this.memeService.getMemes(userId, getLatest);
   }
 
   async createMeme(req: any) {
@@ -24,7 +28,7 @@ export class MemeController {
     return await this.memeService.createMeme(fileData);
   }
 
-  async getMeme(userId: string, memeId: string){
-    return await this.memeService.getMeme(userId, memeId)
+  async getMeme(memeId: string, userId?: string){
+    return await this.memeService.getMeme(memeId, userId)
   }
 }

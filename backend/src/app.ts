@@ -54,7 +54,7 @@ class App {
     });
 
     this.express.get("/api/memes", authMiddleware, (req: any, res) => {
-      this.memeController.getMemes(req.user.userId).then((data) => res.json(data));
+      this.memeController.getMemes(req).then((data) => res.json(data));
     });
 
     this.express.post("/api/memes", [authMiddleware, upload.single('meme'), fileMiddleware], (req: any, res: any) => {
@@ -62,12 +62,12 @@ class App {
     })
 
     this.express.get("/api/memes/:memeId", authMiddleware, (req: any, res)=>{
-      this.memeController.getMeme(req.user.userId, req.params.memeId).then((data) => res.json(data))
+      this.memeController.getMeme(req.params.memeId, req.user.userId).then((data) => res.json(data))
     })
 
-    this.express.get("/api/memes/file/:memeId", authMiddleware, (req: any, res)=>{
-      this.memeController.getMeme(req.user.userId, req.params.memeId).then((data) => {
-        res.sendFile("/memes/" + req.user.userId + "/" + data.name, { root: __dirname })})
+    this.express.get("/api/memes/file/:memeId", (req: any, res)=>{
+      this.memeController.getMeme(req.params.memeId).then((data) => {
+        res.sendFile("/memes/" + data.userId + "/" + data.name, { root: __dirname })})
     })
 
     // handle undefined routes

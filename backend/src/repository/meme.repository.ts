@@ -17,7 +17,28 @@ export class MemeRepository {
     this.tagRepository = this.db.sequelize.getRepository(Tag);
   }
 
-  async getMemes(userId: string) {
+  async getLatestMemes(userId: string): Promise<Meme[]>{
+    try{
+      const memes = await this.memeRepository.findAll({
+        where: {userId: userId, },
+        limit: 10,
+        order: [ [ 'uploadDate', 'DESC' ]],
+        include: [
+          {
+            model: this.tagRepository,
+            attributes: ["id", "name"],
+            through: { attributes: [] },
+          },
+        ],
+        attributes: {exclude: ['userId']}
+      })
+      return memes;
+    }catch(err){
+      return [];
+    }
+  }
+
+  async getMemes(userId: string): Promise<Meme[]> {
     try {
       const memes = await this.memeRepository.findAll({
         where: { userId: userId },
@@ -45,7 +66,7 @@ export class MemeRepository {
     size: number;
     uploadDate: Date;
     tags: [];
-  }) {
+  }): Promise<Meme> {
     const meme = await this.memeRepository.create(fileData);
     if (fileData.tags) {
       console.log(fileData.tags);
@@ -59,7 +80,11 @@ export class MemeRepository {
     return meme;
   }
 
-  async getMeme(userId: string, memeId: string){
-    return await this.memeRepository.findOne({where: {userId: userId, id: memeId}})
+  async getMeme(memeId: string, userId?: string): Promise<Meme>{
+    if(userId){
+      return await this.memeRepository.findOne({where: {userId: userId, id: memeId}})
+    }else{
+      return await this.memeRepository.findOne({where: {id: memeId}})
+    }
   }
 }
