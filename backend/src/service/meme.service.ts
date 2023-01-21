@@ -7,11 +7,11 @@ export class MemeService {
     this.memeRepository = new MemeRepository();
   }
 
-  async getMemes(userId: string, latest: boolean) {
+  async getMemes(userId: string, latest: boolean, limit: number, page: number) {
     if(latest){
       return await this.memeRepository.getLatestMemes(userId);
     }else{
-      return await this.memeRepository.getMemes(userId);
+      return await this.memeRepository.getMemes(userId, limit, page);
     }
     
   }

@@ -1,3 +1,5 @@
+const { rootCertificates } = require('tls');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
@@ -5,6 +7,15 @@ module.exports = {
   theme: {
     extend: {
       border: ['focus'],
+      keyframes: {
+        rotation: {
+          'from': {transform: 'rotate(0deg)'},
+          'to': {transform : 'rotate(360deg)'}
+        }
+      },
+      animation: {
+        'loadingDogo' : 'rotation 3s infinite linear'
+      }
     },
     colors:{
       transparent: "transparent",

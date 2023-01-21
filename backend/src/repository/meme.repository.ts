@@ -38,10 +38,13 @@ export class MemeRepository {
     }
   }
 
-  async getMemes(userId: string): Promise<Meme[]> {
+  async getMemes(userId: string, limit: number, page: number) {
     try {
-      const memes = await this.memeRepository.findAll({
+      const memes = await this.memeRepository.findAndCountAll({
         where: { userId: userId },
+        limit: limit,
+        offset: page * limit,
+        order: [[ 'uploadDate', 'DESC' ]],
         include: [
           {
             model: this.tagRepository,
@@ -69,11 +72,7 @@ export class MemeRepository {
   }): Promise<Meme> {
     const meme = await this.memeRepository.create(fileData);
     if (fileData.tags) {
-      console.log(fileData.tags);
-
       fileData.tags.forEach((data) => {
-        console.log(data);
-
         meme.$add("tags", data);
       });
     }

@@ -9,10 +9,17 @@ export class MemeController {
 
   async getMemes(req: any) {
     const userId = req.user.userId;
-    console.log(req.query.latest === "1");
+    let limit = req.query.size || 10;
+    let page = req.query.page || 0;
+    page = page * 1;
+    limit = limit * 1;
     
     const getLatest = req.query.latest === "1";
-    return await this.memeService.getMemes(userId, getLatest);
+    const memesList = await this.memeService.getMemes(userId, getLatest, limit, page);
+    memesList.currentPage = page;
+    memesList.nextPage = memesList.count - ((page + 1) * limit) > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
+    memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
+    return memesList;
   }
 
   async createMeme(req: any) {

@@ -7,8 +7,6 @@ const listOfRecentFiles:Meme[] = []
 
 const HomePage = () => {
   const latestMemes: { error: any, isPending:any, data: any } = useFetch('/memes?latest=1')
-  console.log(latestMemes.data);
-  
   
   return (
     <div className="bg-background dark:bg-background-dark grid md:grid-cols-3 lg:grid-cols-4">
