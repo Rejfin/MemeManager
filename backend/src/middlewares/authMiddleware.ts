@@ -8,7 +8,7 @@ export const authMiddleware = (req: any, res: any, next: any) => {
   const ACCESS_TOKEN = process.env.TOKEN_SECRET
   jwt.verify(token, ACCESS_TOKEN, (err: any, data: any)=>{
     if(err){
-      return res.sendStatus(403)
+      return res.sendStatus(401)
     }
 
     req.user = data;

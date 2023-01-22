@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import useFetch from "../../hooks/useFetch";
 import { Meme } from "../../models/meme.model";
 import { FileListProps } from "../../utils/fileTypes";
 import { convertSize } from "../../utils/sizeConverter"

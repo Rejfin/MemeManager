@@ -22,9 +22,6 @@ export class Tag extends Model {
   @Column(DataType.UUID)
   userId!: string;
 
-  @BelongsTo(() => User, {
-    hooks: true,
-    onDelete: 'CASCADE',
-  })
+  @BelongsTo(() => User)
   user!: User;
 }

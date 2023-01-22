@@ -40,17 +40,22 @@ export class AuthController {
   }
 
   async refreshAccessToken(data: any, res: any) {
-    const refreshToken = data.token;
+    const refreshToken = data.refreshToken;
 
     if (refreshToken) {
       const newToken = await this.authService.renewAccessToken(refreshToken);
+      
       if (newToken) {
         res.status(200).send({ token: newToken });
       } else {
-        res.sendStatus(401);
+        res.sendStatus(400);
       }
     } else {
-      res.sendStatus(401);
+      res.sendStatus(400);
     }
+  }
+
+  async logOut(refreshToken: string){
+    return await this.authService.logOut(refreshToken)
   }
 }

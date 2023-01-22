@@ -48,9 +48,9 @@ const FilesPage = () => {
                     Object.keys(listOfFiles).map(
                       (value: string, key: number, array: string[]) => {
                         return (
-                          <div className="pt-4">
+                          <div key={key} className="pt-4">
                             <FileRoll
-                              key={key}
+                              key={value}
                               files={listOfFiles[value]}
                               date={new Date(value)}
                             />

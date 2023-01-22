@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.webp";
 import { ReactComponent as Control } from "../../assets/icon-control-navigation.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/icon-dashboard.svg";
@@ -10,6 +10,8 @@ import { ReactComponent as LogoutIcon } from "../../assets/icon-logout.svg";
 import { ReactComponent as FilesIcon } from "../../assets/icon-files.svg";
 import { ReactComponent as DarkModeIcon } from "../../assets/icon-dark-mode.svg";
 import { ReactComponent as LightModeIcon } from "../../assets/icon-light-mode.svg";
+import api from "../../services/api";
+import TokenService from "../../services/token.service";
 
 interface NavEntry {
   title: string;
@@ -68,6 +70,7 @@ const SideNavigation = () => {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("theme") != null
   );
+  const navigate = useNavigate();
 
   const menu = [
     {
@@ -111,7 +114,14 @@ const SideNavigation = () => {
       title: t("navigation.logout"),
       icon: LogoutIcon,
       func: () => {
-        //logout procedure
+        api.post('/auth/logout', {refreshToken: TokenService.getLocalRefreshToken()})
+        .then(_ => {
+          TokenService.removeUser();
+          navigate('/login');
+        }).catch(err => {
+          console.log(err);
+          navigate('/login');
+        })
       },
     } as NavEntry,
   ];

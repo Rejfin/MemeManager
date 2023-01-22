@@ -1,15 +1,16 @@
 import InputField from "../components/global/InputField";
 import Logo from "../assets/logo.webp";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import AuthService from "../services/auth.service";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AlertDialog from "../components/global/AlertDialog";
 
 const AuthPage = (props: { isRegisterPage: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
   const [login, setLogin] = useState("");
   const [loginError, setLoginError] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +18,12 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [repeatPasswordError, setRepeatPasswordError] = useState("");
   const [dialogText, setDialogText] = useState("");
+
+  useEffect(()=>{
+    if(searchParams.get('expired_auth') !== null){
+      setDialogText(t("auth.sessionExpired") || "")
+    }
+  }, [searchParams])
 
   const isLoginFieldValid = (): boolean => {
     if (login.length === 0) {
@@ -91,7 +98,9 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
       if (isLoginFieldValid() && isPasswordFieldValid()) {
         AuthService.login(login, password)
           .then(() => {
-            navigate("/");
+            console.log(searchParams.get('next'));
+            
+            navigate(searchParams.get('next') || "/");
           })
           .catch((data) => {
             setPassword("");
@@ -108,7 +117,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       {/* Alert Dialog */}
-      {dialogText && (
+      {(dialogText || (dialogText && !props.isRegisterPage && searchParams.get('expired_auth') !== null)) && (
         <AlertDialog
           title={"Authentication Error"}
           text={dialogText}

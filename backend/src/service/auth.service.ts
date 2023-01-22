@@ -48,12 +48,23 @@ export class AuthService {
       return null;
     }
     const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET;
+    let newToken = null;
     jwt.verify(refreshToken, REFRESH_TOKEN, (err: any, data: any) => {
       if (err) {
-        return null;
+        newToken = null;
+        return;
       }
-      return this.createJwtToken(data);
+
+      newToken = this.createJwtToken({
+        userId: data.userId,
+        login: data.login,
+      });
+      return;
     });
-    return null;
+    return newToken;
+  }
+
+  async logOut(refreshToken: string){
+    await this.authRepository.signOutUser(refreshToken)
   }
 }

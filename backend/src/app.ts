@@ -41,8 +41,12 @@ class App {
       this.authController.registerUser(req.body, res);
     });
 
-    this.express.post("/api/auth/refresh-token", validatorMiddleware(["token"]), (req, res) => {
+    this.express.post("/api/auth/refresh-token", validatorMiddleware(["refreshToken"]), (req, res) => {
       this.authController.refreshAccessToken(req.body, res)
+    });
+
+    this.express.post("/api/auth/logout", validatorMiddleware(["refreshToken"]), (req, res) => {
+      this.authController.logOut(req.body.refreshToken).then(_ => res.sendStatus(200))
     });
 
     this.express.get("/api/tags", authMiddleware, (req: any, res) => {
@@ -53,6 +57,10 @@ class App {
       this.tagController.createTag(req.body.name, req.user.userId).then((data) => res.json(data));
     });
 
+    this.express.delete("/api/tags/:tagId", authMiddleware, (req: any, res: any) => {
+      //this.tagController.removeTag()
+    });
+
     this.express.get("/api/memes", authMiddleware, (req: any, res) => {
       this.memeController.getMemes(req).then((data) => res.json(data));
     });
@@ -60,6 +68,10 @@ class App {
     this.express.post("/api/memes", [authMiddleware, upload.single('meme'), fileMiddleware], (req: any, res: any) => {
       this.memeController.createMeme(req).then((data) => res.json(data))
     })
+
+    this.express.delete("/api/memes/:memeId", authMiddleware, (req: any, res) => {
+      //this.memeController.removeMeme()
+    });
 
     this.express.get("/api/memes/:memeId", authMiddleware, (req: any, res)=>{
       this.memeController.getMeme(req.params.memeId, req.user.userId).then((data) => res.json(data))

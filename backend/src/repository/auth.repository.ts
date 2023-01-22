@@ -7,7 +7,7 @@ export class AuthRepository {
 
     private db: any = {};
     private authRespository: any;
-    private tokenRepository: any
+    private tokenRepository: any;
 
     constructor() {
         this.db = connect();
@@ -16,36 +16,41 @@ export class AuthRepository {
     }
 
     async registerUser(user: {login: string, password: string}) {
-        const mUser = await this.authRespository.findOne({ where: { login: user.login } })
+        const mUser = await this.authRespository.findOne({ where: { login: user.login } });
         if(mUser){
-            return {created: false}
+            return {created: false};
         }
 
-        const data = await this.authRespository.create(user)
-        return {created: true}
+        const data = await this.authRespository.create(user);
+        return {created: true};
     }
 
     async signinUser(user: {login: string, password: string}){
-        const mUser = await this.authRespository.findOne({ where: { login: user.login } })
+        const mUser = await this.authRespository.findOne({ where: { login: user.login } });
         if(mUser){
             const isPassOk = await bcrypt.compare(user.password, mUser.password);
             if(isPassOk){
-                return mUser
+                return mUser;
             }else{
-                return null
+                return null;
             }
         }else{
             return null;
         }
     }
 
-    async saveTokenToUser(token: RefreshToken, userId: string){
-        const user = await this.authRespository.findOne({ where: { id: userId} })
-        const mToken = await this.tokenRepository.create({token: token, userId: userId})
-        user.$add('tokens', mToken.id)
+    async saveTokenToUser(token: string, userId: string){
+        const user = await this.authRespository.findOne({ where: { id: userId} });
+        const mToken = await this.tokenRepository.create({token: token, userId: userId});
+        user.$add('tokens', mToken.id);
     }
 
     async findRefreshToken(token: string){ 
-        return await this.tokenRepository.findOne({where: {token: token}})
+        return await this.tokenRepository.findOne({where: {token: token}});
+    }
+
+    async signOutUser(token: string){
+        const rToken = await this.tokenRepository.findOne({where : {token: token}});
+        await rToken.destroy();
     }
 }

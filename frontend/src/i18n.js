@@ -54,6 +54,7 @@ i18n
             unexpectedAuthError: 'An unexpected problem occurred during the authorization process',
             registerError: 'There was a problem during registration, make sure your login and password meet the rules',
             userAlreadyExist: 'A user with this login already exists, if this is your account try to log into it',
+            sessionExpired: 'Your session has expired. Please log in again.'
           }
         }
       }

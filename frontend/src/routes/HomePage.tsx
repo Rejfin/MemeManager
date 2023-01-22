@@ -1,9 +1,6 @@
 import RecentFileList from "../components/home_page/RecentFileList";
 import StorageStats from "../components/home_page/StorageStats";
 import useFetch from "../hooks/useFetch";
-import { Meme } from "../models/meme.model";
-
-const listOfRecentFiles:Meme[] = []
 
 const HomePage = () => {
   const latestMemes: { error: any, isPending:any, data: any } = useFetch('/memes?latest=1')
