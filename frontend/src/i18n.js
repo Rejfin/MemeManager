@@ -15,6 +15,7 @@ i18n
         translation: {
           appName: 'Meme Manager',
           appDescription: 'Self hosted aplication to manage your meme collection',
+          cancel: 'Cancel',
           storageStats: {
               title: 'Storage Statistics',
               images: 'Images',
@@ -55,6 +56,12 @@ i18n
             registerError: 'There was a problem during registration, make sure your login and password meet the rules',
             userAlreadyExist: 'A user with this login already exists, if this is your account try to log into it',
             sessionExpired: 'Your session has expired. Please log in again.'
+          },
+          files: {
+            addMeme: 'Add Meme', 
+            upload: 'Upload',
+            browseFiles: 'Browse for file',
+            orDragItHere: ' or drag it here'
           }
         }
       }

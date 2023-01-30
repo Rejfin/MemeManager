@@ -1,8 +1,6 @@
 import { rename, existsSync, mkdirSync } from "node:fs";
 
 export const fileMiddleware = (req: any, res: any, next: any) => {
-  console.log(req.file.path);
-
   const fileName = req.file.filename + "." + req.file.originalname.split(".")[1]
   const newPath =req.file.destination + req.user.userId + "/" + fileName;
 

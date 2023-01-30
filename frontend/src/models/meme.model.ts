@@ -6,6 +6,7 @@ export class Meme {
     originalName!: string;
     type!: string;
     uploadDate!: string;
+    modifiedDate!: string;
     size!: number;
     tags!: Tag[];
 }

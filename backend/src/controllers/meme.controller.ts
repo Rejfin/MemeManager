@@ -30,6 +30,7 @@ export class MemeController {
       type: req.file.mimetype,
       size: req.file.size,
       uploadDate: new Date(),
+      modifiedDate: new Date(req.body.modifiedDate) || new Date(),
       tags: req.body.tags
     };
     return await this.memeService.createMeme(fileData);

@@ -23,7 +23,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
     if(searchParams.get('expired_auth') !== null){
       setDialogText(t("auth.sessionExpired") || "")
     }
-  }, [searchParams])
+  }, [searchParams, t])
 
   const isLoginFieldValid = (): boolean => {
     if (login.length === 0) {

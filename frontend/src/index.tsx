@@ -3,21 +3,30 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import { ModalProvider } from "./utils/ModalProvider";
+import ModalHost from "./utils/ModalHost";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 //controll dark mode
-if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.documentElement.classList.add('dark')
+if (
+  localStorage.theme === "dark" ||
+  (!("theme" in localStorage) &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches)
+) {
+  document.documentElement.classList.add("dark");
 } else {
-  document.documentElement.classList.remove('dark')
+  document.documentElement.classList.remove("dark");
 }
 
 root.render(
   <BrowserRouter>
-    <App />
+    <ModalProvider>
+      <ModalHost/>
+      <App />
+    </ModalProvider>
   </BrowserRouter>
 );
 

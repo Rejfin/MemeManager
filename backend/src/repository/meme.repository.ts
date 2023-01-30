@@ -44,7 +44,7 @@ export class MemeRepository {
         where: { userId: userId },
         limit: limit,
         offset: page * limit,
-        order: [[ 'uploadDate', 'DESC' ]],
+        order: [[ 'modifiedDate', 'DESC' ]],
         include: [
           {
             model: this.tagRepository,
@@ -68,6 +68,7 @@ export class MemeRepository {
     type: string;
     size: number;
     uploadDate: Date;
+    modifiedDate: Date;
     tags: [];
   }): Promise<Meme> {
     const meme = await this.memeRepository.create(fileData);

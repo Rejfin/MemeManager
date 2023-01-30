@@ -23,6 +23,7 @@ export class MemeService {
     type: string;
     size: number;
     uploadDate: Date;
+    modifiedDate: Date
     tags: []
   }) {
     return await this.memeRepository.createMeme(fileData);

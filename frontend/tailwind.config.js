@@ -62,6 +62,8 @@ module.exports = {
       navigationIconColor: "#777777",
       errorColor: "#DA4747",
       inputBorderColor: "#747474",
+      disableColor: "#DDDDD5",
+      disableDarkColor: "#CECEC9"
     }
   },
   plugins: [],

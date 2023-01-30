@@ -35,6 +35,9 @@ export class Meme extends Model {
   @Column
   uploadDate!: Date;
 
+  @Column
+  modifiedDate!: Date;
+
   @BelongsToMany(() => Tag, () => TagMeme)
   tags!: Tag[];
 
