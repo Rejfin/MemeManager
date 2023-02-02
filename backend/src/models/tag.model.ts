@@ -1,10 +1,21 @@
-import { IntegerDataType } from "sequelize";
-import { Table, PrimaryKey, DataType, Column, BelongsToMany, Model, AutoIncrement, ForeignKey, Default, BelongsTo } from "sequelize-typescript";
-import { Meme } from "./meme.model";
-import { TagMeme } from "./tagMeme.model";
-import { User } from "./user.model";
+import { IntegerDataType } from 'sequelize';
+import {
+  Table,
+  PrimaryKey,
+  DataType,
+  Column,
+  BelongsToMany,
+  Model,
+  AutoIncrement,
+  ForeignKey,
+  Default,
+  BelongsTo,
+} from 'sequelize-typescript';
+import { Meme } from './meme.model';
+import { TagMeme } from './tagMeme.model';
+import { User } from './user.model';
 
-@Table({timestamps: false})
+@Table({ timestamps: false })
 export class Tag extends Model {
   @PrimaryKey
   @AutoIncrement

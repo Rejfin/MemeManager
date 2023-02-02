@@ -1,17 +1,8 @@
-import {
-  Table,
-  Column,
-  Model,
-  DataType,
-  PrimaryKey,
-  Default,
-  BeforeCreate,
-  HasMany,
-} from "sequelize-typescript";
-import { Meme } from "./meme.model";
-import { RefreshToken } from "./refreshToken.model";
-import { Tag } from "./tag.model";
-const bcrypt = require("bcrypt");
+import { Table, Column, Model, DataType, PrimaryKey, Default, BeforeCreate, HasMany } from 'sequelize-typescript';
+import { Meme } from './meme.model';
+import { RefreshToken } from './refreshToken.model';
+import { Tag } from './tag.model';
+import bcrypt from 'bcrypt';
 
 @Table({ timestamps: false })
 export class User extends Model {
@@ -33,7 +24,7 @@ export class User extends Model {
   memes!: Meme[];
 
   @HasMany(() => Tag)
-  tags!: Tag[]
+  tags!: Tag[];
 
   @BeforeCreate
   static passwordHash(instance: User) {

@@ -1,8 +1,8 @@
-import api from "./api";
-import TokenService from "./token.service";
+import api from './api';
+import TokenService from './token.service';
 
 const register = (login: string, password: string) => {
-  return api.post("/auth/signup", {
+  return api.post('/auth/signup', {
     login: login,
     password: password,
   });
@@ -10,7 +10,7 @@ const register = (login: string, password: string) => {
 
 const login = (login: string, password: string) => {
   return api
-    .post("/auth/signin", {
+    .post('/auth/signin', {
       login: login,
       password: password,
     })
@@ -28,7 +28,7 @@ const logout = () => {
 };
 
 const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user") || "");
+  return JSON.parse(localStorage.getItem('user') || '');
 };
 
 const AuthService = {

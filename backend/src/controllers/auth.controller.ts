@@ -1,5 +1,5 @@
-import { User } from "../models/user.model";
-import { AuthService } from "../service/auth.service";
+import { Response } from 'express';
+import { AuthService } from '../service/auth.service';
 
 export class AuthController {
   private authService: AuthService;
@@ -8,7 +8,7 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  async registerUser(user: { login: string; password: string }, res: any) {
+  async registerUser(user: { login: string; password: string }, res: Response) {
     const data = await this.authService.registerUser(user);
     if (data == null) {
       res.sendStatus(400);
@@ -16,12 +16,12 @@ export class AuthController {
       if (data?.created == true) {
         res.sendStatus(201);
       } else {
-        res.status(403).send("user already exist");
+        res.status(403).send('user already exist');
       }
     }
   }
 
-  async signInUser(user: { login: string; password: string }, res: any) {
+  async signInUser(user: { login: string; password: string }, res: Response) {
     const mUser = await this.authService.signInUser(user);
 
     if (mUser) {
@@ -31,7 +31,7 @@ export class AuthController {
       });
       const refreshToken = await this.authService.createRefreshToken(
         { userId: mUser.id, login: mUser.login },
-        mUser.id
+        mUser.id,
       );
       res.status(200).json({ token: token, refreshToken: refreshToken });
     } else {
@@ -39,12 +39,12 @@ export class AuthController {
     }
   }
 
-  async refreshAccessToken(data: any, res: any) {
+  async refreshAccessToken(data: { refreshToken?: string }, res: Response) {
     const refreshToken = data.refreshToken;
 
     if (refreshToken) {
       const newToken = await this.authService.renewAccessToken(refreshToken);
-      
+
       if (newToken) {
         res.status(200).send({ token: newToken });
       } else {
@@ -55,7 +55,7 @@ export class AuthController {
     }
   }
 
-  async logOut(refreshToken: string){
-    return await this.authService.logOut(refreshToken)
+  async logOut(refreshToken: string) {
+    return await this.authService.logOut(refreshToken);
   }
 }

@@ -1,4 +1,4 @@
-import { MemeRepository } from "../repository/meme.repository";
+import { MemeRepository } from '../repository/meme.repository';
 
 export class MemeService {
   private memeRepository: MemeRepository;
@@ -8,12 +8,11 @@ export class MemeService {
   }
 
   async getMemes(userId: string, latest: boolean, limit: number, page: number) {
-    if(latest){
+    if (latest) {
       return await this.memeRepository.getLatestMemes(userId);
-    }else{
+    } else {
       return await this.memeRepository.getMemes(userId, limit, page);
     }
-    
   }
 
   async createMeme(fileData: {
@@ -23,15 +22,16 @@ export class MemeService {
     type: string;
     size: number;
     uploadDate: Date;
-    modifiedDate: Date
-    tags: []
+    modifiedDate: Date;
+    height: number;
+    width: number;
+    blurHash: string;
+    tags: [];
   }) {
     return await this.memeRepository.createMeme(fileData);
   }
 
-  async getMeme(memeId: string, userId?: string){
+  async getMeme(memeId: string, userId?: string) {
     return await this.memeRepository.getMeme(memeId, userId);
   }
 }
-
-

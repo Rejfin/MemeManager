@@ -1,25 +1,27 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useState } from 'react';
 
-type ModalProviderProps = {children: React.ReactNode}
+type ModalProviderProps = { children: React.ReactNode };
 
-const ModalStateContext = createContext<{modal: React.ReactNode | undefined, setModal: React.Dispatch<React.SetStateAction<React.ReactNode | undefined>>} | undefined>(undefined)
+const ModalStateContext = createContext<
+  | {
+      modal: React.ReactNode | undefined;
+      setModal: React.Dispatch<React.SetStateAction<React.ReactNode | undefined>>;
+    }
+  | undefined
+>(undefined);
 
-function ModalProvider({children}: ModalProviderProps) {
-  const [modal, setModal] = useState<React.ReactNode | undefined>(undefined)
+function ModalProvider({ children }: ModalProviderProps) {
+  const [modal, setModal] = useState<React.ReactNode | undefined>(undefined);
 
-  return (
-    <ModalStateContext.Provider value={{modal, setModal}}>
-      {children}
-    </ModalStateContext.Provider>
-  )
+  return <ModalStateContext.Provider value={{ modal, setModal }}>{children}</ModalStateContext.Provider>;
 }
 
 function useModal() {
-  const context = useContext(ModalStateContext)
+  const context = useContext(ModalStateContext);
   if (context === undefined) {
-    throw new Error('useModal must be used within a ModalProvider')
+    throw new Error('useModal must be used within a ModalProvider');
   }
-  return context
+  return context;
 }
 
-export {ModalProvider, useModal}
+export { ModalProvider, useModal };

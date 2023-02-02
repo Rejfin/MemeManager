@@ -1,11 +1,13 @@
-import { connect } from "../config/db.config";
-import { Meme } from "../models/meme.model";
-import { Tag } from "../models/tag.model";
+import { connect } from '../config/db.config';
+import { Meme } from '../models/meme.model';
+import { Tag } from '../models/tag.model';
 
 export class MemeRepository {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   private db: any = {};
   private memeRepository: any;
   private tagRepository: any;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   constructor() {
     this.db = connect();
@@ -17,23 +19,23 @@ export class MemeRepository {
     this.tagRepository = this.db.sequelize.getRepository(Tag);
   }
 
-  async getLatestMemes(userId: string): Promise<Meme[]>{
-    try{
+  async getLatestMemes(userId: string): Promise<Meme[]> {
+    try {
       const memes = await this.memeRepository.findAll({
-        where: {userId: userId, },
+        where: { userId: userId },
         limit: 10,
-        order: [ [ 'uploadDate', 'DESC' ]],
+        order: [['uploadDate', 'DESC']],
         include: [
           {
             model: this.tagRepository,
-            attributes: ["id", "name"],
+            attributes: ['id', 'name'],
             through: { attributes: [] },
           },
         ],
-        attributes: {exclude: ['userId']}
-      })
+        attributes: { exclude: ['userId'] },
+      });
       return memes;
-    }catch(err){
+    } catch (err) {
       return [];
     }
   }
@@ -44,15 +46,15 @@ export class MemeRepository {
         where: { userId: userId },
         limit: limit,
         offset: page * limit,
-        order: [[ 'modifiedDate', 'DESC' ]],
+        order: [['modifiedDate', 'DESC']],
         include: [
           {
             model: this.tagRepository,
-            attributes: ["id", "name"],
+            attributes: ['id', 'name'],
             through: { attributes: [] },
           },
         ],
-        attributes: {exclude: ['userId']}
+        attributes: { exclude: ['userId'] },
       });
       return memes;
     } catch (err) {
@@ -69,22 +71,23 @@ export class MemeRepository {
     size: number;
     uploadDate: Date;
     modifiedDate: Date;
+    blurHash: string;
     tags: [];
   }): Promise<Meme> {
     const meme = await this.memeRepository.create(fileData);
     if (fileData.tags) {
       fileData.tags.forEach((data) => {
-        meme.$add("tags", data);
+        meme.$add('tags', data);
       });
     }
     return meme;
   }
 
-  async getMeme(memeId: string, userId?: string): Promise<Meme>{
-    if(userId){
-      return await this.memeRepository.findOne({where: {userId: userId, id: memeId}})
-    }else{
-      return await this.memeRepository.findOne({where: {id: memeId}})
+  async getMeme(memeId: string, userId?: string): Promise<Meme> {
+    if (userId) {
+      return await this.memeRepository.findOne({ where: { userId: userId, id: memeId } });
+    } else {
+      return await this.memeRepository.findOne({ where: { id: memeId } });
     }
   }
 }

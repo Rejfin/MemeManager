@@ -1,6 +1,5 @@
-import { User } from "../models/user.model";
-import { AuthRepository } from "../repository/auth.repository";
-const jwt = require("jsonwebtoken");
+import { AuthRepository } from '../repository/auth.repository';
+import jwt from 'jsonwebtoken';
 
 export class AuthService {
   private authRepository: AuthRepository;
@@ -28,7 +27,8 @@ export class AuthService {
   }
 
   async createRefreshToken(payload: object, userId: string): Promise<string> {
-    const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET;
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET!;
     const REFRESH_EXP = process.env.JWT_REFRESH_EXP;
     const token = jwt.sign(payload, REFRESH_TOKEN, { expiresIn: REFRESH_EXP });
     await this.authRepository.saveTokenToUser(token, userId);
@@ -36,7 +36,8 @@ export class AuthService {
   }
 
   createJwtToken(payload: object): string {
-    const ACCESS_TOKEN = process.env.TOKEN_SECRET;
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    const ACCESS_TOKEN = process.env.TOKEN_SECRET!;
     const TOKEN_EXP = process.env.JWT_EXP;
     const token = jwt.sign(payload, ACCESS_TOKEN, { expiresIn: TOKEN_EXP });
     return token;
@@ -47,8 +48,10 @@ export class AuthService {
     if (!mRefreshToken) {
       return null;
     }
-    const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET;
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    const REFRESH_TOKEN = process.env.TOKEN_REFRESH_SECRET!;
     let newToken = null;
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     jwt.verify(refreshToken, REFRESH_TOKEN, (err: any, data: any) => {
       if (err) {
         newToken = null;
@@ -64,7 +67,7 @@ export class AuthService {
     return newToken;
   }
 
-  async logOut(refreshToken: string){
-    await this.authRepository.signOutUser(refreshToken)
+  async logOut(refreshToken: string) {
+    await this.authRepository.signOutUser(refreshToken);
   }
 }

@@ -1,33 +1,30 @@
-import ReactDOM from "react-dom/client";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter } from "react-router-dom";
-import { ModalProvider } from "./utils/ModalProvider";
-import ModalHost from "./utils/ModalHost";
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+import { ModalProvider } from './utils/ModalProvider';
+import ModalHost from './utils/ModalHost';
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 //controll dark mode
 if (
-  localStorage.theme === "dark" ||
-  (!("theme" in localStorage) &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches)
+  localStorage.theme === 'dark' ||
+  (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
 ) {
-  document.documentElement.classList.add("dark");
+  document.documentElement.classList.add('dark');
 } else {
-  document.documentElement.classList.remove("dark");
+  document.documentElement.classList.remove('dark');
 }
 
 root.render(
   <BrowserRouter>
     <ModalProvider>
-      <ModalHost/>
+      <ModalHost />
       <App />
     </ModalProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );
 
 // If you want to start measuring performance in your app, pass a function

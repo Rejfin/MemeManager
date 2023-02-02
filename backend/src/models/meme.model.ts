@@ -1,3 +1,4 @@
+import { INTEGER } from 'sequelize';
 import {
   Table,
   Column,
@@ -8,10 +9,10 @@ import {
   BelongsToMany,
   ForeignKey,
   BelongsTo,
-} from "sequelize-typescript";
-import { Tag } from "./tag.model";
-import { TagMeme } from "./tagMeme.model";
-import { User } from "./user.model";
+} from 'sequelize-typescript';
+import { Tag } from './tag.model';
+import { TagMeme } from './tagMeme.model';
+import { User } from './user.model';
 
 @Table({ timestamps: false })
 export class Meme extends Model {
@@ -29,7 +30,7 @@ export class Meme extends Model {
   @Column
   type!: string;
 
-  @Column
+  @Column(INTEGER)
   size!: number;
 
   @Column
@@ -37,6 +38,15 @@ export class Meme extends Model {
 
   @Column
   modifiedDate!: Date;
+
+  @Column
+  blurHash!: string;
+
+  @Column(INTEGER)
+  width!: number;
+
+  @Column(INTEGER)
+  height!: number;
 
   @BelongsToMany(() => Tag, () => TagMeme)
   tags!: Tag[];

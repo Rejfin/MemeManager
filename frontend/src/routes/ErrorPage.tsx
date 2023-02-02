@@ -1,7 +1,8 @@
-import { useRouteError } from "react-router-dom";
+import { useRouteError } from 'react-router-dom';
 
 const ErrorPage = () => {
-  const error:any = useRouteError();
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const error: any = useRouteError();
 
   return (
     <>
