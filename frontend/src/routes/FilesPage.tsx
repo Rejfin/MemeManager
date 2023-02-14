@@ -8,6 +8,7 @@ import { Meme } from '../models/meme.model';
 import { useEffect, useRef, useState } from 'react';
 import { useModal } from '../utils/ModalProvider';
 import { useTranslation } from 'react-i18next';
+import EditMemeDialog from '../components/files_page/EditMemeDialog';
 
 const FilesPage = () => {
   const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
@@ -15,14 +16,20 @@ const FilesPage = () => {
   const { t } = useTranslation();
   const { setModal } = useModal();
   const listInnerRef = useRef<HTMLInputElement | null>(null);
-  const [forceRefresh, setForceRefresh] = useState(0);
+  const [searchText, setSearchText] = useState('');
   const [unindexed, setUnindexed] = useState(0);
+  const [isIndexedList, setIsIndexedList] = useState(true);
+  const [url, setUrl] = useState(`/memes?limit=20&page=${page}`);
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch(
-    `/memes?size=20&page=${page}`,
-    forceRefresh,
-  );
+  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch(url);
+
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  const unindexedCount: { error: any; isPending: boolean; data: any } = useFetch('/memes?countUnindexed=1');
+
+  useEffect(() => {
+    setUnindexed(unindexedCount.data);
+  }, [unindexedCount.data]);
 
   /**
    * Function responsible for downloading the appropriate amount of data from the api
@@ -78,10 +85,11 @@ const FilesPage = () => {
     onUploadEnds: () => {
       setModal(undefined);
       setListOfFiles(new Map());
-      if (page === 0) {
-        setForceRefresh(forceRefresh + 1);
+      setPage(0);
+      if (isIndexedList) {
+        setUrl(`/memes?limit=20&page=0`);
       } else {
-        setPage(0);
+        setUrl(`/memes?unindexed=1&limit=20&page=0`);
       }
     },
     negativeButton: {
@@ -107,31 +115,61 @@ const FilesPage = () => {
           const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
           if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
             setPage(latestMemes.data.nextPage);
+            if (isIndexedList) {
+              setUrl(`/memes?unindexed=1&size=20&page=${page}`);
+            } else {
+              setUrl(`/memes?size=20&page=${page}`);
+            }
           }
         }
       }, 150);
     }
   };
 
+  const switchUnindexedMemes = () => {
+    setPage(0);
+    setListOfFiles(new Map());
+    if (isIndexedList) {
+      setIsIndexedList(false);
+      setUrl(`memes?unindexed=1&size=20&page=${page}`);
+    } else {
+      setIsIndexedList(true);
+      setUrl(`/memes?size=20&page=${page}`);
+    }
+  };
+
+  const fileClickHandler = (fileId: string, src: string, width: number, height: number, blurhash?: string) => {
+    setModal(
+      <EditMemeDialog
+        fileId={fileId}
+        src={src}
+        width={width}
+        height={height}
+        blurhash={blurhash}
+        onClose={() => setModal(undefined)}
+      />,
+    );
+  };
+
   return (
     <div className='flex-row h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4'>
       <div className='pb-4 flex'>
-        <SearchComponent />
+        <SearchComponent onChange={(text) => setSearchText(text)} value={searchText} />
         <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface'>
           {t('files.addMeme')}
         </button>
 
         {unindexed > 0 && (
-          <button className='bg-primary-400 rounded-md p-2 text-backgroundSurface ml-2'>
+          <button onClick={switchUnindexedMemes} className='bg-primary-400 rounded-md p-2 text-backgroundSurface ml-2'>
             {t('files.unindexed')}
             <div className='relative'>
-              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>15</div>
+              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexed}</div>
             </div>
           </button>
         )}
       </div>
       <div className='h-[calc(100%-3.5rem)] w-full overflow-y-auto flex-row' ref={listInnerRef} onScroll={onListScroll}>
-        {latestMemes.isPending ? (
+        {latestMemes.isPending && listOfFiles.size === 0 ? (
           <div className='h-[calc(100%-3.5rem)] w-full'>
             <div className='h-[calc(100%-3.5rem)] w-full'>
               <img
@@ -147,7 +185,14 @@ const FilesPage = () => {
             {listOfFiles.size > 0 ? (
               <>
                 {Array.from(listOfFiles).map((data) => (
-                  <FileRoll key={data[0]} files={data[1]} date={new Date(data[0])} />
+                  <FileRoll
+                    key={data[0]}
+                    files={data[1]}
+                    date={new Date(data[0])}
+                    onFileClick={(id, src, width, height, blurhash) =>
+                      fileClickHandler(id, src, width, height, blurhash)
+                    }
+                  />
                 ))}
               </>
             ) : (

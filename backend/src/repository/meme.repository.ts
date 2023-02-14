@@ -1,12 +1,15 @@
+import { literal } from 'sequelize';
 import { connect } from '../config/db.config';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
+import { TagMeme } from '../models/tagMeme.model';
 
 export class MemeRepository {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   private db: any = {};
   private memeRepository: any;
   private tagRepository: any;
+  private tagMemeRepository: any;
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   constructor() {
@@ -17,6 +20,7 @@ export class MemeRepository {
     // });
     this.memeRepository = this.db.sequelize.getRepository(Meme);
     this.tagRepository = this.db.sequelize.getRepository(Tag);
+    this.tagMemeRepository = this.db.sequelize.getRepository(TagMeme);
   }
 
   async getLatestMemes(userId: string): Promise<Meme[]> {
@@ -25,14 +29,6 @@ export class MemeRepository {
         where: { userId: userId },
         limit: 10,
         order: [['uploadDate', 'DESC']],
-        include: [
-          {
-            model: this.tagRepository,
-            attributes: ['id', 'name'],
-            through: { attributes: [] },
-          },
-        ],
-        attributes: { exclude: ['userId'] },
       });
       return memes;
     } catch (err) {
@@ -47,14 +43,7 @@ export class MemeRepository {
         limit: limit,
         offset: page * limit,
         order: [['modifiedDate', 'DESC']],
-        include: [
-          {
-            model: this.tagRepository,
-            attributes: ['id', 'name'],
-            through: { attributes: [] },
-          },
-        ],
-        attributes: { exclude: ['userId'] },
+        attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName'],
       });
       return memes;
     } catch (err) {
@@ -85,9 +74,86 @@ export class MemeRepository {
 
   async getMeme(memeId: string, userId?: string): Promise<Meme> {
     if (userId) {
-      return await this.memeRepository.findOne({ where: { userId: userId, id: memeId } });
+      return await this.memeRepository.findOne({
+        where: { userId: userId, id: memeId },
+        include: [
+          {
+            model: this.tagRepository,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+          },
+        ],
+      });
     } else {
-      return await this.memeRepository.findOne({ where: { id: memeId } });
+      return await this.memeRepository.findOne({
+        where: { id: memeId },
+      });
+    }
+  }
+
+  async countUnindexed(userId: string): Promise<number> {
+    return await this.memeRepository.count({
+      where: literal(`Tags IS NULL AND "Meme"."userId" = '${userId}'`),
+      include: [
+        {
+          model: this.tagRepository,
+        },
+      ],
+    });
+  }
+
+  async updateMeme(userId: string, memeId: string, tags: Tag[]) {
+    const meme = await this.memeRepository.findOne({
+      where: { id: memeId, userId: userId },
+      include: [{ model: this.tagRepository }],
+    });
+    if (meme) {
+      const newTags: Tag[] = [];
+      for (const tag of tags) {
+        const [mTag] = await this.tagRepository.findOrCreate({
+          where: { name: tag.name, userId: userId },
+          defaults: {
+            name: tag.name,
+          },
+        });
+
+        if (!newTags.find((tag) => tag.id === mTag.id)) {
+          newTags.push(mTag);
+        }
+      }
+      await meme.setTags(newTags);
+
+      return await this.memeRepository.findByPk(memeId, {
+        attributes: { exclude: ['userId'] },
+        include: [{ model: this.tagRepository, attributes: ['id', 'name'], through: { attributes: [] } }],
+      });
+    } else {
+      return null;
+    }
+  }
+
+  async getUnindexedMemes(userId: string, limit: number, page: number) {
+    try {
+      const memes = this.memeRepository.findAll({
+        where: literal(
+          `Tags IS NULL AND "Meme"."userId" = '${userId}' GROUP BY "Meme"."modifiedDate", "Meme"."id", "tags"."id" ORDER BY "Meme"."modifiedDate" DESC LIMIT ${limit} OFFSET ${
+            page * limit
+          }`,
+        ),
+        include: [
+          {
+            model: this.tagRepository,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+          },
+        ],
+      });
+      const [memeList, count] = await Promise.all([memes, this.countUnindexed(userId)]);
+
+      return { count: count, rows: memeList, currentPage: 0, nextPage: 0, maxPage: 0 };
+    } catch (err) {
+      console.log(err);
+      return { count: 0, rows: [], currentPage: 0, nextPage: 0, maxPage: 0 };
     }
   }
 }

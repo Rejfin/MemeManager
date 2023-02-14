@@ -7,4 +7,5 @@ export interface FileListProps {
 export interface FileListHistoryProps {
   date: Date;
   files: Meme[];
+  onFileClick?: (fileId: string, src: string, width: number, height: number, blurhash?: string) => void;
 }

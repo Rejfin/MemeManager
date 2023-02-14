@@ -7,8 +7,8 @@ export class TagService {
     this.tagRepository = new TagRepository();
   }
 
-  async getTags(userId: string) {
-    return await this.tagRepository.getTags(userId);
+  async getTags(userId: string, tagName: string, page: number, limit: number) {
+    return await this.tagRepository.getTags(userId, tagName, limit, page);
   }
 
   async createTag(tagName: string, userId: string) {

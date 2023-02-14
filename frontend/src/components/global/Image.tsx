@@ -1,11 +1,12 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import { Blurhash } from 'react-blurhash';
+import { isBlurhashValid } from 'blurhash';
 import FileIcon from '../../assets/icon-unknown-file.svg';
 
-/**
- *
- */
+type objectFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
+
 interface ImageProps {
+  id: string;
   src: string;
   width: number;
   height: number;
@@ -13,6 +14,8 @@ interface ImageProps {
   alt?: string;
   fallbackSrc?: string;
   className?: string;
+  objectFit?: objectFit;
+  onClick?: (fileId: string, src: string, width: number, height: number, blurhash?: string) => void;
 }
 
 /**
@@ -69,8 +72,9 @@ const Image = (props: ImageProps): React.ReactElement => {
         className={`max-w-full flex m-auto relative`}
         style={{ width: props.width * (dimension.height / props.height), height: dimension.height }}
       >
-        {state === State.LOADING && props.blurHash && (
+        {state === State.LOADING && props.blurHash && isBlurhashValid(props.blurHash).result && (
           <Blurhash
+            onClick={() => props.onClick?.(props.id, props.src, props.width, props.height, props.blurHash) || undefined}
             className={`max-w-full`}
             hash={props.blurHash}
             width={props.width * (dimension.height / props.height)}
@@ -83,16 +87,18 @@ const Image = (props: ImageProps): React.ReactElement => {
           />
         )}
         <img
+          onClick={() => props.onClick?.(props.id, props.src, props.width, props.height, props.blurHash) || undefined}
           loading='lazy'
           onError={onError}
           onLoad={onLoad}
           width={props.width * (dimension.height / props.height)}
           height={dimension.height}
           alt={props.alt || ''}
-          className={`max-w-full absolute object-cover`}
+          className={`max-w-full absolute`}
           style={{
             width: props.width * (dimension.height / props.height),
             height: dimension.height,
+            objectFit: props.objectFit || 'contain',
           }}
           src={imgSrc}
         />

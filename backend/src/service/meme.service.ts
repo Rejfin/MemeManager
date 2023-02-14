@@ -1,3 +1,4 @@
+import { Tag } from '../models/tag.model';
 import { MemeRepository } from '../repository/meme.repository';
 
 export class MemeService {
@@ -33,5 +34,17 @@ export class MemeService {
 
   async getMeme(memeId: string, userId?: string) {
     return await this.memeRepository.getMeme(memeId, userId);
+  }
+
+  async getUnindexedAmount(userId: string) {
+    return await this.memeRepository.countUnindexed(userId);
+  }
+
+  async updateMeme(userId: string, memeId: string, tags: Tag[]) {
+    return await this.memeRepository.updateMeme(userId, memeId, tags);
+  }
+
+  async getUnindexedMemes(userId: string, limit: number, page: number) {
+    return await this.memeRepository.getUnindexedMemes(userId, limit, page);
   }
 }

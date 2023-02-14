@@ -51,7 +51,7 @@ class App {
     });
 
     this.express.get('/api/tags', authMiddleware, (req: any, res) => {
-      this.tagController.getTags(req.user.userId).then((data) => res.json(data));
+      this.tagController.getTags(req).then((data) => res.json(data));
     });
 
     this.express.post('/api/tags', [authMiddleware, validatorMiddleware(['name'])], (req: any, res: any) => {
@@ -76,6 +76,10 @@ class App {
 
     this.express.get('/api/memes/:memeId', authMiddleware, (req: any, res) => {
       this.memeController.getMeme(req.params.memeId, req.user.userId).then((data) => res.json(data));
+    });
+
+    this.express.put('/api/memes/:memeId', authMiddleware, (req: any, res) => {
+      this.memeController.updateMeme(req.params.memeId, req.user.userId, req.body.tags).then((data) => res.json(data));
     });
 
     this.express.get('/api/memes/file/:memeId', (req: any, res) => {

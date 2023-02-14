@@ -14,6 +14,8 @@ i18n.use(initReactI18next).init({
         appName: 'Meme Manager',
         appDescription: 'Self hosted aplication to manage your meme collection',
         cancel: 'Cancel',
+        close: 'Close',
+        save: 'Save',
         storageStats: {
           title: 'Storage Statistics',
           images: 'Images',
@@ -61,6 +63,7 @@ i18n.use(initReactI18next).init({
           browseFiles: 'Browse for file',
           orDragItHere: ' or drag it here',
           unindexed: 'unindexed memes',
+          tagExistOnList: 'tag already exist on list',
         },
       },
     },

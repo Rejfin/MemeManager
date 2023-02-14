@@ -1,5 +1,6 @@
 import { connect } from '../config/db.config';
 import { Tag } from '../models/tag.model';
+import { Op } from 'sequelize';
 
 export class TagRepository {
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -13,11 +14,14 @@ export class TagRepository {
     this.tagRespository = this.db.sequelize.getRepository(Tag);
   }
 
-  async getTags(userId: string) {
+  async getTags(userId: string, tagName: string, limit: number, page: number) {
     try {
-      const tags = await this.tagRespository.findAll({
-        where: { userId: userId },
+      const tags = await this.tagRespository.findAndCountAll({
+        where: { userId: userId, name: { [Op.like]: `${tagName}%` } },
         attributes: ['id', 'name'],
+        limit: limit,
+        offset: page * limit,
+        order: [['id', 'DESC']],
       });
       return tags;
     } catch (err) {

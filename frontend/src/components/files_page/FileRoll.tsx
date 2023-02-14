@@ -17,6 +17,10 @@ const FileRoll = (props: FileListHistoryProps) => {
           {props.files.map((file) => (
             <Image
               key={file.id}
+              onClick={(id, src, width, height, blurhash) =>
+                props.onFileClick?.(id, src, width, height, blurhash) || undefined
+              }
+              id={file.id}
               blurHash={file.blurHash}
               src={`${baseUrl}/memes/file/${file.id}`}
               alt={file.name}

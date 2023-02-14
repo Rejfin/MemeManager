@@ -19,6 +19,7 @@ const ListItem = (props: Meme, secondBackground: boolean) => {
     >
       <div className={'h-10 block text-center'}>
         <Image
+          id={props.id}
           className='justify-center self-center text-center block h-10 max-w-[80px]'
           src={`${baseUrl}/memes/file/${props.id}`}
           alt={props.name}
