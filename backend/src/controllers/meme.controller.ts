@@ -1,3 +1,4 @@
+import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
 
@@ -8,41 +9,76 @@ export class MemeController {
     this.memeService = new MemeService();
   }
 
+  /**
+   * function used for fetching memes from database
+   * @param req - consists of a user and query object.
+   * The user object conveys data about the user.
+   * The query, on the other hand, stores such information as the number of records to return,
+   * the pagination page, unindexed switch
+   */
   async getMemes(req: {
     user: { userId: string };
-    query: { limit?: number; page?: number; latest?: string; countUnindexed?: string; unindexed?: string };
+    query: { limit?: number; page?: number; countUnindexed?: string; unindexed?: string };
   }) {
     const userId = req.user.userId;
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
+
+    //change string to numbers
     page = page * 1;
     limit = limit * 1;
 
-    if (req.query.countUnindexed === '1') {
-      return await this.memeService.getUnindexedAmount(userId);
-    } else if (req.query.unindexed === '1') {
-      const memesList = await this.memeService.getUnindexedMemes(userId, limit, page);
-      memesList.currentPage = page;
-      memesList.nextPage = memesList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
-      memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
-      if (memesList.nextPage < 0) {
-        memesList.nextPage = 0;
-      }
-      return memesList;
-    } else {
-      const getLatest = req.query.latest === '1';
-      const memesList = await this.memeService.getMemes(userId, getLatest, limit, page);
-      memesList.currentPage = page;
-      memesList.nextPage = memesList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
-      memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
-      if (memesList.nextPage < 0) {
-        memesList.nextPage = 0;
-      }
+    let memesList: {
+      count: number;
+      rows: Meme[];
+      currentPage: number;
+      nextPage: number;
+      maxPage: number;
+      unindexedAmount?: number;
+    } = {
+      count: 0,
+      rows: [],
+      currentPage: 0,
+      nextPage: 0,
+      maxPage: 0,
+      unindexedAmount: 0,
+    };
 
-      return memesList;
+    // create list of database query based on request query
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    const promisesList: Promise<any>[] = [];
+
+    if (req.query.unindexed === '1') {
+      promisesList.push(this.memeService.getUnindexedMemes(userId, limit, page));
+    } else {
+      promisesList.push(this.memeService.getMemes(userId, limit, page));
     }
+
+    if (req.query.countUnindexed === '1') {
+      promisesList.push(this.memeService.getUnindexedAmount(userId));
+    }
+
+    // wait for all promisess, then construct object and return it
+    return await Promise.all(promisesList).then((results) => {
+      memesList = results[0];
+      memesList.currentPage = page;
+      memesList.nextPage = memesList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
+      memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
+      if (memesList.nextPage < 0) {
+        memesList.nextPage = 0;
+      }
+      if (promisesList.length > 0) {
+        memesList.unindexedAmount = results[1];
+      } else {
+        delete memesList.unindexedAmount;
+      }
+      return memesList;
+    });
   }
 
+  /**
+   * @returns Meme model of created entry in database
+   */
   async createMeme(req: {
     user: { userId: string };
     file: {

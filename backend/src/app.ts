@@ -1,5 +1,5 @@
 import * as bodyParser from 'body-parser';
-import express from 'express';
+import express, { ErrorRequestHandler, Request, Response } from 'express';
 import { AuthController } from './controllers/auth.controller';
 import { MemeController } from './controllers/meme.controller';
 import { TagController } from './controllers/tag.controller';
@@ -91,6 +91,21 @@ class App {
     // handle undefined routes
     this.express.use('*', (req, res) => {
       res.send('Make sure url is correct!!!');
+    });
+
+    // handle errors
+    this.express.use((err: ErrorRequestHandler, req: Request, res: Response) => {
+      if (err instanceof multer.MulterError) {
+        return res.status(418).json({
+          err_code: err.code,
+          err_message: err.message,
+        });
+      } else {
+        return res.status(500).json({
+          err_code: 409,
+          err_message: 'Something went wrong!',
+        });
+      }
     });
   }
 }

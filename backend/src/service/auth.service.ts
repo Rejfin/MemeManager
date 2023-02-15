@@ -8,6 +8,9 @@ export class AuthService {
     this.authRepository = new AuthRepository();
   }
 
+  /**
+   * register user after checks if login and password meet the requirements
+   */
   async registerUser(user: { login: string; password: string }) {
     if (
       user.login.length >= 4 &&
@@ -43,6 +46,11 @@ export class AuthService {
     return token;
   }
 
+  /**
+   * function create new jwt token if provided refreshToken is valid
+   * @param refreshToken
+   * @returns new Jwt token
+   */
   async renewAccessToken(refreshToken: string): Promise<string | null> {
     const mRefreshToken = this.authRepository.findRefreshToken(refreshToken);
     if (!mRefreshToken) {

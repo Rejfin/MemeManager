@@ -1,4 +1,4 @@
-import { rename, existsSync, mkdirSync } from 'node:fs';
+import { rename, existsSync, mkdirSync, utimesSync, closeSync, openSync } from 'node:fs';
 import { encode } from 'blurhash';
 import sharp from 'sharp';
 import { NextFunction, Request, Response } from 'express';
@@ -14,8 +14,16 @@ class FileRequest extends Request {
     width: number;
     height: number;
   };
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  body!: any;
 }
 
+/**
+ * This middleware change file original name to the generate one
+ * if the correct date of the last modification of the file is sent,
+ * then it is saved this way for the created fileMiddleware also generates blurhash
+ * for the uploaded file (if the file is an image)
+ */
 export const fileMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const mReq = req as unknown as FileRequest;
   if (req.file) {
@@ -36,6 +44,15 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
       const { data, info } = await sharp(newPath).ensureAlpha().raw().toBuffer({
         resolveWithObject: true,
       });
+
+      const modDate = mReq.body.modifiedDate || new Date();
+      mReq.body.modifiedDate = modDate;
+      try {
+        const date = new Date(modDate);
+        utimesSync(newPath, date, date);
+      } catch (err) {
+        closeSync(openSync(newPath, 'w'));
+      }
 
       const encoded = encode(new Uint8ClampedArray(data), info.width, info.height, 4, 4);
       mReq.file.blurHash = encoded;

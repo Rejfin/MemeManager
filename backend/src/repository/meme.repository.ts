@@ -14,26 +14,9 @@ export class MemeRepository {
 
   constructor() {
     this.db = connect();
-    // For Development
-    // this.db.sequelize.sync({ force: true }).then(() => {
-    //   console.log("Drop and re-sync db.");
-    // });
     this.memeRepository = this.db.sequelize.getRepository(Meme);
     this.tagRepository = this.db.sequelize.getRepository(Tag);
     this.tagMemeRepository = this.db.sequelize.getRepository(TagMeme);
-  }
-
-  async getLatestMemes(userId: string): Promise<Meme[]> {
-    try {
-      const memes = await this.memeRepository.findAll({
-        where: { userId: userId },
-        limit: 10,
-        order: [['uploadDate', 'DESC']],
-      });
-      return memes;
-    } catch (err) {
-      return [];
-    }
   }
 
   async getMemes(userId: string, limit: number, page: number) {
@@ -43,7 +26,7 @@ export class MemeRepository {
         limit: limit,
         offset: page * limit,
         order: [['modifiedDate', 'DESC']],
-        attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName'],
+        attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName', 'size'],
       });
       return memes;
     } catch (err) {

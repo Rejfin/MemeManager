@@ -8,12 +8,8 @@ export class MemeService {
     this.memeRepository = new MemeRepository();
   }
 
-  async getMemes(userId: string, latest: boolean, limit: number, page: number) {
-    if (latest) {
-      return await this.memeRepository.getLatestMemes(userId);
-    } else {
-      return await this.memeRepository.getMemes(userId, limit, page);
-    }
+  async getMemes(userId: string, limit: number, page: number) {
+    return await this.memeRepository.getMemes(userId, limit, page);
   }
 
   async createMeme(fileData: {

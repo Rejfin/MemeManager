@@ -11,6 +11,9 @@ export class TagService {
     return await this.tagRepository.getTags(userId, tagName, limit, page);
   }
 
+  /**
+   * creates new tag if tag with provided name does not exist in databse jet
+   */
   async createTag(tagName: string, userId: string) {
     if (tagName != null) {
       const savedTag = await this.tagRepository.getTag(tagName.toLowerCase());

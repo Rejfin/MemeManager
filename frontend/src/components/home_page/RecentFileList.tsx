@@ -32,7 +32,7 @@ const ListItem = (props: Meme, secondBackground: boolean) => {
         {props.originalName}
       </div>
       <div className='hidden md:block text-center self-center text-textColor dark:text-textColor-dark'>
-        {new Date(props.uploadDate).toLocaleDateString()}
+        {new Date(props.modifiedDate).toLocaleDateString()}
       </div>
       <div className='hidden lg:block text-center self-center text-textColor dark:text-textColor-dark'>
         {convertSize(props.size)}

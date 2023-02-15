@@ -17,19 +17,12 @@ const FilesPage = () => {
   const { setModal } = useModal();
   const listInnerRef = useRef<HTMLInputElement | null>(null);
   const [searchText, setSearchText] = useState('');
-  const [unindexed, setUnindexed] = useState(0);
   const [isIndexedList, setIsIndexedList] = useState(true);
-  const [url, setUrl] = useState(`/memes?limit=20&page=${page}`);
+  const [url, setUrl] = useState(`/memes?limit=20&page=${page}&countUnindexed=1`);
+  const [unindexedCount, setUnindexedCount] = useState(0);
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const latestMemes: { error: any; isPending: boolean; data: any } = useFetch(url);
-
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const unindexedCount: { error: any; isPending: boolean; data: any } = useFetch('/memes?countUnindexed=1');
-
-  useEffect(() => {
-    setUnindexed(unindexedCount.data);
-  }, [unindexedCount.data]);
 
   /**
    * Function responsible for downloading the appropriate amount of data from the api
@@ -74,6 +67,12 @@ const FilesPage = () => {
         }
       });
       setListOfFiles(new Map(listOfFiles));
+
+      console.log(latestMemes.data);
+
+      if (latestMemes.data.unindexedAmount != null) {
+        setUnindexedCount(latestMemes.data.unindexedAmount);
+      }
     }
     // eslint-disable-next-line
   }, [latestMemes.data]);
@@ -159,11 +158,11 @@ const FilesPage = () => {
           {t('files.addMeme')}
         </button>
 
-        {unindexed > 0 && (
+        {unindexedCount > 0 && (
           <button onClick={switchUnindexedMemes} className='bg-primary-400 rounded-md p-2 text-backgroundSurface ml-2'>
             {t('files.unindexed')}
             <div className='relative'>
-              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexed}</div>
+              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexedCount}</div>
             </div>
           </button>
         )}
