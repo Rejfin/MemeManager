@@ -11,6 +11,7 @@ interface EditMemeDialogProps {
   src: string;
   width: number;
   height: number;
+  type: string;
   blurhash?: string;
   onClose: () => void;
 }
@@ -97,14 +98,22 @@ const EditMemeDialog = (props: EditMemeDialogProps) => {
   return (
     <div className='min-w-[20rem] min-h-[10rem] w-4/5 max-w-xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md flex flex-col overflow-hidden'>
       <div className='m-6 flex flex-col items-center justify-center'>
-        <Image
-          id={props.fileId}
-          src={props.src}
-          width={props.width}
-          height={props.height}
-          blurHash={props.blurhash}
-          className={'h-80 max-w-xl'}
-        />
+        {props.type.startsWith('image') ? (
+          <Image
+            id={props.fileId}
+            src={props.src}
+            width={props.width}
+            type={props.type}
+            height={props.height}
+            blurHash={props.blurhash}
+            className={'h-80 max-w-full'}
+          />
+        ) : (
+          <video src={props.src + '?o=1'} autoPlay controls poster={props.src} className='h-80 max-w-full'>
+            {t('files.videoNotSupported')}
+          </video>
+        )}
+
         <div className='bg-backgroundSurface-dark dark:bg-background-dark bg-opacity-40 w-full h-[2px] mt-6'></div>
         <div className='w-full my-2'>
           {editedTagList.map((tag) => (

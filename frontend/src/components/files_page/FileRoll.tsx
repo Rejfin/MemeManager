@@ -18,15 +18,16 @@ const FileRoll = (props: FileListHistoryProps) => {
             <Image
               key={file.id}
               onClick={(id, src, width, height, blurhash) =>
-                props.onFileClick?.(id, src, width, height, blurhash) || undefined
+                props.onFileClick?.(id, src, width, height, file.type, blurhash) || undefined
               }
+              type={file.type}
               id={file.id}
               blurHash={file.blurHash}
               src={`${baseUrl}/memes/file/${file.id}`}
               alt={file.name}
               className='inline-block pr-2 cursor-pointer max-w-[180px] h-[120px] md:max-w-[250px] md:h-[150px]'
-              width={file.width}
-              height={file.height}
+              width={file.width || 120}
+              height={file.height || 150}
             />
           ))}
         </div>

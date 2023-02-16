@@ -9,7 +9,7 @@ export class Meme {
   modifiedDate!: string;
   size!: number;
   tags!: Tag[];
-  width!: number;
-  height!: number;
-  blurHash!: string;
+  width?: number;
+  height?: number;
+  blurHash?: string;
 }

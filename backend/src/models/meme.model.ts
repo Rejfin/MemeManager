@@ -40,13 +40,16 @@ export class Meme extends Model {
   modifiedDate!: Date;
 
   @Column
-  blurHash!: string;
+  blurHash?: string;
+
+  @Column
+  thumbnailName?: string;
 
   @Column(INTEGER)
-  width!: number;
+  width?: number;
 
   @Column(INTEGER)
-  height!: number;
+  height?: number;
 
   @BelongsToMany(() => Tag, () => TagMeme)
   tags!: Tag[];

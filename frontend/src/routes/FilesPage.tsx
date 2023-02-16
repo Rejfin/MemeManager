@@ -137,7 +137,7 @@ const FilesPage = () => {
     }
   };
 
-  const fileClickHandler = (fileId: string, src: string, width: number, height: number, blurhash?: string) => {
+  const fileClickHandler = (fileId: string, src: string, width: number, height: number, type: string, blurhash?: string) => {
     setModal(
       <EditMemeDialog
         fileId={fileId}
@@ -145,6 +145,7 @@ const FilesPage = () => {
         width={width}
         height={height}
         blurhash={blurhash}
+        type={type}
         onClose={() => setModal(undefined)}
       />,
     );
@@ -152,14 +153,13 @@ const FilesPage = () => {
 
   return (
     <div className='flex-row h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4'>
-      <div className='pb-4 flex'>
-        <SearchComponent onChange={(text) => setSearchText(text)} value={searchText} />
-        <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface'>
+      <div className='pb-4 flex max-w-full'>
+        <SearchComponent className='w-auto h-auto' onChange={(text) => setSearchText(text)} value={searchText} />
+        <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface mx-2'>
           {t('files.addMeme')}
         </button>
-
         {unindexedCount > 0 && (
-          <button onClick={switchUnindexedMemes} className='bg-primary-400 rounded-md p-2 text-backgroundSurface ml-2'>
+          <button onClick={switchUnindexedMemes} className='bg-primary-400 rounded-md p-2 text-backgroundSurface'>
             {t('files.unindexed')}
             <div className='relative'>
               <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexedCount}</div>
@@ -188,8 +188,8 @@ const FilesPage = () => {
                     key={data[0]}
                     files={data[1]}
                     date={new Date(data[0])}
-                    onFileClick={(id, src, width, height, blurhash) =>
-                      fileClickHandler(id, src, width, height, blurhash)
+                    onFileClick={(id, src, width, height, type, blurhash) =>
+                      fileClickHandler(id, src, width, height, type, blurhash)
                     }
                   />
                 ))}

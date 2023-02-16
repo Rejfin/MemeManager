@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { Blurhash } from 'react-blurhash';
 import { isBlurhashValid } from 'blurhash';
 import FileIcon from '../../assets/icon-unknown-file.svg';
+import { ReactComponent as PlayIcon } from '../../assets/icon-play.svg';
 
 type objectFit = 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
 
@@ -10,6 +11,7 @@ interface ImageProps {
   src: string;
   width: number;
   height: number;
+  type: string;
   blurHash?: string;
   alt?: string;
   fallbackSrc?: string;
@@ -102,6 +104,11 @@ const Image = (props: ImageProps): React.ReactElement => {
           }}
           src={imgSrc}
         />
+        {props.type.startsWith('video') && (
+          <div className='bg-background-dark bg-opacity-50 w-full h-full z-[1] pointer-events-none'>
+            <PlayIcon className='fill-backgroundSurface opacity-95 pointer-events-none w-full max-w-full h-full py-10 abosolute left-1/2 top-1/2 bottom-1/2 z-[2]' />
+          </div>
+        )}
       </div>
     </div>
   );

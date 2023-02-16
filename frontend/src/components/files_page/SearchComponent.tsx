@@ -4,6 +4,7 @@ import InputField from '../global/InputField';
 
 const SearchComponent = (props: {
   value: string;
+  className?: string;
   placeholder?: string;
   error?: string;
   disabled?: boolean;
@@ -13,11 +14,11 @@ const SearchComponent = (props: {
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
-    <div>
-      <div className='relative'>
+    <div className={props.className}>
+      <div className='flex items-center relative w-full h-full'>
         <InputField
           ref={inputRef}
-          className='outline-none focus:outline-2 focus:border-b-2 text-textColor dark:text-textColor-dark border-navigationIconColor bg-background dark:bg-background-dark rounded-md focus:rounded-b-none p-2 pr-12'
+          className='w-full h-full outline-none focus:outline-2 focus:border-b-2 text-textColor dark:text-textColor-dark border-navigationIconColor bg-background dark:bg-background-dark rounded-md focus:rounded-b-none p-2 pr-12'
           id={'search'}
           inputType={'text'}
           placeholder={props.placeholder || 'Search..'}
@@ -32,7 +33,7 @@ const SearchComponent = (props: {
         />
         <SearchIcon
           onClick={() => !props.disabled && props.onSearch?.(inputRef.current?.value || '')}
-          className={`w-6 inline-block absolute right-4 top-2 mb-1 fill-navigationIconColor dark:fill-textColor-dark opacity-60 ${
+          className={`w-6 absolute right-4 fill-navigationIconColor dark:fill-textColor-dark opacity-60 ${
             props.onSearch && !props.disabled && 'cursor-pointer'
           }`}
         />

@@ -24,8 +24,8 @@ const InputField = forwardRef<HTMLInputElement, InputFieldProps>((props, ref) =>
   };
 
   return (
-    <div className='flex flex-col w-full'>
-      <div className={props.error ?? 'relative'}>
+    <div className='flex flex-col w-full h-full'>
+      <div className={props.error ?? 'relative h-full'}>
         <input
           disabled={props.disabled}
           ref={ref}

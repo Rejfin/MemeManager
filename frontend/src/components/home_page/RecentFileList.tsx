@@ -23,8 +23,9 @@ const ListItem = (props: Meme, secondBackground: boolean) => {
           className='justify-center self-center text-center block h-10 max-w-[80px]'
           src={`${baseUrl}/memes/file/${props.id}`}
           alt={props.name}
-          width={props.width}
-          height={props.height}
+          type={props.type}
+          width={props.width || 60}
+          height={props.height || 40}
           blurHash={props.blurHash}
         />
       </div>
@@ -32,7 +33,7 @@ const ListItem = (props: Meme, secondBackground: boolean) => {
         {props.originalName}
       </div>
       <div className='hidden md:block text-center self-center text-textColor dark:text-textColor-dark'>
-        {new Date(props.modifiedDate).toLocaleDateString()}
+        {new Date(props.uploadDate).toLocaleDateString()}
       </div>
       <div className='hidden lg:block text-center self-center text-textColor dark:text-textColor-dark'>
         {convertSize(props.size)}

@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
@@ -18,11 +19,12 @@ export class MemeController {
    */
   async getMemes(req: {
     user: { userId: string };
-    query: { limit?: number; page?: number; countUnindexed?: string; unindexed?: string };
+    query: { limit?: number; page?: number; countUnindexed?: string; unindexed?: string; latest?: number };
   }) {
     const userId = req.user.userId;
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
+    let latest = req.query.latest == 1;
 
     //change string to numbers
     page = page * 1;
@@ -51,7 +53,7 @@ export class MemeController {
     if (req.query.unindexed === '1') {
       promisesList.push(this.memeService.getUnindexedMemes(userId, limit, page));
     } else {
-      promisesList.push(this.memeService.getMemes(userId, limit, page));
+      promisesList.push(this.memeService.getMemes(userId, limit, page, latest));
     }
 
     if (req.query.countUnindexed === '1') {
@@ -89,6 +91,7 @@ export class MemeController {
       width: number;
       height: number;
       blurHash: string;
+      thumbnailname?: string;
     };
     body: {
       modifiedDate: string;
@@ -107,12 +110,22 @@ export class MemeController {
       modifiedDate: new Date(req.body.modifiedDate) || new Date(),
       blurHash: req.file.blurHash,
       tags: req.body.tags,
+      thumbnailName: req.file.thumbnailname,
     };
     return await this.memeService.createMeme(fileData);
   }
 
-  async getMeme(memeId: string, userId?: string) {
-    return await this.memeService.getMeme(memeId, userId);
+  // return thumbnail of file of original file (if image doesnt matter)
+  async getMeme(req: 
+    { user?: { userId: string }; params: { memeId: string }; query:{o?: number} }) {
+    const memeId = req.params.memeId
+    const userId = req.user?.userId
+    const originalName = req.query.o == 1
+    const data = await this.memeService.getMeme(memeId, userId);
+    if(!originalName){
+      data.name = data.thumbnailName || data.name
+    }
+    return data
   }
 
   async updateMeme(memeId: string, userId: string, tags: Tag[]) {

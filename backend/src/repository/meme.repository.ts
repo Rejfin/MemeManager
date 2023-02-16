@@ -19,14 +19,14 @@ export class MemeRepository {
     this.tagMemeRepository = this.db.sequelize.getRepository(TagMeme);
   }
 
-  async getMemes(userId: string, limit: number, page: number) {
+  async getMemes(userId: string, limit: number, page: number, latest?: boolean) {
     try {
       const memes = await this.memeRepository.findAndCountAll({
         where: { userId: userId },
         limit: limit,
         offset: page * limit,
-        order: [['modifiedDate', 'DESC']],
-        attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName', 'size'],
+        order: [[latest ? 'uploadDate' : 'modifiedDate', 'DESC']],
+        attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName', 'size', 'uploadDate', 'type'],
       });
       return memes;
     } catch (err) {
@@ -43,7 +43,10 @@ export class MemeRepository {
     size: number;
     uploadDate: Date;
     modifiedDate: Date;
-    blurHash: string;
+    blurHash?: string;
+    thumbnailName?: string;
+    width?: number;
+    height?: number;
     tags: [];
   }): Promise<Meme> {
     const meme = await this.memeRepository.create(fileData);

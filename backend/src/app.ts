@@ -75,7 +75,7 @@ class App {
     // });
 
     this.express.get('/api/memes/:memeId', authMiddleware, (req: any, res) => {
-      this.memeController.getMeme(req.params.memeId, req.user.userId).then((data) => res.json(data));
+      this.memeController.getMeme(req).then((data) => res.json(data));
     });
 
     this.express.put('/api/memes/:memeId', authMiddleware, (req: any, res) => {
@@ -83,7 +83,7 @@ class App {
     });
 
     this.express.get('/api/memes/file/:memeId', (req: any, res) => {
-      this.memeController.getMeme(req.params.memeId).then((data) => {
+      this.memeController.getMeme(req).then((data) => {
         res.sendFile('/memes/' + data.userId + '/' + data.name, { root: __dirname });
       });
     });

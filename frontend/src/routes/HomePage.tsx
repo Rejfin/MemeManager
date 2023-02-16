@@ -4,7 +4,7 @@ import useFetch from '../hooks/useFetch';
 
 const HomePage = () => {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch('/memes?limit=10&page=0');
+  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch('/memes?limit=10&page=0&latest=1');
 
   return (
     <div className='bg-background dark:bg-background-dark grid md:grid-cols-3 lg:grid-cols-4 h-full'>
