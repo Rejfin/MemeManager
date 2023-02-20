@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useFetch from '../../hooks/useFetch';
+import useSearchTag from '../../hooks/useSearchTag';
 import { Tag } from '../../models/tag.model';
 import api from '../../services/api';
 import Image from '../global/Image';
@@ -24,10 +25,11 @@ const EditMemeDialog = (props: EditMemeDialogProps) => {
   const [id, setId] = useState(-1);
   const [newTagError, setNewTagError] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
-  const [autoTagList, setAutoTagList] = useState<string[]>([]);
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const memeData: { data: any; isPending: boolean; error: any } = useFetch(`/memes/${props.fileId}`);
+
+  const tags: { tagList: Tag[] } = useSearchTag(tagText);
 
   /**
    * set list of tags when they are available
@@ -39,24 +41,12 @@ const EditMemeDialog = (props: EditMemeDialogProps) => {
     }
   }, [memeData.data, memeData.isPending]);
 
-  /**
-   * debounced function to pull down tags from api and used them as prompt during input
-   */
-  useEffect(() => {
-    setTimeout(() => {
-      // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-      api.get(`/tags?name=${tagText}&limit=5`).then((data: any) => {
-        setAutoTagList(data.data.rows.map((data: Tag) => data.name));
-      });
-    }, 700);
-  }, [tagText]);
-
   const onTextChange = (text: string) => {
     setTagText(text);
   };
 
   /**
-   * when user click enter or magnifier icon text from input is checked
+   * when user click enter or magnifier icon, text from input is checked
    * to see if it doesnt already exist in tags list and if not it is added,
    * otherwise an error message is dispalyed
    */
@@ -133,7 +123,7 @@ const EditMemeDialog = (props: EditMemeDialogProps) => {
           onChange={onTextChange}
           value={tagText}
           error={newTagError}
-          dataList={autoTagList}
+          dataList={tags.tagList.map((x) => x.name)}
         />
         <div className='flex flex-row pt-4 justify-between w-full'>
           {tagList !== editedTagList && !memeData.isPending && (

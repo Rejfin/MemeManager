@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
@@ -19,12 +18,20 @@ export class MemeController {
    */
   async getMemes(req: {
     user: { userId: string };
-    query: { limit?: number; page?: number; countUnindexed?: string; unindexed?: string; latest?: number };
+    query: {
+      limit?: number;
+      page?: number;
+      countUnindexed?: string;
+      unindexed?: string;
+      latest?: number;
+      tags?: string;
+    };
   }) {
     const userId = req.user.userId;
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
-    let latest = req.query.latest == 1;
+    const latest = req.query.latest == 1;
+    const tagsList = req.query.tags?.split(',').map((x) => parseInt(x)) || [];
 
     //change string to numbers
     page = page * 1;
@@ -53,7 +60,7 @@ export class MemeController {
     if (req.query.unindexed === '1') {
       promisesList.push(this.memeService.getUnindexedMemes(userId, limit, page));
     } else {
-      promisesList.push(this.memeService.getMemes(userId, limit, page, latest));
+      promisesList.push(this.memeService.getMemes(userId, limit, page, latest, tagsList));
     }
 
     if (req.query.countUnindexed === '1') {
@@ -116,16 +123,15 @@ export class MemeController {
   }
 
   // return thumbnail of file of original file (if image doesnt matter)
-  async getMeme(req: 
-    { user?: { userId: string }; params: { memeId: string }; query:{o?: number} }) {
-    const memeId = req.params.memeId
-    const userId = req.user?.userId
-    const originalName = req.query.o == 1
+  async getMeme(req: { user?: { userId: string }; params: { memeId: string }; query: { o?: number } }) {
+    const memeId = req.params.memeId;
+    const userId = req.user?.userId;
+    const originalName = req.query.o == 1;
     const data = await this.memeService.getMeme(memeId, userId);
-    if(!originalName){
-      data.name = data.thumbnailName || data.name
+    if (!originalName) {
+      data.name = data.thumbnailName || data.name;
     }
-    return data
+    return data;
   }
 
   async updateMeme(memeId: string, userId: string, tags: Tag[]) {

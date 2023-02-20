@@ -19,12 +19,20 @@ export class MemeRepository {
     this.tagMemeRepository = this.db.sequelize.getRepository(TagMeme);
   }
 
-  async getMemes(userId: string, limit: number, page: number, latest?: boolean) {
+  async getMemes(userId: string, limit: number, page: number, latest?: boolean, tagList?: number[]) {
     try {
       const memes = await this.memeRepository.findAndCountAll({
         where: { userId: userId },
         limit: limit,
         offset: page * limit,
+        include: [
+          {
+            model: this.tagRepository,
+            attributes: ['id', 'name'],
+            through: { attributes: [] },
+            where: tagList && tagList?.length > 0 ? { id: tagList } : null,
+          },
+        ],
         order: [[latest ? 'uploadDate' : 'modifiedDate', 'DESC']],
         attributes: ['blurHash', 'width', 'height', 'id', 'modifiedDate', 'originalName', 'size', 'uploadDate', 'type'],
       });

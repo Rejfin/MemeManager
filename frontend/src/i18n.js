@@ -64,7 +64,7 @@ i18n.use(initReactI18next).init({
           orDragItHere: ' or drag it here',
           unindexed: 'unindexed memes',
           tagExistOnList: 'tag already exist on list',
-          videoNotSupported: 'Video not supported'
+          videoNotSupported: 'Video not supported',
         },
       },
     },

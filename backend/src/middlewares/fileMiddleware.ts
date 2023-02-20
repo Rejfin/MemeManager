@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import { NextFunction, Request, Response } from 'express';
 import ffmpeg from 'fluent-ffmpeg';
 
+// eslint-disable-next-line  @typescript-eslint/no-var-requires
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -45,7 +46,7 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
      * @param pathToFile path to file
      * @param thumbnailname name of thumbnail file
      */
-    const createBlurHash = async (pathToFile:string, thumbnailname: string) => {
+    const createBlurHash = async (pathToFile: string, thumbnailname: string) => {
       const { data, info } = await sharp(pathToFile).ensureAlpha().raw().toBuffer({
         resolveWithObject: true,
       });
@@ -54,7 +55,7 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
       mReq.file.width = info.width;
       mReq.file.height = info.height;
       mReq.file.thumbnailname = thumbnailname;
-    }
+    };
 
     rename(req.file.path, newPath, async function (err) {
       if (err) {
@@ -65,22 +66,25 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
 
       try {
         if (mReq.file.mimetype.startsWith('image')) {
-          await createBlurHash(newPath, fileName)
+          await createBlurHash(newPath, fileName);
         } else if (mReq.file.mimetype.startsWith('video')) {
           await new Promise<void>((resolve, reject) => {
             ffmpeg(newPath)
               .on('end', async function () {
-                await createBlurHash(`${req.file!.destination + mReq.user.userId}/${req.file!.filename}.png`, req.file!.filename + '.png')
+                await createBlurHash(
+                  `${mReq.file.destination + mReq.user.userId}/${mReq.file.filename}.png`,
+                  mReq.file.filename + '.png',
+                );
                 resolve();
               })
-              .on('error', function (err: any) {
+              .on('error', function (err: string) {
                 console.log('[ERROR] ' + err);
                 reject(err);
               })
               .screenshots({
                 timemarks: ['3'],
-                filename: `${req.file!.filename}.png`,
-                folder: req.file!.destination + mReq.user.userId,
+                filename: `${mReq.file.filename}.png`,
+                folder: mReq.file.destination + mReq.user.userId,
               });
           });
         }
