@@ -44,4 +44,23 @@ export class MemeService {
   async getUnindexedMemes(userId: string, limit: number, page: number) {
     return await this.memeRepository.getUnindexedMemes(userId, limit, page);
   }
+
+  async getStatistics(userId: string) {
+    const dbData = await this.memeRepository.getStatistics(userId);
+    const sizes = new Map();
+    const counts = new Map();
+
+    dbData['sizes'].forEach((data, index) => {
+      const type = data.type.split('/');
+      if (type[0] === 'image' || type[0] == 'video') {
+        sizes.set(type[0], (sizes.get(type[0]) || 0) + Number(data.size));
+        counts.set(type[0], (counts.get(type[0]) || 0) + Number(dbData['counts'][index]['count']));
+      } else {
+        sizes.set('other', (sizes.get('other') || 0) + Number(data.size));
+        counts.set('other', (counts.get('other') || 0) + Number(dbData['counts'][index]['count']));
+      }
+    });
+
+    return { sizes: Object.fromEntries(sizes), counts: Object.fromEntries(counts) };
+  }
 }

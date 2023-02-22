@@ -137,4 +137,8 @@ export class MemeController {
   async updateMeme(memeId: string, userId: string, tags: Tag[]) {
     return await this.memeService.updateMeme(userId, memeId, tags);
   }
+
+  async getStatistics(userId: string) {
+    return await this.memeService.getStatistics(userId);
+  }
 }

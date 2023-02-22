@@ -1,22 +1,19 @@
-import { literal } from 'sequelize';
+import { col, fn, literal } from 'sequelize';
 import { connect } from '../config/db.config';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
-import { TagMeme } from '../models/tagMeme.model';
 
 export class MemeRepository {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   private db: any = {};
   private memeRepository: any;
   private tagRepository: any;
-  private tagMemeRepository: any;
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   constructor() {
     this.db = connect();
     this.memeRepository = this.db.sequelize.getRepository(Meme);
     this.tagRepository = this.db.sequelize.getRepository(Tag);
-    this.tagMemeRepository = this.db.sequelize.getRepository(TagMeme);
   }
 
   async getMemes(userId: string, limit: number, page: number, latest?: boolean, tagList?: number[]) {
@@ -149,5 +146,28 @@ export class MemeRepository {
       console.log(err);
       return { count: 0, rows: [], currentPage: 0, nextPage: 0, maxPage: 0 };
     }
+  }
+
+  async getStatistics(
+    userId: string,
+  ): Promise<{ sizes: { type: string; size: string }[]; counts: { type: string; count: string }[] }> {
+    const sizeData = this.memeRepository.findAll({
+      where: { userId: userId },
+      group: ['type'],
+      raw: true,
+      attributes: ['type', [fn('sum', col('size')), 'size']],
+    });
+    const countData = this.memeRepository.findAll({
+      where: { userId: userId },
+      group: ['type'],
+      raw: true,
+      attributes: ['type', [fn('COUNT', col('id')), 'count']],
+    });
+    return Promise.all([sizeData, countData]).then((data) => {
+      return {
+        sizes: data[0],
+        counts: data[1],
+      };
+    });
   }
 }

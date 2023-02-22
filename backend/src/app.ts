@@ -74,6 +74,12 @@ class App {
     //   //this.memeController.removeMeme()
     // });
 
+    this.express.get('/api/memes/stats', authMiddleware, (req: any, res) => {
+      this.memeController.getStatistics(req.user.userId).then((data) => {
+        res.json(data);
+      });
+    });
+
     this.express.get('/api/memes/:memeId', authMiddleware, (req: any, res) => {
       this.memeController.getMeme(req).then((data) => res.json(data));
     });
