@@ -79,12 +79,16 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           .catch((data) => {
             setPassword('');
             setRepeatPassword('');
-            if (data.response.status === 400) {
-              setDialogText(t('auth.registerError') || '');
-            } else if (data.response.status === 403) {
-              setDialogText(t('auth.userAlreadyExist') || '');
+            if (data.response) {
+              if (data.response.status === 400) {
+                setDialogText(t('auth.registerError') || '');
+              } else if (data.response.status === 403) {
+                setDialogText(t('auth.userAlreadyExist') || '');
+              } else {
+                setDialogText(t('auth.unexpectedAuthError') || '');
+              }
             } else {
-              setDialogText(t('auth.unexpectedAuthError') || '');
+              setDialogText(t('auth.unexpectedAuthError') || data.message);
             }
           });
       }
@@ -92,13 +96,11 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
       if (isLoginFieldValid() && isPasswordFieldValid()) {
         AuthService.login(login, password)
           .then(() => {
-            console.log(searchParams.get('next'));
-
             navigate(searchParams.get('next') || '/');
           })
           .catch((data) => {
             setPassword('');
-            if (data.response.status === 401) {
+            if (data.response && data.response.status === 401) {
               setDialogText(t('auth.authError') || '');
             } else {
               setDialogText(t('auth.unexpectedAuthError') || '');

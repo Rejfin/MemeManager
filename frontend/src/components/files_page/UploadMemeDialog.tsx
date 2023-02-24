@@ -15,6 +15,7 @@ interface UploadMemeModalProps {
 interface FileToUpload {
   file: File;
   progress: number;
+  error?: '';
 }
 
 const UploadMemeDialog = (props: UploadMemeModalProps) => {
@@ -61,10 +62,13 @@ const UploadMemeDialog = (props: UploadMemeModalProps) => {
   const updateFileOnList = (index: number, file: FileToUpload) => {
     const newList = fileToUploadList.map((f, i) => {
       if (i === index) {
-        return { file: file.file, progress: file.progress };
+        return { file: file.file, progress: file.progress, error: file.error };
       }
       return f;
     });
+    if (file.error) {
+      setIsUploading(false);
+    }
     setFileToUploadList(newList);
   };
 
@@ -123,10 +127,15 @@ const UploadMemeDialog = (props: UploadMemeModalProps) => {
       data.append('modifiedDate', new Date(file.file.lastModified).toISOString());
       FileService.uploadFile(data, (progress) => {
         file.progress = Math.round((progress.loaded * 100) / progress.total);
+        file.error = '';
         updateFileOnList(uploadingIndex, file);
         if (file.progress === 100) {
           setUploadingIndex(uploadingIndex + 1);
         }
+      }).catch((data) => {
+        const mFile = file;
+        mFile.error = data.message;
+        updateFileOnList(uploadingIndex, mFile);
       });
     }
     // eslint-disable-next-line
@@ -167,10 +176,16 @@ const UploadMemeDialog = (props: UploadMemeModalProps) => {
       </div>
       <div className='max-h-64 overflow-auto mb-4'>
         {fileToUploadList.map((file: FileToUpload, index: number) => (
-          <div key={index} className='flex flex-row h-12 mx-6 my-1 rounded-md border-primary-600 border-[1px] relative'>
+          <div
+            title={file.error}
+            key={index}
+            className='flex flex-row h-12 mx-6 my-1 rounded-md border-primary-600 border-[1px] relative'
+          >
             <div
-              style={{ width: file.progress + '%' }}
-              className={`bg-primary-500 bg-opacity-50 absolute left-0 right-0 bottom-0 top-0`}
+              style={{ width: file.error ? '100%' : file.progress + '%' }}
+              className={`bg-opacity-50 absolute left-0 right-0 bottom-0 top-0 ${
+                file.error ? ' bg-errorColor' : ' bg-primary-500 '
+              }`}
             ></div>
             <div className='w-full flex flex-row'>
               <div className='my-auto ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark'>
@@ -180,7 +195,7 @@ const UploadMemeDialog = (props: UploadMemeModalProps) => {
                 {!isUplading && file.progress !== 100 && (
                   <RemoveIcon
                     onClick={() => removeFileFromUploadList(index)}
-                    className='w-5 fill-errorColor cursor-pointer'
+                    className='w-5 fill-errorColor cursor-pointer z-[1]'
                   />
                 )}
               </div>

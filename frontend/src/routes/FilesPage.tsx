@@ -23,6 +23,7 @@ const FilesPage = () => {
   const [url, setUrl] = useState(`/memes?limit=20&page=${page}&countUnindexed=1&unindexed=0`);
   const [unindexedCount, setUnindexedCount] = useState(0);
   const [searchTags, setSearchTags] = useState<Tag[]>([]);
+  const [tagError, setTagError] = useState('');
 
   const urlMap = new Map<string, string>();
   urlMap.set('limit', '20');
@@ -54,7 +55,7 @@ const FilesPage = () => {
     setTimeout(() => {
       if (listInnerRef && listInnerRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-        if (scrollHeight && scrollTop && clientHeight) {
+        if (scrollHeight !== null && scrollTop !== null && clientHeight !== null) {
           if (
             !latestMemes.isPending &&
             (listInnerRef.current.scrollHeight <= listInnerRef.current.clientHeight ||
@@ -62,6 +63,8 @@ const FilesPage = () => {
           ) {
             if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
               setPage(latestMemes.data.nextPage);
+              urlMap.set('page', latestMemes.data.nextPage.toString());
+              updateUrl();
             }
           }
         }
@@ -177,6 +180,9 @@ const FilesPage = () => {
     );
   };
 
+  /**
+   * run every time search tags list changed
+   */
   useEffect(() => {
     if (searchTags.length > 0) {
       setListOfFiles(new Map());
@@ -184,15 +190,28 @@ const FilesPage = () => {
       setIsIndexedList(true);
     } else {
       urlMap.set('unindexed', isIndexedList ? '0' : '1');
+      urlMap.set('page', '0');
+      setPage(0);
+      setListOfFiles(new Map());
     }
     updateUrl();
   }, [searchTags]);
 
+  /**
+   * handle search tag function
+   */
   const onSearch = () => {
     const tag = tags.tagList.find((tag) => tag.name === searchText.toLowerCase());
+
     if (tag) {
-      setSearchTags((oldTags) => [...oldTags, tag]);
+      const mTag = searchTags.find((t) => t.id === tag.id);
+      if (!mTag) {
+        setSearchTags((oldTags) => [...oldTags, tag]);
+      }
       setSearchText('');
+      setTagError('');
+    } else {
+      setTagError(t('files.tagDoesNotExist') || '');
     }
   };
 
@@ -209,6 +228,7 @@ const FilesPage = () => {
           onChange={(text) => setSearchText(text)}
           value={searchText}
           onSearch={() => onSearch()}
+          error={tagError}
         />
         <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface mx-2'>
           {t('files.addMeme')}

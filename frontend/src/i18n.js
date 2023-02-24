@@ -65,6 +65,7 @@ i18n.use(initReactI18next).init({
           unindexed: 'unindexed memes',
           tagExistOnList: 'tag already exist on list',
           videoNotSupported: 'Video not supported',
+          tagDoesNotExist: 'tag does not exist :/',
         },
       },
     },

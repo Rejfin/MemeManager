@@ -135,11 +135,7 @@ const SideNavigation = () => {
       />
 
       <div className='flex gap-x-4 items-center'>
-        <img
-          src={Logo}
-          alt='Logo'
-          className={`cursor-pointer w-12 rounded-full duration-500 ${isNavOpen && 'rotate-[360deg]'}`}
-        />
+        <img src={Logo} alt='Logo' className={`w-12 rounded-full duration-500 ${isNavOpen && 'rotate-[360deg]'}`} />
 
         <h1
           className={`text-textColor dark:text-textColor-dark origin-left font-medium text-xl duration-200 ${

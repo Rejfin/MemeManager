@@ -45,8 +45,8 @@ const HomePage = () => {
             imageSize={stats['sizes']['image'] || 0}
             videoSize={stats['sizes']['video'] || 0}
             otherSize={stats['sizes']['other'] || 0}
-            videoCount={stats['counts']['image'] || 0}
-            imageCount={stats['counts']['video'] || 0}
+            videoCount={stats['counts']['video'] || 0}
+            imageCount={stats['counts']['image'] || 0}
             otherCount={stats['counts']['other'] || 0}
           />
         )}
