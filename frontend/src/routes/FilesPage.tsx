@@ -234,7 +234,10 @@ const FilesPage = () => {
           {t('files.addMeme')}
         </button>
         {unindexedCount > 0 && (
-          <button onClick={switchUnindexedMemes} className='bg-primary-400 rounded-md p-2 text-backgroundSurface'>
+          <button
+            onClick={switchUnindexedMemes}
+            className={`bg-primary-400 rounded-md p-2 text-backgroundSurface ${!isIndexedList && 'bg-primary-300'}`}
+          >
             {t('files.unindexed')}
             <div className='relative'>
               <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexedCount}</div>

@@ -170,4 +170,12 @@ export class MemeRepository {
       };
     });
   }
+
+  async removeMeme(memeId: string, userId: string): Promise<Meme> {
+    const meme = await this.memeRepository.findOne({ where: { userId: userId, id: memeId } });
+    if (meme) {
+      await meme.destroy();
+    }
+    return meme;
+  }
 }

@@ -45,4 +45,8 @@ export class TagController {
       return null;
     }
   }
+
+  async removeTag(tagId: number, userId: string) {
+    return await this.tagService.removeTag(tagId, userId);
+  }
 }

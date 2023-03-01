@@ -33,6 +33,6 @@ export class Tag extends Model {
   @Column(DataType.UUID)
   userId!: string;
 
-  @BelongsTo(() => User)
+  @BelongsTo(() => User, { onDelete: 'CASCADE' })
   user!: User;
 }

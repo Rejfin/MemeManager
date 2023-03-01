@@ -16,11 +16,13 @@ i18n.use(initReactI18next).init({
         cancel: 'Cancel',
         close: 'Close',
         save: 'Save',
+        ok: 'OK',
+        warning: 'Warning',
+        somethingWentWrong: 'Something went wrong :/',
         storageStats: {
           title: 'Storage Statistics',
           images: 'Images',
           videos: 'Videos',
-          gifs: 'Gifs',
           other: 'Other',
         },
         recentFileList: {
@@ -66,6 +68,15 @@ i18n.use(initReactI18next).init({
           tagExistOnList: 'tag already exist on list',
           videoNotSupported: 'Video not supported',
           tagDoesNotExist: 'tag does not exist :/',
+        },
+        settings: {
+          iWantIt: 'Yes I want it',
+          clearDbMessage:
+            'This operation is not reversible. If you still want to clear the database, it will delete all your files, database entries and tags that you created. Are you sure you want to clear the database?',
+          removeAccountMessage:
+            'This operation is not reversible. If you still want to remove your account, it will delete all associated information and files. Are you sure you want to remove your account?',
+          accountHasBeenDeleted: 'Your account has been deleted',
+          accountFailedToDelete: 'Make sure the password you entered is correct and that you are still logged in',
         },
       },
     },

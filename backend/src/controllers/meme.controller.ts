@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
@@ -140,5 +141,22 @@ export class MemeController {
 
   async getStatistics(userId: string) {
     return await this.memeService.getStatistics(userId);
+  }
+
+  async removeMeme(memeId: string, userId: string, res: Response) {
+    const isSuccess = await this.memeService.removeMeme(memeId, userId);
+    console.log(isSuccess.length);
+    
+    if (isSuccess.length === 1 && isSuccess[0]) {
+      res.status(200).send({ message: 'Meme sucessfully deleted' });
+    } else if (isSuccess.length > 1) {
+      if (isSuccess.every((x) => x === true)) {
+        res.status(200).send({ message: 'Meme sucessfully deleted' });
+      } else {
+        res.status(400).send({ message: 'Failed to delete meme file or its thumbnail' });
+      }
+    }else{
+      res.status(400).send({ message: 'Failed to delete meme' });
+    }
   }
 }

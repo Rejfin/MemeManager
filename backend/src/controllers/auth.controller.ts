@@ -73,4 +73,15 @@ export class AuthController {
   async logOut(refreshToken: string) {
     return await this.authService.logOut(refreshToken);
   }
+
+  async deleteMe(req: { body: { password: string }; user: { userId: string } }, res: Response) {
+    const isSuccess = await this.authService.deleteMe(req.user.userId, req.body.password);
+    console.log(isSuccess);
+    
+    if (isSuccess) {
+      res.status(200).send({ message: 'Account sucessfully deleted' });
+    } else {
+      res.status(400).send({ message: 'Failed to delete account' });
+    }
+  }
 }

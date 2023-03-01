@@ -1,6 +1,6 @@
 import { forwardRef, KeyboardEvent } from 'react';
 
-type InputFieldType = 'text' | 'password' | 'email' | 'number';
+export type InputFieldType = 'text' | 'password' | 'email' | 'number';
 
 interface InputFieldProps {
   id: string;

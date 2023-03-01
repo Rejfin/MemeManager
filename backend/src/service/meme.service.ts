@@ -1,3 +1,4 @@
+import { unlink } from 'fs';
 import { Tag } from '../models/tag.model';
 import { MemeRepository } from '../repository/meme.repository';
 
@@ -62,5 +63,40 @@ export class MemeService {
     });
 
     return { sizes: Object.fromEntries(sizes), counts: Object.fromEntries(counts) };
+  }
+
+  async removeMeme(memeId: string, userId: string) {
+    const removedMeme = await this.memeRepository.removeMeme(memeId, userId);
+    console.log(removedMeme);
+
+    if (removedMeme) {
+      const promises = [];
+
+      const filePromise = new Promise<boolean>((res) => {
+        unlink(`${global.DIR_ROOT}/memes/${userId}/${removedMeme.name}`, (err) => {
+          if (err) {
+            res(false);
+          }
+          res(true);
+        });
+      });
+      promises.push(filePromise);
+
+      if (removedMeme.name !== removedMeme.thumbnailName) {
+        const thumbnailPromise = new Promise<boolean>((res) => {
+          unlink(`${global.DIR_ROOT}/memes/${userId}/${removedMeme.thumbnailName}`, (err) => {
+            if (err) {
+              res(false);
+            }
+            res(true);
+          });
+        });
+        promises.push(thumbnailPromise);
+      }
+
+      return await Promise.all(promises);
+    } else {
+      return [false];
+    }
   }
 }

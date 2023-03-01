@@ -47,11 +47,28 @@ export class AuthRepository {
   }
 
   async findRefreshToken(token: string) {
-    return await this.tokenRepository.findOne({ where: { token: token } });
+    const x = await this.tokenRepository.findOne({ where: { token: token } });
+    console.log(x);
+
+    return x;
   }
 
   async signOutUser(token: string) {
     const rToken = await this.tokenRepository.findOne({ where: { token: token } });
     await rToken.destroy();
+  }
+
+  async deleteMe(userId: string, password: string): Promise<boolean> {
+    const mUser = await this.authRespository.findOne({ where: { id: userId } });
+    if (mUser) {
+      const isPassOk = await bcrypt.compare(password, mUser.password);
+      if (isPassOk) {
+        await this.authRespository.destroy({ where: { id: userId } });
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
   }
 }

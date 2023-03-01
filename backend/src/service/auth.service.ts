@@ -1,5 +1,6 @@
 import { AuthRepository } from '../repository/auth.repository';
 import jwt from 'jsonwebtoken';
+import { rm } from 'fs';
 
 export class AuthService {
   private authRepository: AuthRepository;
@@ -77,5 +78,21 @@ export class AuthService {
 
   async logOut(refreshToken: string) {
     await this.authRepository.signOutUser(refreshToken);
+  }
+
+  async deleteMe(userId: string, password: string) {
+    const success = await this.authRepository.deleteMe(userId, password);
+    if (success) {
+      return await new Promise<boolean>((res) => {
+        rm(`${global.DIR_ROOT}/memes/${userId}`, { recursive: true, force: true }, (err) => {
+          if (err) {
+            res(false);
+          }
+          res(true);
+        });
+      });
+    } else {
+      return false;
+    }
   }
 }
