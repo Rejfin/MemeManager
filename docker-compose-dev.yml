@@ -29,11 +29,8 @@ services:
       - private
     depends_on:
       - db
-    environment:
-      - POSTGRES_DB=meme-manager
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
+    env_file:
+      - backend.example.env
   frontend:
     build:
       context: frontend
@@ -48,5 +45,7 @@ services:
       - api
     environment:
        - WATCHPACK_POLLING=true
+    env_file:
+      - frontend.example.env
 networks:
   private:

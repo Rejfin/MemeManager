@@ -16,6 +16,11 @@ export const connect = () => {
     host: hostName,
     dialect: dialect,
     repositoryMode: true,
+    logging: (str: string) => {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(str);
+      }
+    },
     pool: {
       max: 10,
       min: 0,

@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import SideNavigation from '../components/global/SideNavigation';
-import '../App.css';
 
 const BaseScreen = () => {
   return (

@@ -1,3 +1,10 @@
+/* eslint no-var: 0 */
+declare global {
+  var DIR_ROOT: string;
+}
+
+global.DIR_ROOT = __dirname;
+
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';

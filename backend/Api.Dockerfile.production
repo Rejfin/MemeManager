@@ -10,6 +10,5 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 COPY --from=builder app/build ./build
-COPY --from=builder app/src/.env ./build
 EXPOSE 3070
 CMD ["node", "build/index.js"]

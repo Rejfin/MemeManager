@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../config/logger';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
@@ -74,6 +75,9 @@ export class MemeController {
       memesList.currentPage = page;
       memesList.nextPage = memesList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
       memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
+      if (memesList.maxPage < 0) {
+        memesList.maxPage = 0;
+      }
       if (memesList.nextPage < 0) {
         memesList.nextPage = 0;
       }
@@ -82,6 +86,9 @@ export class MemeController {
       } else {
         delete memesList.unindexedAmount;
       }
+      logger.info(
+        `User with id: ${userId} retrieved a list of memes (page: ${page}/${memesList.maxPage}, amount: ${memesList.rows.length}/${limit})`,
+      );
       return memesList;
     });
   }
@@ -89,23 +96,26 @@ export class MemeController {
   /**
    * @returns Meme model of created entry in database
    */
-  async createMeme(req: {
-    user: { userId: string };
-    file: {
-      filename: string;
-      originalname: string;
-      mimetype: string;
-      size: number;
-      width: number;
-      height: number;
-      blurHash: string;
-      thumbnailname?: string;
-    };
-    body: {
-      modifiedDate: string;
-      tags: [];
-    };
-  }) {
+  async createMeme(
+    req: {
+      user: { userId: string };
+      file: {
+        filename: string;
+        originalname: string;
+        mimetype: string;
+        size: number;
+        width: number;
+        height: number;
+        blurHash: string;
+        thumbnailname?: string;
+      };
+      body: {
+        modifiedDate: string;
+        tags: [];
+      };
+    },
+    res: Response,
+  ) {
     const fileData = {
       userId: req.user.userId,
       name: req.file.filename,
@@ -120,42 +130,75 @@ export class MemeController {
       tags: req.body.tags,
       thumbnailName: req.file.thumbnailname,
     };
-    return await this.memeService.createMeme(fileData);
+    const meme = await this.memeService.createMeme(fileData);
+    if (meme) {
+      logger.info(`New meme created by user with id: ${req.user.userId}`);
+      res.status(200).send(meme);
+    } else {
+      logger.warn(`Meme could not be created`);
+      res.status(400).send({ message: 'Meme could not be created' });
+    }
   }
 
   // return thumbnail of file of original file (if image doesnt matter)
-  async getMeme(req: { user?: { userId: string }; params: { memeId: string }; query: { o?: number } }) {
+  async getMeme(
+    req: { user?: { userId: string }; params: { memeId: string }; query: { o?: number } },
+    res: Response,
+    file = false,
+  ) {
     const memeId = req.params.memeId;
     const userId = req.user?.userId;
     const originalName = req.query.o == 1;
     const data = await this.memeService.getMeme(memeId, userId);
-    if (!originalName) {
-      data.name = data.thumbnailName || data.name;
+    if (data) {
+      if (!originalName) {
+        data.name = data.thumbnailName || data.name;
+      }
+      logger.info(`Retrieved meme data with id: ${memeId}`);
+      if (file) {
+        res.sendFile('/memes/' + data.userId + '/' + data.name, { root: global.DIR_ROOT });
+      } else {
+        res.status(200).send(data);
+      }
+    } else {
+      logger.warn('Could not retrive meme data');
+      res.status(400).send({ message: 'Could not retrive meme data' });
     }
-    return data;
   }
 
   async updateMeme(memeId: string, userId: string, tags: Tag[]) {
+    logger.info(`Updating meme data with id: ${memeId}`);
     return await this.memeService.updateMeme(userId, memeId, tags);
   }
 
-  async getStatistics(userId: string) {
-    return await this.memeService.getStatistics(userId);
+  async getStatistics(userId: string, res: Response) {
+    logger.info(`User with id: ${userId} retrieving statistics`);
+    const data = await this.memeService.getStatistics(userId);
+    if (data) {
+      logger.info('statistics were successfully retrived');
+      res.status(200).send(data);
+    } else {
+      logger.warn('statistics were not successfully retrived');
+      res.status(400).send({ message: 'statistics were not successfully retrived' });
+    }
   }
 
   async removeMeme(memeId: string, userId: string, res: Response) {
     const isSuccess = await this.memeService.removeMeme(memeId, userId);
-    console.log(isSuccess.length);
-    
+
     if (isSuccess.length === 1 && isSuccess[0]) {
+      logger.info(`Meme sucessfully deleted (id: ${memeId})`);
       res.status(200).send({ message: 'Meme sucessfully deleted' });
     } else if (isSuccess.length > 1) {
       if (isSuccess.every((x) => x === true)) {
+        logger.info(`Meme sucessfully deleted (id: ${memeId})`);
         res.status(200).send({ message: 'Meme sucessfully deleted' });
       } else {
+        logger.warn(`Failed to delete meme file or its thumbnail (id: ${memeId})`);
         res.status(400).send({ message: 'Failed to delete meme file or its thumbnail' });
       }
-    }else{
+    } else {
+      logger.warn(`Failed to delete meme (id: ${memeId})`);
       res.status(400).send({ message: 'Failed to delete meme' });
     }
   }

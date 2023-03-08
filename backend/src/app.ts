@@ -7,8 +7,10 @@ import { authMiddleware } from './middlewares/authMiddleware';
 import { fileMiddleware } from './middlewares/fileMiddleware';
 import { validatorMiddleware } from './middlewares/validatorMiddleware';
 import multer from 'multer';
-const upload = multer({ dest: __dirname + '/memes/' });
+const upload = multer({ dest: global.DIR_ROOT + '/memes/' });
 import cors from 'cors';
+import logger from './config/logger';
+import { loggerMiddleware } from './middlewares/loggerMiddleware';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class App {
@@ -18,6 +20,7 @@ class App {
   public authController: AuthController;
 
   constructor() {
+    logger.info('Loading MemeManager API components ...');
     this.express = express();
     this.middleware();
     this.routes();
@@ -31,6 +34,7 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cors());
+    this.express.use(loggerMiddleware);
   }
 
   private routes(): void {
@@ -63,11 +67,11 @@ class App {
     });
 
     this.express.post('/api/tags', [authMiddleware, validatorMiddleware(['name'])], (req: any, res: any) => {
-      this.tagController.createTag(req.body.name, req.user.userId).then((data) => res.json(data));
+      this.tagController.createTag(req.body.name, req.user.userId, res);
     });
 
     this.express.delete('/api/tags/:tagId', authMiddleware, (req: any, res: any) => {
-      this.tagController.removeTag(req.params.tagId, req.user.userId).then((data) => res.json(data));
+      this.tagController.removeTag(req.params.tagId, req.user.userId, res);
     });
 
     this.express.get('/api/memes', authMiddleware, (req: any, res) => {
@@ -75,21 +79,19 @@ class App {
     });
 
     this.express.post('/api/memes', [authMiddleware, upload.single('meme'), fileMiddleware], (req: any, res: any) => {
-      this.memeController.createMeme(req).then((data) => res.json(data));
+      this.memeController.createMeme(req, res);
     });
 
     this.express.delete('/api/memes/:memeId', authMiddleware, (req: any, res) => {
-      this.memeController.removeMeme(req.params.memeId, req.user.userId, res)
+      this.memeController.removeMeme(req.params.memeId, req.user.userId, res);
     });
 
     this.express.get('/api/memes/stats', authMiddleware, (req: any, res) => {
-      this.memeController.getStatistics(req.user.userId).then((data) => {
-        res.json(data);
-      });
+      this.memeController.getStatistics(req.user.userId, res);
     });
 
     this.express.get('/api/memes/:memeId', authMiddleware, (req: any, res) => {
-      this.memeController.getMeme(req).then((data) => res.json(data));
+      this.memeController.getMeme(req, res);
     });
 
     this.express.put('/api/memes/:memeId', authMiddleware, (req: any, res) => {
@@ -97,9 +99,7 @@ class App {
     });
 
     this.express.get('/api/memes/file/:memeId', (req: any, res) => {
-      this.memeController.getMeme(req).then((data) => {
-        res.sendFile('/memes/' + data.userId + '/' + data.name, { root: __dirname });
-      });
+      this.memeController.getMeme(req, res, true);
     });
 
     // handle undefined routes

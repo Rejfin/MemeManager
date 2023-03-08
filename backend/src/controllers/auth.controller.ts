@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import logger from '../config/logger';
 import { AuthService } from '../service/auth.service';
 
 export class AuthController {
@@ -18,11 +19,14 @@ export class AuthController {
   async registerUser(user: { login: string; password: string }, res: Response) {
     const data = await this.authService.registerUser(user);
     if (data == null) {
+      logger.warn('User not created due to invalid data');
       res.sendStatus(400);
     } else {
       if (data?.created == true) {
+        logger.info(`User with login ${user.login} has been created`);
         res.sendStatus(201);
       } else {
+        logger.warn(`User with login ${user.login} already exist`);
         res.status(403).send('user already exist');
       }
     }
@@ -45,8 +49,15 @@ export class AuthController {
         { userId: mUser.id, login: mUser.login },
         mUser.id,
       );
-      res.status(200).json({ token: token, refreshToken: refreshToken });
+      if (refreshToken) {
+        logger.info(`User with login: ${user.login} logged in`);
+        res.status(200).json({ token: token, refreshToken: refreshToken });
+      } else {
+        logger.warn(`Failed attempt to log in to account: ${user.login}`);
+        res.sendStatus(401);
+      }
     } else {
+      logger.warn(`Failed attempt to log in to account: ${user.login}`);
       res.sendStatus(401);
     }
   }
@@ -58,14 +69,17 @@ export class AuthController {
     const refreshToken = data.refreshToken;
 
     if (refreshToken) {
-      const newToken = await this.authService.renewAccessToken(refreshToken);
+      const data = await this.authService.renewAccessToken(refreshToken);
 
-      if (newToken) {
-        res.status(200).send({ token: newToken });
+      if (data.token) {
+        logger.info(`Refresh token for account with login: ${data.login}`);
+        res.status(200).send({ token: data.token });
       } else {
+        logger.info(`Refresh token expired or is invalid`);
         res.sendStatus(400);
       }
     } else {
+      logger.info(`No refresh token in request`);
       res.sendStatus(400);
     }
   }
@@ -76,11 +90,12 @@ export class AuthController {
 
   async deleteMe(req: { body: { password: string }; user: { userId: string } }, res: Response) {
     const isSuccess = await this.authService.deleteMe(req.user.userId, req.body.password);
-    console.log(isSuccess);
-    
+
     if (isSuccess) {
+      logger.info(`Account with id: ${req.user.userId} has been deleted`);
       res.status(200).send({ message: 'Account sucessfully deleted' });
     } else {
+      logger.warn(`Failed attempt to delete account with id: ${req.user.userId}`);
       res.status(400).send({ message: 'Failed to delete account' });
     }
   }

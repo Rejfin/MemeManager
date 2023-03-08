@@ -22,6 +22,8 @@ export class TagService {
       } else {
         return savedTag;
       }
+    } else {
+      return null;
     }
   }
 

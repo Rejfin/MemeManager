@@ -3,6 +3,7 @@ import { encode } from 'blurhash';
 import sharp from 'sharp';
 import { NextFunction, Request, Response } from 'express';
 import ffmpeg from 'fluent-ffmpeg';
+import logger from '../config/logger';
 
 // eslint-disable-next-line  @typescript-eslint/no-var-requires
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
@@ -55,11 +56,13 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
       mReq.file.width = info.width;
       mReq.file.height = info.height;
       mReq.file.thumbnailname = thumbnailname;
+      logger.info({ url: req.originalUrl }, `Blurhash for the file (${fileName}) was created successfully`);
     };
 
-    rename(req.file.path, newPath, async function (err) {
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    rename(req.file.path, newPath, async function (err: any) {
       if (err) {
-        console.log('[ERROR] ' + err);
+        logger.error({ url: req.originalUrl }, err);
         return res.sendStatus(500);
       }
       mReq.file.filename = fileName;
@@ -78,7 +81,7 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
                 resolve();
               })
               .on('error', function (err: string) {
-                console.log('[ERROR] ' + err);
+                logger.error({ url: req.originalUrl }, err);
                 reject(err);
               })
               .screenshots({
@@ -88,8 +91,9 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
               });
           });
         }
-      } catch (err) {
-        console.log('[ERROR] ' + err);
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        logger.error({ url: req.originalUrl }, err);
       }
 
       const modDate = mReq.body.modifiedDate || new Date();
@@ -97,14 +101,15 @@ export const fileMiddleware = (req: Request, res: Response, next: NextFunction) 
       try {
         const date = new Date(modDate);
         utimesSync(newPath, date, date);
-      } catch (err) {
+        // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+      } catch (err: any) {
         closeSync(openSync(newPath, 'w'));
-        console.log('[ERROR] ' + err);
+        logger.error({ url: req.originalUrl }, err);
       }
       next();
     });
   } else {
-    console.log('[ERROR] file object not sended');
+    logger.warn({ url: req.originalUrl }, 'file object not sended');
     return res.sendStatus(400);
   }
 };

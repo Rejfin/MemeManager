@@ -44,7 +44,7 @@ const ListItem = (props: Meme, secondBackground: boolean) => {
 
 const RecentFileList = ({ files }: FileListProps) => {
   const { t } = useTranslation();
-  const fileList = files.map((file: Meme, index: number) => ListItem(file, index % 2 === 0));
+  const fileList = files?.map((file: Meme, index: number) => ListItem(file, index % 2 === 0));
   return (
     <div className='rounded-md bg-backgroundSurface dark:bg-backgroundSurface-dark w-full h-full shadow-md overflow-y-auto'>
       <div className='p-6 text-textColor dark:text-textColor-dark text-lg font-medium'>{t('recentFileList.title')}</div>

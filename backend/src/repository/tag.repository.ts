@@ -1,6 +1,7 @@
 import { connect } from '../config/db.config';
 import { Tag } from '../models/tag.model';
 import { Op } from 'sequelize';
+import logger from '../config/logger';
 
 export class TagRepository {
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -25,7 +26,7 @@ export class TagRepository {
       });
       return tags;
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return [];
     }
   }
@@ -37,7 +38,7 @@ export class TagRepository {
         attributes: ['id', 'name'],
       });
     } catch (err) {
-      console.log(err);
+      logger.error(err);
       return null;
     }
   }
@@ -47,12 +48,17 @@ export class TagRepository {
     try {
       data = await this.tagRepository.create({ name: tagName, userId: userId });
     } catch (err) {
-      console.log(err);
+      logger.error(err);
     }
     return data;
   }
 
   async removeTag(tagId: number, userId: string) {
-    return await this.tagRepository.destroy({ where: { userId: userId, id: tagId } });
+    try {
+      return await this.tagRepository.destroy({ where: { userId: userId, id: tagId } });
+    } catch (err) {
+      logger.error(err);
+      return null;
+    }
   }
 }

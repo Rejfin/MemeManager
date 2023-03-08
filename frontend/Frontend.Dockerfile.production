@@ -2,7 +2,8 @@ FROM node:18-alpine AS build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package*.json ./
-RUN npm ci
+RUN npm install
+ARG REACT_APP_API_ADDRESS
 COPY . .
 RUN npm run build
 
