@@ -27,7 +27,8 @@ export class AuthController {
         res.sendStatus(201);
       } else {
         logger.warn(`User with login ${user.login} already exist`);
-        res.status(403).send('user already exist');
+        res.status(403)
+        res.send('user already exist');
       }
     }
   }
@@ -51,7 +52,8 @@ export class AuthController {
       );
       if (refreshToken) {
         logger.info(`User with login: ${user.login} logged in`);
-        res.status(200).json({ token: token, refreshToken: refreshToken });
+        res.status(200)
+        res.json({ token: token, refreshToken: refreshToken });
       } else {
         logger.warn(`Failed attempt to log in to account: ${user.login}`);
         res.sendStatus(401);
@@ -73,7 +75,8 @@ export class AuthController {
 
       if (data.token) {
         logger.info(`Refresh token for account with login: ${data.login}`);
-        res.status(200).send({ token: data.token });
+        res.status(200)
+        res.send({ token: data.token });
       } else {
         logger.info(`Refresh token expired or is invalid`);
         res.sendStatus(400);
@@ -91,12 +94,18 @@ export class AuthController {
   async deleteMe(req: { body: { password: string }; user: { userId: string } }, res: Response) {
     const isSuccess = await this.authService.deleteMe(req.user.userId, req.body.password);
 
-    if (isSuccess) {
+    if (isSuccess.account && isSuccess.folder) {
       logger.info(`Account with id: ${req.user.userId} has been deleted`);
-      res.status(200).send({ message: 'Account sucessfully deleted' });
-    } else {
-      logger.warn(`Failed attempt to delete account with id: ${req.user.userId}`);
-      res.status(400).send({ message: 'Failed to delete account' });
+      res.status(200)
+      res.send({ message: 'Account sucessfully deleted' });
+    } else if(isSuccess.account){
+      logger.warn(`Failed attempt to delete account folder id: ${req.user.userId}, but account deleted`);
+      res.status(200)
+      res.send({ message: 'Account sucessfully deleted, but some file could survive' });
+    }else{
+      logger.warn(`Failed attempt to delete account folder id: ${req.user.userId}`);
+      res.status(400)
+      res.send({ message: 'Account could not be deleted' });
     }
   }
 }

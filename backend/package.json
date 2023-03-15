@@ -8,7 +8,8 @@
     "dev": "nodemon",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json,scss} --config ./.prettierrc"
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,css,md,json,scss} --config ./.prettierrc",
+    "test": "jest"
   },
   "nodemonConfig": {
     "watch": [
@@ -28,6 +29,7 @@
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.15",
     "@types/fluent-ffmpeg": "^2.1.20",
+    "@types/jest": "^29.4.0",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.11.17",
@@ -37,9 +39,11 @@
     "eslint": "^8.33.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.20",
+    "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

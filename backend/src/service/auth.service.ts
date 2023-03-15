@@ -91,7 +91,7 @@ export class AuthService {
   async deleteMe(userId: string, password: string) {
     const success = await this.authRepository.deleteMe(userId, password);
     if (success) {
-      return await new Promise<boolean>((res) => {
+      const folder =  await new Promise<boolean>((res) => {
         rm(`${global.DIR_ROOT}/memes/${userId}`, { recursive: true, force: true }, (err) => {
           if (err) {
             logger.error(err);
@@ -100,8 +100,9 @@ export class AuthService {
           res(true);
         });
       });
+      return {account: true, folder: folder}
     } else {
-      return false;
+      return {account: false, folder: false}
     }
   }
 }

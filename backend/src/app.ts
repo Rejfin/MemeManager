@@ -11,6 +11,7 @@ const upload = multer({ dest: global.DIR_ROOT + '/memes/' });
 import cors from 'cors';
 import logger from './config/logger';
 import { loggerMiddleware } from './middlewares/loggerMiddleware';
+import { AuthService } from './service/auth.service';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class App {
