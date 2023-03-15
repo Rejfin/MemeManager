@@ -16,7 +16,10 @@ export class TagController {
    * The query, on the other hand, stores such information as the number of records to return,
    * the pagination page and the beginning of the tag name to search for
    */
-  async getTags(req: { user: { userId: string }; query: { limit?: number; page?: number; name?: string } }) {
+  async getTags(
+    req: { user: { userId: string }; query: { limit?: number; page?: number; name?: string } },
+    res: Response,
+  ) {
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
     page = page * 1;
@@ -35,6 +38,8 @@ export class TagController {
     logger.info(
       `User with id: ${req.user.userId} retrieved a list of tags, (page: ${page}/${tagsList.maxPage}, amount: ${tagsList.rows.length}/${limit})`,
     );
+    res.status(200);
+    res.send(tagsList);
     return tagsList;
   }
 
@@ -49,20 +54,24 @@ export class TagController {
     const newTag = await this.tagService.createTag(tag, userId);
     if (newTag) {
       logger.info(`Created new tag ("${newTag.name}") by user: ${userId}`);
-      res.status(200).send({ id: newTag.id, name: newTag.name });
+      res.status(200);
+      res.send({ id: newTag.id, name: newTag.name });
     } else {
       logger.warn(`No new tag named ${tag} was created`);
-      res.status(400).send(`No new tag named ${tag} was created`);
+      res.status(400);
+      res.send({message: `No new tag named ${tag} was created`});
     }
   }
 
   async removeTag(tagId: number, userId: string, res: Response) {
     const data = await this.tagService.removeTag(tagId, userId);
     if (data) {
-      res.status(200).send(data);
+      res.status(200);
+      res.send(data);
     } else {
       logger.warn(`There was a problem while deleting the tag (tagId: ${tagId}, userId: ${userId})`);
-      res.status(400).send({ message: 'There was a problem while deleting the tag' });
+      res.status(400);
+      res.send({ message: 'There was a problem while deleting the tag' });
     }
   }
 }
