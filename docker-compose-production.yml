@@ -28,23 +28,19 @@ services:
       - private
     depends_on:
       - db
-    environment:
-      - NODE_ENV=production
     env_file:
       - backend.example.env
   frontend:
     build:
       context: frontend
       dockerfile: Frontend.Dockerfile.production
-      args:
-        - "REACT_APP_API_ADDRESS=http://localhost:3070/api"
     ports:
       - "80:80"
     networks:
       - private
     depends_on:
       - api
-    env_file:
-      - frontend.example.env
+    volumes:
+      - ./frontend/public/config.js:/usr/share/nginx/html/config.js
 networks:
   private:
