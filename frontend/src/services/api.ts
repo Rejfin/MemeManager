@@ -1,8 +1,10 @@
 import axios from 'axios';
 import TokenService from './token.service';
 
+console.log((window as any).ENV.API_ADDRESS);
+
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_ADDRESS,
+  baseURL: (window as any).ENV.API_ADDRESS,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -49,8 +51,11 @@ instance.interceptors.response.use(
       if (err.response.status === 400) {
         window.location.href = `login?expired_auth&next=${encodeURIComponent(window.location.pathname)}`;
       }
+    }else if(err.code === "ERR_NETWORK" && originalConfig.url !== '/auth/signin'){
+      window.location.href = `login`
+      console.log(err);
     }
-
+    
     return Promise.reject(err);
   },
 );

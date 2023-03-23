@@ -2,7 +2,7 @@ import { FileListHistoryProps } from '../../utils/fileTypes';
 import Image from '../global/Image';
 
 const FileRoll = (props: FileListHistoryProps) => {
-  const baseUrl = process.env.REACT_APP_API_ADDRESS;
+  const baseUrl = (window as any).ENV.API_ADDRESS;
   return (
     <div className='w-full'>
       <div className='flex'>

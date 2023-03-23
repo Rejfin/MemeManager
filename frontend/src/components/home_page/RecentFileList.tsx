@@ -8,7 +8,7 @@ import Image from '../global/Image';
  * Crates entry element for list of recent files
  */
 const ListItem = (props: Meme, secondBackground: boolean) => {
-  const baseUrl = process.env.REACT_APP_API_ADDRESS;
+  const baseUrl = (window as any).ENV.API_ADDRESS;
   return (
     <li
       key={props.id}

@@ -44,8 +44,6 @@ services:
     depends_on:
       - api
     environment:
-       - WATCHPACK_POLLING=true
-    env_file:
-      - frontend.example.env
+      - WATCHPACK_POLLING=true
 networks:
   private:

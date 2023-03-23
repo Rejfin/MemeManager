@@ -29,6 +29,7 @@ const generator = (time: any, index: any): string => {
 };
 
 import { createStream } from 'rotating-file-stream';
+import { connect } from './config/db.config';
 createStream(generator, {
   size: '10M',
   interval: '1d',
@@ -37,9 +38,12 @@ createStream(generator, {
 });
 
 App.set('port', port);
-const server = http.createServer(App);
-server.listen(port);
 
-logger.info(`MemeManager API started on port ${port}`);
+const db = connect();
+db.sequelize.sync().then(()=>{
+  const server = http.createServer(App);
+  server.listen(port);
+  logger.info(`MemeManager API started on port ${port}`);
+})
 
 module.exports = App;
