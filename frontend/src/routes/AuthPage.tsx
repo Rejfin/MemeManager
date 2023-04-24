@@ -151,7 +151,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           <InputField
             id='password'
             inputType={'password'}
-            placeholder={t('auth.password')}
+            placeholder={t('auth.password') || ''}
             value={password}
             error={passwordError}
             onChange={(value) => {
@@ -163,7 +163,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
               <InputField
                 id='repeatedPassword'
                 inputType={'password'}
-                placeholder={t('auth.repeatPassword')}
+                placeholder={t('auth.repeatPassword') || ''}
                 value={repeatPassword}
                 error={repeatPasswordError}
                 onChange={(value) => {

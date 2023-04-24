@@ -15,7 +15,7 @@ const SearchComponent = (props: {
   const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className={props.className}>
-      <div className='flex items-center relative w-full h-full'>
+      {/* <div className='flex items-center relative w-full h-fit'>
         <InputField
           ref={inputRef}
           className='w-full h-full outline-none focus:outline-2 focus:border-b-2 text-textColor dark:text-textColor-dark border-navigationIconColor bg-background dark:bg-background-dark rounded-md focus:rounded-b-none p-2 pr-12'
@@ -28,7 +28,7 @@ const SearchComponent = (props: {
           onChange={(text) => {
             props.onChange?.(text);
           }}
-          onEnter={() => props.onSearch?.(inputRef.current?.value || '')}
+          onEnterClick={() => props.onSearch?.(inputRef.current?.value || '')}
           dataList={props.dataList}
         />
         <SearchIcon
@@ -37,7 +37,7 @@ const SearchComponent = (props: {
             props.onSearch && !props.disabled && 'cursor-pointer'
           }`}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
