@@ -2,7 +2,7 @@ import axios from 'axios';
 import TokenService from './token.service';
 
 const instance = axios.create({
-  baseURL: (window as any).ENV.API_ADDRESS,
+  baseURL: (window as any).env.API_ADDRESS,
   headers: {
     'Content-Type': 'application/json',
   },
