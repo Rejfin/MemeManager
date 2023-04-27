@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import AlertDialog from '../components/global/AlertDialog';
-import { useModal } from '../utils/ModalProvider';
 import { InputFieldType } from '../components/global/InputField';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
-  const { setModal } = useModal();
+  //const { setModal } = useModal();
   const navigate = useNavigate();
 
   const onRemoveAccount = () => {
@@ -21,56 +20,56 @@ const SettingsPage = () => {
             .delete('/auth/deleteme', { data: { password: text } })
             .then((data) => {
               if (data.status == 200) {
-                setModal(
-                  <AlertDialog
-                    title={''}
-                    text={t('settings.accountHasBeenDeleted')}
-                    positiveButton={{
-                      text: t('ok'),
-                      func: () => {
-                        setModal(undefined);
-                        navigate('/login');
-                      },
-                    }}
-                  />,
-                );
+                // setModal(
+                //   <AlertDialog
+                //     title={''}
+                //     text={t('settings.accountHasBeenDeleted')}
+                //     positiveButton={{
+                //       text: t('ok'),
+                //       func: () => {
+                //         setModal(undefined);
+                //         navigate('/login');
+                //       },
+                //     }}
+                //   />,
+                // );
               } else {
-                setModal(
-                  <AlertDialog
-                    title={t('somethingWentWrong')}
-                    text={data.data.message}
-                    positiveButton={{
-                      text: t('ok'),
-                      func: () => {
-                        setModal(undefined);
-                      },
-                    }}
-                  />,
-                );
+                // setModal(
+                //   <AlertDialog
+                //     title={t('somethingWentWrong')}
+                //     text={data.data.message}
+                //     positiveButton={{
+                //       text: t('ok'),
+                //       func: () => {
+                //         setModal(undefined);
+                //       },
+                //     }}
+                //   />,
+                // );
               }
             })
             .catch(() => {
-              setModal(
-                <AlertDialog
-                  title={t('somethingWentWrong')}
-                  text={t('settings.accountFailedToDelete')}
-                  positiveButton={{
-                    text: t('ok'),
-                    func: () => {
-                      setModal(undefined);
-                    },
-                  }}
-                />,
-              );
+              // setModal(
+              //   <AlertDialog
+              //     title={t('somethingWentWrong')}
+              //     text={t('settings.accountFailedToDelete')}
+              //     positiveButton={{
+              //       text: t('ok'),
+              //       func: () => {
+              //         setModal(undefined);
+              //       },
+              //     }}
+              //   />,
+              // );
             });
 
-          setModal(undefined);
+          //setModal(undefined);
         },
       },
       negativeButton: {
         text: t('cancel'),
         func: () => {
-          setModal(undefined);
+          //setModal(undefined);
         },
       },
       inputField: {
@@ -79,7 +78,7 @@ const SettingsPage = () => {
       },
     };
 
-    setModal(<AlertDialog {...removeProps} />);
+    //setModal(<AlertDialog {...removeProps} />);
   };
 
   return (

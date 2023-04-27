@@ -60,7 +60,7 @@ export default {
       navigationIconColor: "#777777",
       errorColor: "#DA4747",
       inputBorderColor: "#747474",
-      disableColor: "#DDDDD5",
+      disableColor: "#E7E7E7",
       disableDarkColor: "#CECEC9"
     }
   },

@@ -2,8 +2,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
-import { ModalProvider } from './utils/ModalProvider';
 import ModalHost from './utils/ModalHost';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -18,10 +19,10 @@ if (
 }
 
 root.render(
-  <BrowserRouter>
-    <ModalProvider>
-      <ModalHost />
-      <App />
-    </ModalProvider>
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+    <ModalHost />
+        <App />
+    </BrowserRouter>
+  </Provider>,
 );

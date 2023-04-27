@@ -6,17 +6,17 @@ import logo from '../assets/logo.webp';
 import UploadMemeDialog from '../components/files_page/UploadMemeDialog';
 import { Meme } from '../models/meme.model';
 import { useEffect, useRef, useState } from 'react';
-import { useModal } from '../utils/ModalProvider';
 import { useTranslation } from 'react-i18next';
 import EditMemeDialog from '../components/files_page/EditMemeDialog';
 import useSearchTag from '../hooks/useSearchTag';
 import { Tag } from '../models/tag.model';
+import { closeModal, openModal } from '../features/modal/modalSlice';
+import { useAppDispatch } from '../app/hooks'
 
 const FilesPage = () => {
   const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
   const [page, setPage] = useState(0);
   const { t } = useTranslation();
-  const { setModal } = useModal();
   const listInnerRef = useRef<HTMLInputElement | null>(null);
   const [searchText, setSearchText] = useState('');
   const [isIndexedList, setIsIndexedList] = useState(true);
@@ -24,6 +24,7 @@ const FilesPage = () => {
   const [unindexedCount, setUnindexedCount] = useState(0);
   const [searchTags, setSearchTags] = useState<Tag[]>([]);
   const [tagError, setTagError] = useState('');
+  const dispatch = useAppDispatch()
 
   const urlMap = new Map<string, string>();
   urlMap.set('limit', '20');
@@ -38,9 +39,7 @@ const FilesPage = () => {
 
   const updateUrl = (forceRefresh = false) => {
     setUrl(
-      `/memes?limit=${urlMap.get('limit')}&page=${urlMap.get('page')}&countUnindexed=${urlMap.get(
-        'countUnindexed',
-      )}&unindexed=${urlMap.get('unindexed')}${
+      `/memes?limit=${urlMap.get('limit')}&page=${urlMap.get('page')}&countUnindexed=${urlMap.get('countUnindexed')}&unindexed=${urlMap.get('unindexed')}${
         searchTags.length > 0 ? `&tags=${searchTags.map((x) => x.id).join(',')}` : ''
       }${forceRefresh ? `&f=${Math.random() * 10000}` : ''}`,
     );
@@ -104,7 +103,7 @@ const FilesPage = () => {
    */
   const modalProps = {
     onUploadEnds: () => {
-      setModal(undefined);
+      dispatch(closeModal())
       setListOfFiles(new Map());
       setPage(0);
       urlMap.set('unindexed', isIndexedList ? '1' : '0');
@@ -113,13 +112,13 @@ const FilesPage = () => {
     negativeButton: {
       text: t('cancel'),
       func: () => {
-        setModal(undefined);
+        dispatch(closeModal())
       },
     },
   };
 
   const showUploadModal = () => {
-    setModal(<UploadMemeDialog {...modalProps} />);
+    dispatch(openModal(<UploadMemeDialog {...modalProps} />));
   };
 
   /**
@@ -133,7 +132,6 @@ const FilesPage = () => {
           const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
           if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
             setPage(latestMemes.data.nextPage);
-
             urlMap.set('unindexed', isIndexedList ? '1' : '0');
             urlMap.set('page', page.toString());
             updateUrl();
@@ -146,17 +144,15 @@ const FilesPage = () => {
   const switchUnindexedMemes = () => {
     setPage(0);
     setListOfFiles(new Map());
-
     urlMap.set('unindexed', isIndexedList ? '1' : '0');
     urlMap.set('page', '0');
-
     if (isIndexedList) {
       setIsIndexedList(false);
       setSearchTags([]);
     } else {
       setIsIndexedList(true);
-      updateUrl();
     }
+    updateUrl();
   };
 
   const fileClickHandler = (
@@ -202,7 +198,6 @@ const FilesPage = () => {
    */
   const onSearch = () => {
     const tag = tags.tagList.find((tag) => tag.name === searchText.toLowerCase());
-
     if (tag) {
       const mTag = searchTags.find((t) => t.id === tag.id);
       if (!mTag) {
@@ -229,21 +224,15 @@ const FilesPage = () => {
           value={searchText}
           onSearch={() => onSearch()}
           error={tagError}
+          isUnindexed={!isIndexedList}
+          onUnindexedChange={() => switchUnindexedMemes()}
         />
-        <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface mx-2'>
+        <button
+          onClick={() => showUploadModal()}
+          className='bg-primary-400 w-fit rounded-md p-2 text-backgroundSurface mx-2'
+        >
           {t('files.addMeme')}
         </button>
-        {unindexedCount > 0 && (
-          <button
-            onClick={switchUnindexedMemes}
-            className={`bg-primary-400 rounded-md p-2 text-backgroundSurface ${!isIndexedList && 'bg-primary-300'}`}
-          >
-            {t('files.unindexed')}
-            <div className='relative'>
-              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexedCount}</div>
-            </div>
-          </button>
-        )}
       </div>
       <div className='max-w-2xl my-2'>
         {searchTags.map((tag) => (

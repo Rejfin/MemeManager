@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import RecentFileList from '../components/home_page/RecentFileList';
 import StorageStats from '../components/home_page/StorageStats';
 import useFetch from '../hooks/useFetch';
+import { Meme } from '../models/meme.model';
 
 interface statsData {
   sizes: { total?: number; video?: number; image?: number; other?: number };
@@ -10,10 +11,10 @@ interface statsData {
 
 const HomePage = () => {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch('/memes?limit=10&page=0&latest=1');
+  const latestMemes: { error: string; isPending: boolean; data: any } = useFetch('/memes?limit=10&page=0&latest=1');
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const statsData: { data: any; isPending: boolean; error: any } = useFetch('memes/stats');
+  const statsData: { data: any; isPending: boolean; error: string } = useFetch('memes/stats');
 
   const [stats, setStats] = useState<statsData | null>(null);
 

@@ -1,4 +1,5 @@
-import { useRef } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReactComponent as SearchIcon } from '../../assets/icon-search.svg';
 import InputField from '../global/InputField';
 
@@ -7,37 +8,53 @@ const SearchComponent = (props: {
   className?: string;
   placeholder?: string;
   error?: string;
-  disabled?: boolean;
   dataList?: string[];
-  onSearch?: (text: string) => void;
+  isUnindexed?: boolean;
+  onSearch?: () => void;
   onChange?: (text: string) => void;
+  onUnindexedChange?: (isUnindexed: boolean) => void
 }) => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { t } = useTranslation();
+
   return (
-    <div className={props.className}>
-      {/* <div className='flex items-center relative w-full h-fit'>
+    <div className={`w-full h-full ${props.className}`}>
+      <div>
         <InputField
-          ref={inputRef}
-          className='w-full h-full outline-none focus:outline-2 focus:border-b-2 text-textColor dark:text-textColor-dark border-navigationIconColor bg-background dark:bg-background-dark rounded-md focus:rounded-b-none p-2 pr-12'
+          disabled={props.isUnindexed || false}
           id={'search'}
-          inputType={'text'}
-          placeholder={props.placeholder || 'Search..'}
-          value={props.value}
+          placeholder={props.placeholder}
           error={props.error}
-          disabled={props.disabled}
+          icon={<SearchIcon className='w-6 fill-navigationIconColor' />}
+          value={props.value}
           onChange={(text) => {
-            props.onChange?.(text);
+            props.onChange?.(text)
           }}
-          onEnterClick={() => props.onSearch?.(inputRef.current?.value || '')}
-          dataList={props.dataList}
+          onIconClick={()=>props.onSearch?.()}
+          onEnterClick={()=>props.onSearch?.()}
         />
-        <SearchIcon
-          onClick={() => !props.disabled && props.onSearch?.(inputRef.current?.value || '')}
-          className={`w-6 absolute right-4 fill-navigationIconColor dark:fill-textColor-dark opacity-60 ${
-            props.onSearch && !props.disabled && 'cursor-pointer'
-          }`}
-        />
-      </div> */}
+        <div className='flex-col h-fit w-full pt-2'>
+          <div className='flex items-center'>
+            <label className='relative inline-block w-10 h-5'>
+              <input
+                className='hidden peer'
+                type='checkbox'
+                checked={props.isUnindexed || false}
+                onChange={(val) => {
+                  props.onUnindexedChange?.(val.target.checked)
+                }}
+              />
+              <span className='absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#ccc] duration-300 before:absolute before:h-3 before:w-3 before:left-1 before:bottom-1 before:bg-[white] before:duration-300 peer-checked:bg-primary-500 peer-focus:shadow-md peer-checked:before:translate-x-5 rounded-[34px] before:rounded-[50%]'></span>
+            </label>
+            <p className='ps-3 text-textColor dark:text-textColor-dark'>{t('files.unindexed')}</p>
+          </div>
+          <div className={`${props.isUnindexed ? 'hidden': 'flex flex-wrap'}`}>
+            {props.dataList && props.dataList.length > 0 &&
+              props.dataList.map((tag) => (
+                <div id={tag} className='bg-primary-500 text-secondaryTextColor rounded-2xl px-3 mt-2 mx-[0.15rem]'>{tag}</div>
+              ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
