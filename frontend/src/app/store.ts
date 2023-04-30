@@ -1,15 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit'
 import modalReducer from '../features/modal/modalSlice'
+import searchReducer from '../features/search/searchSlice'
+import editModalReducer from '../features/editModal/editModalSlice';
 
 export const store = configureStore({
   reducer: {
-    modal: modalReducer
+    modal: modalReducer,
+    search: searchReducer,
+    editModal: editModalReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['modal/openModal'],
-        ignoredPaths: ['modal.modalProps']
+        ignoredActions: ['modal/openModal', 'search/addTag'],
+        ignoredPaths: ['modal.modalProps', 'search.tags']
       },
     }),
 })
