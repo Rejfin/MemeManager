@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import InputField, { InputFieldType } from './InputField';
 
-interface AlertProps {
+export interface IAlertProps {
   title: string;
   text: string;
   positiveButton: {
@@ -19,7 +19,7 @@ interface AlertProps {
   };
 }
 
-const AlertDialog = (props: AlertProps) => {
+const AlertDialog = (props: IAlertProps) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (text: string) => {

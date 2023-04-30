@@ -7,7 +7,7 @@ import api from '../../services/api';
 import Image from '../global/Image';
 import SearchComponent from './SearchComponent';
 
-interface EditMemeDialogProps {
+export interface IEditMemeDialogProps {
   fileId: string;
   src: string;
   width: number;
@@ -17,7 +17,7 @@ interface EditMemeDialogProps {
   onClose: () => void;
 }
 
-const EditMemeDialog = (props: EditMemeDialogProps) => {
+const EditMemeDialog = (props: IEditMemeDialogProps) => {
   const { t } = useTranslation();
   const [tagText, setTagText] = useState('');
   const [tagList, setTagList] = useState<Tag[]>([]);

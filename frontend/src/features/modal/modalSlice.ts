@@ -1,32 +1,40 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IEditMemeDialogProps } from '../../components/files_page/EditMemeDialog';
+import { IUploadMemeModalProps } from '../../components/files_page/UploadMemeDialog';
+import { IAlertProps } from '../../components/global/AlertDialog';
 
 // Define a type for the slice state
 interface IModalState {
-  isOpen: boolean,
-  modal: React.ReactNode | undefined
+  isOpen: boolean;
+  modalProps: IAlertProps | IUploadMemeModalProps | IEditMemeDialogProps;
 }
 
 // Define the initial state using that type
 const initialState: IModalState = {
   isOpen: false,
-  modal: undefined
-}
+  modalProps: {
+    title: '',
+    text: '',
+    positiveButton: {
+      text: 'ok',
+      func: () => {},
+    },
+  },
+};
 
 export const modalSlice = createSlice({
   name: 'modal',
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<React.ReactNode>) => {
-        state.isOpen = true
-        state.modal = action.payload
+    openModal: (state, action: PayloadAction<IAlertProps | IUploadMemeModalProps | IEditMemeDialogProps>) => {
+      return {modalProps: action.payload, isOpen: true}
     },
     closeModal: (state) => {
-        state.isOpen = false
-    }
+      state.isOpen = false;
+    },
   },
-})
+});
 
-export const { openModal, closeModal } = modalSlice.actions
+export const { openModal, closeModal } = modalSlice.actions;
 
-export default modalSlice.reducer
+export default modalSlice.reducer;

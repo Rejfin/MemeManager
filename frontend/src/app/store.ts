@@ -5,6 +5,13 @@ export const store = configureStore({
   reducer: {
     modal: modalReducer
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['modal/openModal'],
+        ignoredPaths: ['modal.modalProps']
+      },
+    }),
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

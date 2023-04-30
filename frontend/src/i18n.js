@@ -45,6 +45,7 @@ i18n.use(initReactI18next).init({
           logIn: 'Log in',
           register: 'Register',
           password: 'Password',
+          errorTitle: 'Authentication Error',
           repeatPassword: 'Repeat password',
           dontHaveAcc: "You don't have an account?",
           createNewAccount: 'Create new',
