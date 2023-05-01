@@ -11,9 +11,9 @@ const ModalHost = () => {
     <>
       {isModalOpen && (
         <div className='fixed flex items-center justify-center w-full h-full bg-textColor bg-opacity-60 z-50'>
-          {'title' in modalProps && <AlertDialog {...(modalProps as IAlertProps)} />}
-          {'onUploadEnds' in modalProps && <UploadMemeDialog {...(modalProps as IUploadMemeModalProps)} />}
-          {'fileId' in modalProps && <EditMemeDialog {...(modalProps as IEditMemeDialogProps)} />}
+          {'title' in modalProps[0] && <AlertDialog {...(modalProps[0] as IAlertProps)} />}
+          {'onUploadEnds' in modalProps[0] && <UploadMemeDialog {...(modalProps[0] as IUploadMemeModalProps)} />}
+          {'fileId' in modalProps[0] && <EditMemeDialog {...(modalProps[0] as IEditMemeDialogProps)} />}
         </div>
       )}
     </>

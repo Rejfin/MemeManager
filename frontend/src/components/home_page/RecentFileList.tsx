@@ -3,7 +3,6 @@ import { Meme } from '../../models/meme.model';
 import { convertSize } from '../../utils/sizeConverter';
 import Image from '../global/Image';
 
-
 export interface FileListProps {
   files: Meme[];
   onFileClick: (file: Meme) => void;
@@ -13,10 +12,11 @@ export interface FileListProps {
  * Crates entry element for list of recent files
  */
 const ListItem = (props: Meme, secondBackground: boolean, onFileClick: (file: Meme) => void) => {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const baseUrl = (window as any).env.API_ADDRESS;
   return (
     <li
-      onClick={()=>onFileClick(props)}
+      onClick={() => onFileClick(props)}
       key={props.id}
       className={
         'grid grid-cols-4 cursor-pointer md:grid-cols-7 py-3 mx-4 content-center content-justify' +
@@ -39,7 +39,7 @@ const ListItem = (props: Meme, secondBackground: boolean, onFileClick: (file: Me
         {props.originalName}
       </div>
       <div className='hidden md:block text-center self-center text-textColor dark:text-textColor-dark'>
-        {new Date(props.uploadDate).toLocaleDateString()}
+        {new Intl.DateTimeFormat(window.navigator.language).format(new Date(props.uploadDate))}
       </div>
       <div className='hidden lg:block text-center self-center text-textColor dark:text-textColor-dark'>
         {convertSize(props.size)}
@@ -50,7 +50,9 @@ const ListItem = (props: Meme, secondBackground: boolean, onFileClick: (file: Me
 
 const RecentFileList = (props: FileListProps) => {
   const { t } = useTranslation();
-  const fileList = props.files?.map((file: Meme, index: number) => ListItem(file, index % 2 === 0, (file: Meme)=> props.onFileClick(file)));
+  const fileList = props.files?.map((file: Meme, index: number) =>
+    ListItem(file, index % 2 === 0, (file: Meme) => props.onFileClick(file)),
+  );
   return (
     <div className='rounded-md bg-backgroundSurface dark:bg-backgroundSurface-dark w-full h-full shadow-md overflow-y-auto'>
       <div className='p-6 text-textColor dark:text-textColor-dark text-lg font-medium'>{t('recentFileList.title')}</div>

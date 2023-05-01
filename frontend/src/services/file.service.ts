@@ -13,12 +13,12 @@ const uploadFile = (file: FormData, progressCallback: (uploadProgress: any) => v
 };
 
 const updateTags = (fileId: string, tags: Tag[]) => {
-  return api.put(`memes/${fileId}`, { tags: tags })
-}
+  return api.put(`memes/${fileId}`, { tags: tags });
+};
 
 const FileService = {
   uploadFile,
-  updateTags
+  updateTags,
 };
 
 export default FileService;

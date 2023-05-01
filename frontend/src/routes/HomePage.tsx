@@ -12,6 +12,7 @@ interface statsData {
 }
 
 const HomePage = () => {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const baseUrl = (window as any).env.API_ADDRESS;
   const dispatch = useAppDispatch();
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -40,24 +41,26 @@ const HomePage = () => {
 
   const fileClickHandler = (file: Meme) => {
     console.dir(file);
-    
-    dispatch(openModal(
-      {
+
+    dispatch(
+      openModal({
         fileId: file.id,
         src: `${baseUrl}/memes/file/${file.id}`,
-        width: file.width!,
-        height: file.height!,
+        width: file.width,
+        height: file.height,
         blurhash: file.blurHash,
         type: file.type,
-        onClose: () => dispatch(closeModal())
-      }
-    ))
+        onClose: () => dispatch(closeModal()),
+      }),
+    );
   };
 
   return (
     <div className='bg-background dark:bg-background-dark grid md:grid-cols-3 lg:grid-cols-4 h-full'>
       <div className='flex md:col-span-2 lg:col-span-3 p-2 max-h-[calc(100vh-1rem)]'>
-        {latestMemes.data && <RecentFileList files={latestMemes.data.rows} onFileClick={(file: Meme)=>fileClickHandler(file)}/>}
+        {latestMemes.data && (
+          <RecentFileList files={latestMemes.data.rows} onFileClick={(file: Meme) => fileClickHandler(file)} />
+        )}
       </div>
       <div className='p-2 flex max-h-[calc(100vh-1rem)]'>
         {stats && (

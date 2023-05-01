@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+      - 'dev-*'
 
 env:
   API_IMAGE_NAME: meme-manager-api

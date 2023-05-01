@@ -16,15 +16,30 @@ export interface IAlertProps {
     onChange?: (value: string) => void;
     inputType?: InputFieldType;
     placeholder?: string;
+    validationFunction?: (text: string) => [boolean, string?];
   };
 }
 
 const AlertDialog = (props: IAlertProps) => {
   const [inputValue, setInputValue] = useState('');
+  const [inputError, setInputError] = useState('');
 
   const handleInputChange = (text: string) => {
     setInputValue(text);
     props.inputField?.onChange?.(text);
+  };
+
+  const handlePositiveClick = () => {
+    if (props.inputField?.validationFunction) {
+      const [isValid, errorText] = props.inputField?.validationFunction?.(inputValue) || [false, 'input error'];
+      if (isValid) {
+        props.positiveButton.func(inputValue);
+      } else {
+        setInputError(errorText || '');
+      }
+    } else {
+      props.positiveButton.func(inputValue);
+    }
   };
 
   return (
@@ -42,6 +57,7 @@ const AlertDialog = (props: IAlertProps) => {
               placeholder={props.inputField.placeholder || ''}
               value={inputValue}
               onChange={handleInputChange}
+              error={inputError}
             />
           </div>
         )}
@@ -55,7 +71,7 @@ const AlertDialog = (props: IAlertProps) => {
             </button>
           )}
           <button
-            onClick={() => props.positiveButton.func(inputValue)}
+            onClick={() => handlePositiveClick()}
             className='w-fit rounded-md bg-primary-600 mb-4 ml-2 py-1 px-9 text-textColor-dark'
           >
             {props.positiveButton.text}
