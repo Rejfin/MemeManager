@@ -69,16 +69,16 @@ const SearchComponent = (props: { className?: string; inEditModal?: boolean }) =
     <div className={`w-full h-full ${props.className}`}>
       <div>
         <InputField
-          disabled={isUnindexed}
+          disabled={isUnindexed && !props.inEditModal}
           id={'search'}
           placeholder={t('files.searchForTags')}
           error={tagErrorText}
           icon={<SearchIcon className='w-6 fill-navigationIconColor' />}
           value={searchText}
-          dataList={tags.tagList.map((t)=>t.name)}
+          dataList={tags.tagList.map((t) => t.name)}
           onChange={(text) => {
             setSearchText(text);
-          }} 
+          }}
           onIconClick={() => onSearch()}
           onEnterClick={() => onSearch()}
         />
@@ -105,9 +105,9 @@ const SearchComponent = (props: { className?: string; inEditModal?: boolean }) =
               searchTags.length > 0 &&
               searchTags.map((tag) => (
                 <div
-                  id={tag.id.toString()}
+                  key={tag.id.toString()}
                   onClick={() => onTagClick(tag)}
-                  className='bg-primary-500 text-secondaryTextColor rounded-2xl px-3 mt-2 mx-[0.15rem]'
+                  className='bg-primary-500 text-secondaryTextColor cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
                 >
                   {tag.name}
                 </div>

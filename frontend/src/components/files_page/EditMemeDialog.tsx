@@ -5,7 +5,6 @@ import { useAppSelector } from '../../app/hooks';
 import { removeEditedTag, setEditedTags, setIsSaving, setOriginalTags } from '../../features/editModal/editModalSlice';
 import useFetch from '../../hooks/useFetch';
 import { Tag } from '../../models/tag.model';
-import api from '../../services/api';
 import FileService from '../../services/file.service';
 import Image from '../global/Image';
 import SearchComponent from './SearchComponent';
@@ -81,7 +80,7 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
   return (
     <div className='min-w-[20rem] min-h-[10rem] w-4/5 max-w-xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md flex flex-col overflow-hidden'>
       <div className='m-6 flex flex-col items-center justify-center'>
-        {props.type.startsWith('image') ? (
+        {props.type.startsWith('image') || !props.type.startsWith('video') ? (
           <Image
             id={props.fileId}
             src={props.src}
@@ -98,12 +97,12 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
         )}
 
         <div className='bg-backgroundSurface-dark dark:bg-background-dark bg-opacity-40 w-full h-[2px] mt-6'></div>
-        <div className='w-full my-2'>
+        <div className='w-full my-2 flex flex-wrap'>
           {editedTags.map((tag) => (
             <div
               onClick={() => dispatch(removeEditedTag(tag))}
               key={tag.id}
-              className='px-2 bg-primary-400 rounded-lg ml-2 mt-2 inline-block cursor-pointer'
+              className='bg-primary-500 text-secondaryTextColor cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
             >
               {tag.name}
             </div>

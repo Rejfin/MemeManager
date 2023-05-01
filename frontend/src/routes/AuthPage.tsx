@@ -28,17 +28,21 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
   }, [searchParams, t]);
 
   useEffect(() => {
-    if(dialogText != ''){
-      dispatch(openModal({
-        title: t('auth.errorTitle'),
-        text: dialogText,
-        positiveButton: {
-          text: t('ok'),
-          func: () => {dispatch(closeModal())}
-        }
-      }))
+    if (dialogText != '') {
+      dispatch(
+        openModal({
+          title: t('auth.errorTitle'),
+          text: dialogText,
+          positiveButton: {
+            text: t('ok'),
+            func: () => {
+              dispatch(closeModal());
+            },
+          },
+        }),
+      );
     }
-  }, [dialogText])
+  }, [dialogText]);
 
   const isLoginFieldValid = (): boolean => {
     if (login.length === 0) {

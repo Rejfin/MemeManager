@@ -31,11 +31,16 @@ const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem('user') || '');
 };
 
+const removeAccount = (password: string) => {
+  return api.delete('/auth/deleteme', { data: { password: password } });
+};
+
 const AuthService = {
   register,
   login,
   logout,
   getCurrentUser,
+  removeAccount,
 };
 
 export default AuthService;

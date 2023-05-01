@@ -8,7 +8,7 @@ import SettingsPage from './routes/SettingsPage';
 import ProfilePage from './routes/ProfilePage';
 import AuthPage from './routes/AuthPage';
 import Button from './components/global/Button';
-import {ReactComponent as Icon} from './assets/icon-files.svg'
+import { ReactComponent as Icon } from './assets/icon-files.svg';
 
 function App() {
   return (
@@ -28,8 +28,7 @@ function App() {
           path='test'
           element={
             <div className='p-5'>
-              <Button icon={<Icon/>}>Test</Button>
-             
+              <Button icon={<Icon />}>Test</Button>
             </div>
           }
         />

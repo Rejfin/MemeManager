@@ -6,20 +6,13 @@ import { IAlertProps } from '../../components/global/AlertDialog';
 // Define a type for the slice state
 interface IModalState {
   isOpen: boolean;
-  modalProps: IAlertProps | IUploadMemeModalProps | IEditMemeDialogProps;
+  modalProps: (IAlertProps | IUploadMemeModalProps | IEditMemeDialogProps)[];
 }
 
 // Define the initial state using that type
 const initialState: IModalState = {
   isOpen: false,
-  modalProps: {
-    title: '',
-    text: '',
-    positiveButton: {
-      text: 'ok',
-      func: () => {},
-    },
-  },
+  modalProps: [],
 };
 
 export const modalSlice = createSlice({
@@ -27,10 +20,14 @@ export const modalSlice = createSlice({
   initialState,
   reducers: {
     openModal: (state, action: PayloadAction<IAlertProps | IUploadMemeModalProps | IEditMemeDialogProps>) => {
-      return {modalProps: action.payload, isOpen: true}
+      state.modalProps.unshift(action.payload);
+      state.isOpen = true;
     },
     closeModal: (state) => {
-      state.isOpen = false;
+      state.modalProps.shift();
+      if (state.modalProps.length == 0) {
+        state.isOpen = false;
+      }
     },
   },
 });

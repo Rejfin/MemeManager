@@ -14,6 +14,7 @@ interface IInputFieldProps {
   dataList?: string[];
   icon?: ReactElement;
   autocomplete?: string;
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   required?: any;
   onEnterClick?: () => void;
   onIconClick?: () => void;
@@ -21,7 +22,7 @@ interface IInputFieldProps {
 
 /**
  * Custom input field that can contains icon and have error handling option
- * @param {IInputFieldProps} props 
+ * @param {IInputFieldProps} props
  * @returns InputField element
  */
 const InputField = (props: IInputFieldProps) => {
@@ -48,11 +49,16 @@ const InputField = (props: IInputFieldProps) => {
           list={`${props.id}-option-list`}
           autoComplete={props.autocomplete || 'off'}
           type={props.inputType || 'text'}
-          className={`border text-base rounded-lg block w-full h-full p-4 dark:text-textColor-dark dark:bg-background-dark ${props.icon && 'pl-11'} ${
+          className={`border text-base rounded-lg block w-full h-full p-4 dark:text-textColor-dark dark:bg-background-dark ${
+            props.icon && 'pl-11'
+          } ${
             props.error
               ? ' border-errorColor placeholder-errorColor focus:outline-errorColor'
               : ' border-inputBorderColor placeholder-inputBorderColor focus:outline-primary-500'
-          } ${props.disabled && 'bg-disableColor bg-opacity-60 border-disableColor border-opacity-30 dark:bg-disableDarkColor dark:bg-opacity-40'} ${props.className}`}
+          } ${
+            props.disabled &&
+            'bg-disableColor bg-opacity-60 border-disableColor border-opacity-30 dark:bg-disableDarkColor dark:bg-opacity-40'
+          } ${props.className}`}
           placeholder={props.placeholder || ''}
           onChange={(element) => props.onChange(element.target.value)}
           value={props.value}
@@ -75,7 +81,5 @@ const InputField = (props: IInputFieldProps) => {
     </div>
   );
 };
-
-
 
 export default InputField;

@@ -69,7 +69,7 @@ i18n.use(initReactI18next).init({
           tagExistOnList: 'tag already exist on list',
           videoNotSupported: 'Video not supported',
           tagDoesNotExist: 'tag does not exist :/',
-          searchForTags: 'search for tags...'
+          searchForTags: 'search for tags...',
         },
         settings: {
           iWantIt: 'Yes I want it',

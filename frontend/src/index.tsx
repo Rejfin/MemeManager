@@ -21,8 +21,8 @@ if (
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-    <ModalHost />
-        <App />
+      <ModalHost />
+      <App />
     </BrowserRouter>
   </Provider>,
 );

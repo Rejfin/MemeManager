@@ -1,7 +1,14 @@
-import { FileListHistoryProps } from '../../utils/fileTypes';
+import { Meme } from '../../models/meme.model';
 import Image from '../global/Image';
 
+export interface FileListHistoryProps {
+  date: Date;
+  files: Meme[];
+  onFileClick?: (fileId: string, src: string, width: number, height: number, type: string, blurhash?: string) => void;
+}
+
 const FileRoll = (props: FileListHistoryProps) => {
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const baseUrl = (window as any).env.API_ADDRESS;
   return (
     <div className='w-full'>
