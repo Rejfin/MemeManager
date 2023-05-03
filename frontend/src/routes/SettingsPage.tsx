@@ -32,6 +32,7 @@ const SettingsPage = () => {
           AuthService.removeAccount(text!)
             .then((data) => {
               if (data.status == 200) {
+                dispatch(closeModal());
                 dispatch(openModal(modalProps));
               } else {
                 modalProps.title = t('somethingWentWrong');
