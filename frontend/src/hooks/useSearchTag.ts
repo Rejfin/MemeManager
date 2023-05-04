@@ -11,7 +11,7 @@ const useSearchTag = (tagName: string) => {
     setTimeout(() => {
       // eslint-disable-next-line  @typescript-eslint/no-explicit-any
       api.get(`/tags?name=${tagName}&limit=5`).then((data: any) => {
-        setTagList(data.data.rows);
+        setTagList(data.data.data.items);
       });
     }, 700);
   }, [tagName]);

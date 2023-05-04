@@ -17,7 +17,6 @@ const FilesPage = () => {
   const isUnindexedList = useAppSelector((state) => state.search.isUnindexed);
 
   const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
-  // const [page, setPage] = useState(0);
   const listInnerRef = useRef<HTMLInputElement | null>(null);
 
   const [url, setUrl] = useState(`/memes?limit=20&page=0&countUnindexed=1&unindexed=0`);
