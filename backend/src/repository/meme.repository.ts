@@ -162,10 +162,10 @@ export class MemeRepository {
       });
       const [memeList, count] = await Promise.all([memes, this.countUnindexed(userId)]);
 
-      return { count: count, rows: memeList, currentPage: 0, nextPage: 0, maxPage: 0 };
+      return { count: count, rows: memeList};
     } catch (err) {
       logger.error(err);
-      return { count: 0, rows: [], currentPage: 0, nextPage: 0, maxPage: 0 };
+      return { count: 0, rows: []};
     }
   }
 

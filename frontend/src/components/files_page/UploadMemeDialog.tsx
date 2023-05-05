@@ -134,7 +134,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
         }
       }).catch((data) => {
         const mFile = file;
-        mFile.error = data.message;
+        mFile.error = data.data.message;
         updateFileOnList(uploadingIndex, mFile);
       });
     }
