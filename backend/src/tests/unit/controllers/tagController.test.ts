@@ -1,5 +1,8 @@
 import { Response } from 'express';
 import { TagController } from '../../../controllers/tag.controller';
+import { ApiResponse } from '../../../models/apiResponse.model';
+import { PaginatedData } from '../../../models/PaginatedData.model';
+import { Tag } from '../../../models/tag.model';
 
 jest.mock('../../../config/logger', () => ({
   warn: jest.fn(),
@@ -36,9 +39,33 @@ beforeEach(() => {
 describe('TagController', () => {
   describe('get tags', () => {
     test('get tags, and return status 200', async () => {
-      mockGetTags.mockReturnValue({ rows: [] });
+      mockGetTags.mockReturnValue({
+        rows: [
+          {
+            id: 1,
+            name: 'test',
+          },
+        ],
+        count: 1,
+      });
       await controller.getTags({ user: { userId: 'asdf-34fef-345t5' }, query: {} }, mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<PaginatedData<{ id: number; name: string }>>(
+          new PaginatedData(
+            [
+              {
+                id: 1,
+                name: 'test',
+              },
+            ],
+            1,
+            0,
+            0,
+            0,
+          ),
+        ),
+      );
     });
   });
 
@@ -47,7 +74,9 @@ describe('TagController', () => {
       mockCreateTag.mockReturnValue({ id: 1, name: 'test' });
       await controller.createTag('test', 'dhbdfg-3455-sdf', mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ id: 1, name: 'test' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<Partial<Tag>>({ id: 1, name: 'test' }, undefined, true),
+      );
     });
 
     test('trying creating tag without name, return status 400', async () => {
@@ -55,27 +84,29 @@ describe('TagController', () => {
       mockCreateTag.mockReturnValue(null);
       await controller.createTag(tagName, 'dhbdfg-3455-sdf', mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        message: `No new tag named ${tagName} was created`,
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, `No new tag named ${tagName} was created`, false),
+      );
     });
   });
 
   describe('remove tag', () => {
     test('sucessfully remove tag, return status 200', async () => {
-      mockRemoveTag.mockReturnValue({ id: 1, name: 'test' });
+      mockRemoveTag.mockReturnValue(1);
       await controller.removeTag(1, 'sdfgdg-3453-45sdf', mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ id: 1, name: 'test' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(1, 'Tag successfully removed', true),
+      );
     });
 
     test('unsucessfully remove tag, return status 400', async () => {
       mockRemoveTag.mockReturnValue(null);
       await controller.removeTag(1, 'sdfgdg-3453-45sdf', mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        message: 'There was a problem while deleting the tag',
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'There was a problem while deleting the tag', false),
+      );
     });
   });
 });

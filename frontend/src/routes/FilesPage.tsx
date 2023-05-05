@@ -17,15 +17,13 @@ const FilesPage = () => {
   const isUnindexedList = useAppSelector((state) => state.search.isUnindexed);
 
   const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
-  // const [page, setPage] = useState(0);
   const listInnerRef = useRef<HTMLInputElement | null>(null);
 
-  const [url, setUrl] = useState(`/memes?limit=20&page=0&countUnindexed=1&unindexed=0`);
+  const [url, setUrl] = useState(`/memes?limit=20&page=0&unindexed=0`);
 
   const urlParams = new Map<string, string>();
   urlParams.set('limit', '20');
   urlParams.set('page', '0');
-  urlParams.set('countUnindexed', '1');
   urlParams.set('unindexed', '0');
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -33,9 +31,7 @@ const FilesPage = () => {
 
   const updateUrl = (forceRefresh = false) => {
     setUrl(
-      `/memes?limit=${urlParams.get('limit')}&page=${urlParams.get('page')}&countUnindexed=${urlParams.get(
-        'countUnindexed',
-      )}&unindexed=${isUnindexedList ? '1' : '0'}${
+      `/memes?limit=${urlParams.get('limit')}&page=${urlParams.get('page')}&unindexed=${isUnindexedList ? '1' : '0'}${
         searchTags.length > 0 && !isUnindexedList ? `&tags=${searchTags.map((x) => x.id).join(',')}` : ''
       }${forceRefresh ? `&f=${Math.random() * 10000}` : ''}`,
     );
@@ -72,8 +68,10 @@ const FilesPage = () => {
    * creates a list of files to be displayed by date
    */
   useEffect(() => {
-    if (latestMemes.data != null && latestMemes.data.rows != null) {
-      latestMemes.data.rows.forEach((meme: Meme) => {
+    console.log(latestMemes.data);
+    
+    if (latestMemes.isPending === false && latestMemes.data.isSuccess === true && latestMemes.data.data.items != null) {
+      latestMemes.data.data.items.forEach((meme: Meme) => {
         if (!listOfFiles.has(new Date(meme.modifiedDate).toDateString())) {
           listOfFiles.set(new Date(meme.modifiedDate).toDateString(), []);
         }
@@ -85,10 +83,6 @@ const FilesPage = () => {
         }
       });
       setListOfFiles(new Map(listOfFiles));
-
-      if (latestMemes.data.unindexedAmount != null) {
-        //setUnindexedCount(latestMemes.data.unindexedAmount);
-      }
     }
     // eslint-disable-next-line
   }, [latestMemes.data]);
@@ -122,7 +116,7 @@ const FilesPage = () => {
           const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
           if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
             urlParams.set('unindexed', isUnindexedList ? '1' : '0');
-            urlParams.set('page', latestMemes.data.nextPage);
+            urlParams.set('page', latestMemes.data.data.nextPage);
             updateUrl();
           }
         }

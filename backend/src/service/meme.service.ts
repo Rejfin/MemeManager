@@ -35,10 +35,6 @@ export class MemeService {
     return await this.memeRepository.getMeme(memeId, userId);
   }
 
-  async getUnindexedAmount(userId: string) {
-    return await this.memeRepository.countUnindexed(userId);
-  }
-
   async updateMeme(userId: string, memeId: string, tags: Tag[]) {
     return await this.memeRepository.updateMeme(userId, memeId, tags);
   }

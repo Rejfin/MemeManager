@@ -16,7 +16,7 @@ const HomePage = () => {
   const baseUrl = (window as any).env.API_ADDRESS;
   const dispatch = useAppDispatch();
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const latestMemes: { error: string; isPending: boolean; data: any } = useFetch('/memes?limit=10&page=0&latest=1');
+  const latestMemes: { error: string; isPending: boolean; data: any } = useFetch('/memes?latest=1');
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const statsData: { data: any; isPending: boolean; error: string } = useFetch('memes/stats');
@@ -28,14 +28,14 @@ const HomePage = () => {
       let sizeTotal = 0;
       let countTotal = 0;
 
-      Object.keys(statsData.data['sizes']).forEach((key: string) => {
-        sizeTotal = sizeTotal + statsData.data['sizes'][key];
-        countTotal = countTotal + statsData.data['counts'][key];
+      Object.keys(statsData.data.data['sizes']).forEach((key: string) => {
+        sizeTotal = sizeTotal + statsData.data.data['sizes'][key];
+        countTotal = countTotal + statsData.data.data['counts'][key];
       });
 
-      statsData.data['sizes'].total = sizeTotal;
-      statsData.data['counts'].total = countTotal;
-      setStats(statsData.data);
+      statsData.data.data['sizes'].total = sizeTotal;
+      statsData.data.data['counts'].total = countTotal;
+      setStats(statsData.data.data);
     }
   }, [statsData.data]);
 
@@ -59,7 +59,7 @@ const HomePage = () => {
     <div className='bg-background dark:bg-background-dark grid md:grid-cols-3 lg:grid-cols-4 h-full'>
       <div className='flex md:col-span-2 lg:col-span-3 p-2 max-h-[calc(100vh-1rem)]'>
         {latestMemes.data && (
-          <RecentFileList files={latestMemes.data.rows} onFileClick={(file: Meme) => fileClickHandler(file)} />
+          <RecentFileList files={latestMemes.data.data.items} onFileClick={(file: Meme) => fileClickHandler(file)} />
         )}
       </div>
       <div className='p-2 flex max-h-[calc(100vh-1rem)]'>

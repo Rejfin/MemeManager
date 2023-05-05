@@ -15,8 +15,8 @@ const login = (login: string, password: string) => {
       password: password,
     })
     .then((response) => {
-      if (response.data.token) {
-        TokenService.setUser(response.data);
+      if(response.data.isSuccess){
+        TokenService.setUser(response.data.data);
       }
 
       return response.data;

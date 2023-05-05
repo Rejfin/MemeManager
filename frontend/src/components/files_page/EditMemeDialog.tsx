@@ -34,9 +34,9 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
    * set list of tags when they are available
    */
   useEffect(() => {
-    if (!memeData.isPending && memeData.data.tags) {
-      dispatch(setOriginalTags(memeData.data.tags));
-      dispatch(setEditedTags(memeData.data.tags));
+    if (!memeData.isPending && memeData.data.data.tags) {
+      dispatch(setOriginalTags(memeData.data.data.tags));
+      dispatch(setEditedTags(memeData.data.data.tags));
     }
   }, [memeData.data, memeData.isPending]);
 
@@ -55,8 +55,8 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
     } else {
       dispatch(setIsSaving(true));
       FileService.updateTags(props.fileId, editedTags).then((data) => {
-        dispatch(setOriginalTags(data.data.tags));
-        dispatch(setEditedTags(data.data.tags));
+        dispatch(setOriginalTags(data.data.data.tags));
+        dispatch(setEditedTags(data.data.data.tags));
         dispatch(setIsSaving(false));
       });
     }
