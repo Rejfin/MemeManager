@@ -51,8 +51,8 @@ export default {
         dark: "#F0F0F0"
       },
       secondaryTextColor:{
-        DEFAULT: "#F3F3F3",
-        dark: "#383838"
+        DEFAULT: "#A5A5A5",
+        dark: "#979797"
       },
       videoColor:"#fcd31a",
       gifsColor:"#46e4ff",

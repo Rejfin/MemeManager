@@ -141,4 +141,17 @@ export class AuthController {
       res.json(response);
     }
   }
+
+  async cleanAccount(req: { body: { password: string }; user: { userId: string } }, res: Response) {
+    const response = new ApiResponse<[PromiseSettledResult<number>, PromiseSettledResult<number>]>();
+    const data = await this.authService.cleanAccount(req.user.userId, req.body.password);
+    if (data == null) {
+      response.isSuccess = false;
+      response.message = '';
+    } else {
+      response.data = data;
+    }
+    res.status(200);
+    res.json(response);
+  }
 }

@@ -34,7 +34,6 @@ export class MemeController {
     res: Response,
   ) {
     const response = new ApiResponse<PaginatedData<Meme>>();
-
     const userId = req.user.userId;
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
@@ -44,6 +43,14 @@ export class MemeController {
     //change string to numbers
     page = page * 1;
     limit = limit * 1;
+
+    if (isNaN(page)) {
+      page = 0;
+    }
+
+    if (isNaN(limit)) {
+      limit = 10;
+    }
 
     let memeList: { count: number; rows: Meme[] };
 

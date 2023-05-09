@@ -3,18 +3,27 @@ import { RefreshToken } from '../models/refreshToken.model';
 import { User } from '../models/user.model';
 import bcrypt from 'bcrypt';
 import logger from '../config/logger';
+import { MemeRepository } from './meme.repository';
+import { TagRepository } from './tag.repository';
+import { Repository } from 'sequelize-typescript';
+import { Meme } from '../models/meme.model';
+import { Tag } from '../models/tag.model';
 
 export class AuthRepository {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   private db: any = {};
-  private authRespository: any;
-  private tokenRepository: any;
+  private authRespository: Repository<User>;
+  private tokenRepository: Repository<RefreshToken>;
+  private memeRepository: Repository<Meme>;
+  private tagRepository: Repository<Tag>;
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   constructor() {
     this.db = connect();
     this.authRespository = this.db.sequelize.getRepository(User);
     this.tokenRepository = this.db.sequelize.getRepository(RefreshToken);
+    this.memeRepository = this.db.sequelize.getRepository(Meme);
+    this.tagRepository = this.db.sequelize.getRepository(Tag);
   }
 
   async registerUser(user: { login: string; password: string }) {
@@ -55,7 +64,7 @@ export class AuthRepository {
     try {
       const user = await this.authRespository.findOne({ where: { id: userId } });
       const mToken = await this.tokenRepository.create({ token: token, userId: userId });
-      user.$add('tokens', mToken.id);
+      user!.$add('tokens', mToken.id);
       return true;
     } catch (err) {
       logger.error(err);
@@ -63,7 +72,7 @@ export class AuthRepository {
     }
   }
 
-  async findRefreshToken(token: string): Promise<string | null> {
+  async findRefreshToken(token: string): Promise<RefreshToken | null> {
     try {
       return await this.tokenRepository.findOne({ where: { token: token } });
     } catch (err) {
@@ -75,7 +84,7 @@ export class AuthRepository {
   async signOutUser(token: string) {
     try {
       const rToken = await this.tokenRepository.findOne({ where: { token: token } });
-      await rToken.destroy();
+      await rToken!.destroy();
     } catch (err) {
       logger.error(err);
     }
@@ -97,6 +106,30 @@ export class AuthRepository {
     } catch (err) {
       logger.error(err);
       return false;
+    }
+  }
+
+  async cleanAccount(
+    userId: string,
+    password: string,
+  ): Promise<[PromiseSettledResult<number>, PromiseSettledResult<number>] | null> {
+    try {
+      const mUser = await this.authRespository.findOne({ where: { id: userId } });
+      if (mUser) {
+        const isPassOk = await bcrypt.compare(password, mUser.password);
+        if (isPassOk) {
+          return await Promise.allSettled([
+            this.memeRepository.destroy({ where: { userId: userId } }),
+            this.tagRepository.destroy({ where: { userId: userId } }),
+          ]);
+        } else {
+          return null;
+        }
+      }
+      return null;
+    } catch (err) {
+      logger.error(err);
+      return null;
     }
   }
 }

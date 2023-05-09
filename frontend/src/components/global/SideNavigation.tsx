@@ -5,7 +5,6 @@ import Logo from '../../assets/logo.webp';
 import { ReactComponent as Control } from '../../assets/icon-control-navigation.svg';
 import { ReactComponent as DashboardIcon } from '../../assets/icon-dashboard.svg';
 import { ReactComponent as SettingsIcon } from '../../assets/icon-settings.svg';
-import { ReactComponent as ProfileIcon } from '../../assets/icon-profile.svg';
 import { ReactComponent as LogoutIcon } from '../../assets/icon-logout.svg';
 import { ReactComponent as FilesIcon } from '../../assets/icon-files.svg';
 import { ReactComponent as DarkModeIcon } from '../../assets/icon-dark-mode.svg';
@@ -76,11 +75,6 @@ const SideNavigation = () => {
       title: t('navigation.files'),
       icon: FilesIcon,
       path: 'files',
-    } as NavEntry,
-    {
-      title: t('navigation.profile'),
-      icon: ProfileIcon,
-      path: 'profile',
     } as NavEntry,
     {
       title: t('navigation.settings'),

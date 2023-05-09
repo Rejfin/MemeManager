@@ -57,7 +57,7 @@ const InputField = (props: IInputFieldProps) => {
               : ' border-inputBorderColor placeholder-inputBorderColor focus:outline-primary-500'
           } ${
             props.disabled &&
-            'bg-disableColor bg-opacity-60 border-disableColor border-opacity-30 dark:bg-disableDarkColor dark:bg-opacity-40'
+            'bg-disableColor bg-opacity-60 border-disableColor border-opacity-30 dark:bg-disableDarkColor dark:bg-opacity-30'
           } ${props.className}`}
           placeholder={props.placeholder || ''}
           onChange={(element) => props.onChange(element.target.value)}

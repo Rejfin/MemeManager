@@ -102,7 +102,7 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
             <div
               onClick={() => dispatch(removeEditedTag(tag))}
               key={tag.id}
-              className='bg-primary-500 text-secondaryTextColor cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
+              className='bg-primary-500 text-textColor-dark cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
             >
               {tag.name}
             </div>
