@@ -53,7 +53,7 @@ const FilesPage = () => {
               (scrollTop + clientHeight) / scrollHeight >= 0.9)
           ) {
             if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
-              urlParams.set('page', latestMemes.data.nextPage.toString());
+              urlParams.set('page', latestMemes.data.nextPage);
               updateUrl();
             }
           }
@@ -68,8 +68,6 @@ const FilesPage = () => {
    * creates a list of files to be displayed by date
    */
   useEffect(() => {
-    console.log(latestMemes.data);
-    
     if (latestMemes.isPending === false && latestMemes.data.isSuccess === true && latestMemes.data.data.items != null) {
       latestMemes.data.data.items.forEach((meme: Meme) => {
         if (!listOfFiles.has(new Date(meme.modifiedDate).toDateString())) {
@@ -172,7 +170,7 @@ const FilesPage = () => {
           {t('files.addMeme')}
         </Button>
       </div>
-      <div className='h-[calc(100%-3.5rem)] w-full overflow-y-auto flex-row' ref={listInnerRef} onScroll={onListScroll}>
+      <div className='h-[calc(100%-6rem)] w-full overflow-y-auto flex-row' ref={listInnerRef} onScroll={onListScroll}>
         {latestMemes.isPending && listOfFiles.size === 0 ? (
           <div className='h-[calc(100%-3.5rem)] w-full'>
             <div className='h-[calc(100%-3.5rem)] w-full'>

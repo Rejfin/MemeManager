@@ -47,7 +47,7 @@ const AlertDialog = (props: IAlertProps) => {
       <div className='min-w-[20rem] min-h-[10rem] max-w-xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md flex flex-col overflow-hidden'>
         <div className='m-6 flex flex-col items-center'>
           <h2 className='text-2xl text-textColor dark:text-textColor-dark text-center'>{props.title}</h2>
-          <p className='text-textColor dark:text-textColor-dark my-4 text-center'>{props.text}</p>
+          <p className='text-textColor dark:text-textColor-dark my-4 text-center whitespace-pre-line'>{props.text}</p>
         </div>
         {props.inputField && (
           <div className='w-full flex justify-center px-4 pb-4'>

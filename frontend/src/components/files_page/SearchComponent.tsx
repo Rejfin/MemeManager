@@ -7,6 +7,7 @@ import { addTag, removeTag, switchIndexedList } from '../../features/search/sear
 import useSearchTag from '../../hooks/useSearchTag';
 import { Tag } from '../../models/tag.model';
 import InputField from '../global/InputField';
+import ToggleButton from '../global/ToggleButton';
 
 const SearchComponent = (props: { className?: string; inEditModal?: boolean }) => {
   const { t } = useTranslation();
@@ -85,17 +86,7 @@ const SearchComponent = (props: { className?: string; inEditModal?: boolean }) =
         <div className='flex-col h-fit w-full pt-2'>
           {!props.inEditModal && (
             <div className='flex items-center'>
-              <label className='relative inline-block w-10 h-5'>
-                <input
-                  className='hidden peer'
-                  type='checkbox'
-                  checked={isUnindexed}
-                  onChange={() => {
-                    dispatch(switchIndexedList());
-                  }}
-                />
-                <span className='absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#ccc] duration-300 before:absolute before:h-3 before:w-3 before:left-1 before:bottom-1 before:bg-[white] before:duration-300 peer-checked:bg-primary-500 peer-focus:shadow-md peer-checked:before:translate-x-5 rounded-[34px] before:rounded-[50%]'></span>
-              </label>
+              <ToggleButton isChecked={isUnindexed} onChange={() => dispatch(switchIndexedList())} />
               <p className='ps-3 text-textColor dark:text-textColor-dark'>{t('files.unindexed')}</p>
             </div>
           )}
@@ -107,7 +98,7 @@ const SearchComponent = (props: { className?: string; inEditModal?: boolean }) =
                 <div
                   key={tag.id.toString()}
                   onClick={() => onTagClick(tag)}
-                  className='bg-primary-500 text-secondaryTextColor cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
+                  className='bg-primary-500 text-textColor-dark cursor-pointer rounded-2xl px-3 mt-2 mx-[0.15rem]'
                 >
                   {tag.name}
                 </div>

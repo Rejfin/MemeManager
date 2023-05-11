@@ -62,6 +62,10 @@ class App {
       },
     );
 
+    this.express.delete('/api/auth/clear', [authMiddleware, validatorMiddleware(['password'])], (req:any, res: any) => {
+      this.authController.cleanAccount(req, res);
+    })
+
     this.express.get('/api/tags', authMiddleware, (req: any, res) => {
       this.tagController.getTags(req, res);
     });

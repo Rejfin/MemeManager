@@ -35,12 +35,17 @@ const removeAccount = (password: string) => {
   return api.delete('/auth/deleteme', { data: { password: password } });
 };
 
+const clearAccount = (password: string) => {
+  return api.delete('/auth/clear', {data: {password: password}});
+}
+
 const AuthService = {
   register,
   login,
   logout,
   getCurrentUser,
   removeAccount,
+  clearAccount
 };
 
 export default AuthService;
