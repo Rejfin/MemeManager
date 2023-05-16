@@ -53,7 +53,7 @@ instance.interceptors.response.use(
     } else if (err.code === 'ERR_NETWORK' && originalConfig.url !== '/auth/signin') {
       window.location.href = `login`;
     }
-
+    
     return Promise.reject(err);
   },
 );

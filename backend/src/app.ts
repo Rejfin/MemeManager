@@ -33,7 +33,13 @@ class App {
   private middleware(): void {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
-    this.express.use(cors());
+
+    var corsOptions = {
+      origin: '*',
+      optionsSuccessStatus: 200
+    }
+
+    this.express.use(cors(corsOptions));
     this.express.use(loggerMiddleware);
   }
 
