@@ -35,7 +35,7 @@ jobs:
             ghcr.io/rejfin/${{ env.API_IMAGE_NAME }}
           tags: |
             type=ref,event=tag
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=raw,value=latest,enable=${{ github.event.repository.default_branch == 'main'}}
 
       - name: Build API docker image
         uses: docker/build-push-action@v4
@@ -76,7 +76,7 @@ jobs:
             ghcr.io/rejfin/${{ env.UI_IMAGE_NAME }}
           tags: |
             type=ref,event=tag
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=raw,value=latest,enable=${{ github.event.repository.default_branch == 'main'}}
 
       - name: Build UI docker image
         uses: docker/build-push-action@v4
