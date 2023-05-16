@@ -1,5 +1,8 @@
 import { Response } from 'express';
 import { MemeController } from '../../../controllers/meme.controller';
+import { ApiResponse } from '../../../models/apiResponse.model';
+import { Meme } from '../../../models/meme.model';
+import { PaginatedData } from '../../../models/PaginatedData.model';
 
 jest.mock('../../../config/logger', () => ({
   warn: jest.fn(),
@@ -44,24 +47,28 @@ beforeEach(() => {
 describe('MemeController', () => {
   describe('get memes', () => {
     test('get memes, and return status 200', async () => {
-      mockGetMemes.mockReturnValue({ rows: [] });
+      mockGetMemes.mockReturnValue({ rows: [{}], count: 1 });
       await controller.getMemes({ user: { userId: 'asdf-34fef-345t5' }, query: {} }, mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect(mockGetMemes).toBeCalled();
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<PaginatedData<Meme>>(new PaginatedData([{} as Meme], 1, 0, 0, 0)),
+      );
     });
 
     test('get unindexed memes, and return status 200', async () => {
       const userId = 'sdfsdf-234345-sdfsdf';
       const page = 0;
       const limit = 25;
-      mockGetMemes.mockReturnValue({ count: 0, rows: [], currentPage: 0, nextPage: 0, maxPage: 0 });
-      mockGetUnindexedMemes.mockReturnValue({ count: 0, rows: [], currentPage: 0, nextPage: 0, maxPage: 0 });
+      mockGetUnindexedMemes.mockReturnValue({ rows: [{}, {}], count: 2 });
       await controller.getMemes(
         { user: { userId: userId }, query: { unindexed: '1', limit: limit, page: page } },
         mockResponse,
       );
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
       expect(mockGetUnindexedMemes).toBeCalledWith(userId, limit, page);
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<PaginatedData<Meme>>(new PaginatedData([{} as Meme, {} as Meme], 2, 0, 0, 0)),
+      );
     });
   });
 
@@ -99,7 +106,9 @@ describe('MemeController', () => {
       mockCreateMeme.mockReturnValue(null);
       await controller.createMeme({ user: { userId: 'asdasd' } } as any, mockResponse);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ message: 'Meme could not be created' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<Meme>(undefined, 'Meme could not be created', false),
+      );
     });
   });
 
@@ -119,15 +128,21 @@ describe('MemeController', () => {
         mockResponse,
       );
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        id: 'asda-123-asd3w-d',
-        name: 'test',
-        size: 43.33,
-        type: 'image/jpg',
-        blurHash: 'sdfjg58uhgndfjk',
-        height: 1200,
-        width: 1800,
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse<Meme>(
+          {
+            id: 'asda-123-asd3w-d',
+            name: 'test',
+            size: 43.33,
+            type: 'image/jpg',
+            blurHash: 'sdfjg58uhgndfjk',
+            height: 1200,
+            width: 1800,
+          } as Meme,
+          undefined,
+          true,
+        ),
+      );
     });
 
     test('try to get data of meme with invalid params, return status 400', async () => {
@@ -137,9 +152,9 @@ describe('MemeController', () => {
         mockResponse,
       );
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        message: 'Could not retrive meme data',
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'Could not retrive meme data', false),
+      );
     });
   });
 
@@ -152,15 +167,15 @@ describe('MemeController', () => {
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
     });
 
-    test('get statistics with invalid user id, return status 200', async () => {
+    test('get statistics with invalid user id, return status 400', async () => {
       const userId = 'asdasd-123234-asda';
       mockGetStatistics.mockReturnValue(null);
       await controller.getStatistics(userId, mockResponse);
       expect(mockGetStatistics).toBeCalledWith(userId);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        message: 'statistics were not successfully retrived',
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'statistics were not successfully retrived', false),
+      );
     });
   });
 
@@ -172,7 +187,9 @@ describe('MemeController', () => {
       await controller.removeMeme(memeId, userId, mockResponse);
       expect(mockRemoveMeme).toBeCalledWith(memeId, userId);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ message: 'Meme sucessfully deleted' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'Meme sucessfully deleted', true),
+      );
     });
 
     test('sucessfully remove meme (video), return status 200', async () => {
@@ -182,7 +199,9 @@ describe('MemeController', () => {
       await controller.removeMeme(memeId, userId, mockResponse);
       expect(mockRemoveMeme).toBeCalledWith(memeId, userId);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(200);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ message: 'Meme sucessfully deleted' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'Meme sucessfully deleted', true),
+      );
     });
 
     test('unsucessfully remove meme (image), return status 400', async () => {
@@ -192,7 +211,9 @@ describe('MemeController', () => {
       await controller.removeMeme(memeId, userId, mockResponse);
       expect(mockRemoveMeme).toBeCalledWith(memeId, userId);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({ message: 'Failed to delete meme' });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'Failed to delete meme', false),
+      );
     });
 
     test('unsucessfully remove meme (video), return status 400', async () => {
@@ -202,9 +223,9 @@ describe('MemeController', () => {
       await controller.removeMeme(memeId, userId, mockResponse);
       expect(mockRemoveMeme).toBeCalledWith(memeId, userId);
       expect((mockResponse.status as jest.Mock).mock.calls[0][0]).toBe(400);
-      expect((mockResponse.send as jest.Mock).mock.calls[0][0]).toStrictEqual({
-        message: 'Failed to delete meme file or its thumbnail',
-      });
+      expect((mockResponse.json as jest.Mock).mock.calls[0][0]).toStrictEqual(
+        new ApiResponse(undefined, 'Failed to delete meme file or its thumbnail', false),
+      );
     });
   });
 });

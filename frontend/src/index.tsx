@@ -1,17 +1,10 @@
-/* eslint no-var: 0 */
-declare global {
-  var DIR_ROOT: string;
-}
-
-global.DIR_ROOT = __dirname;
-
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { ModalProvider } from './utils/ModalProvider';
 import ModalHost from './utils/ModalHost';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -26,15 +19,10 @@ if (
 }
 
 root.render(
-  <BrowserRouter>
-    <ModalProvider>
+  <Provider store={store}>
+    <BrowserRouter>
       <ModalHost />
       <App />
-    </ModalProvider>
-  </BrowserRouter>,
+    </BrowserRouter>
+  </Provider>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

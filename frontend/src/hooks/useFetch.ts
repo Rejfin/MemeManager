@@ -2,10 +2,10 @@ import { AxiosResponse } from 'axios';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 
-const useFetch = (url: string) => {
-  const [data, setData] = useState(null);
+const useFetch = <Type>(url: string) => {
+  const [data, setData] = useState<Type | undefined>(undefined);
   const [isPending, setIsPending] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setIsPending(true);
@@ -14,7 +14,7 @@ const useFetch = (url: string) => {
       .then((data: AxiosResponse) => {
         setData(data.data);
         setIsPending(false);
-        setError(null);
+        setError('');
       })
       .catch((err) => {
         setError(err.message);

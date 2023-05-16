@@ -4,11 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 import { useEffect, useState } from 'react';
-import AlertDialog from '../components/global/AlertDialog';
+import { useAppDispatch } from '../app/hooks';
+import { closeModal, openModal } from '../features/modal/modalSlice';
 
 const AuthPage = (props: { isRegisterPage: boolean }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const [searchParams] = useSearchParams();
   const [login, setLogin] = useState('');
@@ -17,13 +19,30 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
   const [passwordError, setPasswordError] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [repeatPasswordError, setRepeatPasswordError] = useState('');
-  const [dialogText, setDialogText] = useState('');
+  const [dialogText, setDialogText] = useState<string>('');
 
   useEffect(() => {
     if (searchParams.get('expired_auth') !== null) {
       setDialogText(t('auth.sessionExpired') || '');
     }
   }, [searchParams, t]);
+
+  useEffect(() => {
+    if (dialogText != '') {
+      dispatch(
+        openModal({
+          title: t('auth.errorTitle'),
+          text: dialogText,
+          positiveButton: {
+            text: t('ok'),
+            func: () => {
+              dispatch(closeModal());
+            },
+          },
+        }),
+      );
+    }
+  }, [dialogText]);
 
   const isLoginFieldValid = (): boolean => {
     if (login.length === 0) {
@@ -112,21 +131,6 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
 
   return (
     <div className='flex flex-col items-center justify-center h-full w-full'>
-      {/* Alert Dialog */}
-      {(dialogText || (dialogText && !props.isRegisterPage && searchParams.get('expired_auth') !== null)) && (
-        <AlertDialog
-          title={'Authentication Error'}
-          text={dialogText}
-          positiveButton={{
-            text: 'OK',
-            func: () => {
-              setDialogText('');
-            },
-          }}
-        />
-      )}
-
-      {/* Main Page */}
       <div className='flex flex-col items-center w-full h-fit md:w-4/5 md:h-fit md:max-w-3xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4'>
         <div className='flex items-center justify-center'>
           <img src={Logo} alt='Logo' className='rounded-full' />
@@ -151,7 +155,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           <InputField
             id='password'
             inputType={'password'}
-            placeholder={t('auth.password')}
+            placeholder={t('auth.password') || ''}
             value={password}
             error={passwordError}
             onChange={(value) => {
@@ -163,7 +167,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
               <InputField
                 id='repeatedPassword'
                 inputType={'password'}
-                placeholder={t('auth.repeatPassword')}
+                placeholder={t('auth.repeatPassword') || ''}
                 value={repeatPassword}
                 error={repeatPasswordError}
                 onChange={(value) => {

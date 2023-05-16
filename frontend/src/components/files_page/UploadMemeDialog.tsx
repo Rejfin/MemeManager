@@ -4,7 +4,7 @@ import { ReactComponent as RemoveIcon } from '../../assets/icon-delete.svg';
 import FileService from '../../services/file.service';
 import { useTranslation } from 'react-i18next';
 
-interface UploadMemeModalProps {
+export interface IUploadMemeModalProps {
   negativeButton: {
     text: string;
     func: () => void;
@@ -18,7 +18,7 @@ interface FileToUpload {
   error?: '';
 }
 
-const UploadMemeDialog = (props: UploadMemeModalProps) => {
+const UploadMemeDialog = (props: IUploadMemeModalProps) => {
   const inputFile = useRef<HTMLInputElement | null>(null);
   const [fileToUploadList, setFileToUploadList] = useState<FileToUpload[]>([]);
   const [dragActive, setDragActive] = useState(false);
@@ -134,7 +134,7 @@ const UploadMemeDialog = (props: UploadMemeModalProps) => {
         }
       }).catch((data) => {
         const mFile = file;
-        mFile.error = data.message;
+        mFile.error = data.data.message;
         updateFileOnList(uploadingIndex, mFile);
       });
     }

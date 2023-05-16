@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import logger from '../config/logger';
+import { ApiResponse } from '../models/apiResponse.model';
 import { Meme } from '../models/meme.model';
+import { PaginatedData } from '../models/PaginatedData.model';
 import { Tag } from '../models/tag.model';
 import { MemeService } from '../service/meme.service';
 
@@ -24,7 +26,6 @@ export class MemeController {
       query: {
         limit?: number;
         page?: number;
-        countUnindexed?: string;
         unindexed?: string;
         latest?: number;
         tags?: string;
@@ -32,6 +33,7 @@ export class MemeController {
     },
     res: Response,
   ) {
+    const response = new ApiResponse<PaginatedData<Meme>>();
     const userId = req.user.userId;
     let limit = req.query.limit || 10;
     let page = req.query.page || 0;
@@ -42,59 +44,45 @@ export class MemeController {
     page = page * 1;
     limit = limit * 1;
 
-    let memesList: {
-      count: number;
-      rows: Meme[];
-      currentPage: number;
-      nextPage: number;
-      maxPage: number;
-      unindexedAmount?: number;
-    } = {
-      count: 0,
-      rows: [],
-      currentPage: 0,
-      nextPage: 0,
-      maxPage: 0,
-      unindexedAmount: 0,
-    };
+    if (isNaN(page)) {
+      page = 0;
+    }
 
-    // create list of database query based on request query
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    const promisesList: Promise<any>[] = [];
+    if (isNaN(limit)) {
+      limit = 10;
+    }
+
+    let memeList: { count: number; rows: Meme[] };
 
     if (req.query.unindexed === '1') {
-      promisesList.push(this.memeService.getUnindexedMemes(userId, limit, page));
+      memeList = await this.memeService.getUnindexedMemes(userId, limit, page);
     } else {
-      promisesList.push(this.memeService.getMemes(userId, limit, page, latest, tagsList));
+      memeList = await this.memeService.getMemes(userId, limit, page, latest, tagsList);
     }
 
-    if (req.query.countUnindexed === '1') {
-      promisesList.push(this.memeService.getUnindexedAmount(userId));
+    // maxPage return not entire maxPage, it return maxPage based on current loaded data
+    const maxPage = memeList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memeList.count / limit) - 1;
+
+    logger.info(
+      `User with id: ${userId} retrieved a list of memes (page: ${page}/${maxPage}, amount: ${memeList.count}/${limit})`,
+    );
+
+    response.data = new PaginatedData(
+      memeList.rows,
+      memeList.count,
+      page,
+      maxPage,
+      Math.ceil(memeList.count / limit) - 1,
+    );
+    if (response.data.maxPage < 0) {
+      response.data.maxPage = 0;
+    }
+    if (response.data.nextPage < 0) {
+      response.data.nextPage = 0;
     }
 
-    // wait for all promisess, then construct object and return it
-    return await Promise.all(promisesList).then((results) => {
-      memesList = results[0];
-      memesList.currentPage = page;
-      memesList.nextPage = memesList.count - (page + 1) * limit > 0 ? page + 1 : Math.ceil(memesList.count / limit) - 1;
-      memesList.maxPage = Math.ceil(memesList.count / limit) - 1;
-      if (memesList.maxPage < 0) {
-        memesList.maxPage = 0;
-      }
-      if (memesList.nextPage < 0) {
-        memesList.nextPage = 0;
-      }
-      if (promisesList.length > 0) {
-        memesList.unindexedAmount = results[1];
-      } else {
-        delete memesList.unindexedAmount;
-      }
-      logger.info(
-        `User with id: ${userId} retrieved a list of memes (page: ${page}/${memesList.maxPage}, amount: ${memesList.rows.length}/${limit})`,
-      );
-      res.status(200);
-      res.send(memesList);
-    });
+    res.status(200);
+    res.json(response);
   }
 
   /**
@@ -120,6 +108,7 @@ export class MemeController {
     },
     res: Response,
   ) {
+    const response = new ApiResponse<Meme>();
     try {
       const fileData = {
         userId: req.user.userId,
@@ -138,17 +127,22 @@ export class MemeController {
       const meme = await this.memeService.createMeme(fileData);
       if (meme) {
         logger.info(`New meme created by user with id: ${req.user.userId}`);
+        response.data = meme;
         res.status(200);
-        res.send(meme);
+        res.json(response);
       } else {
         logger.warn(`Meme could not be created`);
+        response.isSuccess = false;
+        response.message = 'Meme could not be created';
         res.status(400);
-        res.send({ message: 'Meme could not be created' });
+        res.json(response);
       }
     } catch (err) {
       logger.warn(`Meme could not be created`);
+      response.isSuccess = false;
+      response.message = 'Meme could not be created';
       res.status(400);
-      res.send({ message: 'Meme could not be created' });
+      res.json(response);
     }
   }
 
@@ -162,6 +156,9 @@ export class MemeController {
     const userId = req.user?.userId;
     const originalName = req.query.o == 1;
     const data = await this.memeService.getMeme(memeId, userId);
+
+    const response = new ApiResponse<Meme>();
+
     if (data) {
       if (!originalName) {
         data.name = data.thumbnailName || data.name;
@@ -171,57 +168,76 @@ export class MemeController {
         res.sendFile('/memes/' + data.userId + '/' + data.name, { root: global.DIR_ROOT });
       } else {
         res.status(200);
-        res.send(data);
+        response.data = data;
+        res.json(response);
       }
     } else {
       logger.warn('Could not retrive meme data');
+      response.isSuccess = false;
+      response.message = 'Could not retrive meme data';
       res.status(400);
-      res.send({ message: 'Could not retrive meme data' });
+      res.json(response);
     }
   }
 
   async updateMeme(memeId: string, userId: string, tags: Tag[], res: Response) {
     logger.info(`Updating meme data with id: ${memeId}`);
     const data = await this.memeService.updateMeme(userId, memeId, tags);
+    const response = new ApiResponse<Meme>();
+    response.data = data;
     res.status(200);
-    res.send(data);
+    res.json(response);
   }
 
   async getStatistics(userId: string, res: Response) {
     logger.info(`User with id: ${userId} retrieving statistics`);
     const data = await this.memeService.getStatistics(userId);
+    const response = new ApiResponse<{
+      sizes: { image: number; video: number; other: number };
+      counts: { image: number; video: number; other: number };
+    }>();
     if (data) {
       logger.info('statistics were successfully retrived');
+      response.data = data;
       res.status(200);
-      res.send(data);
+      res.json(response);
     } else {
       logger.warn('statistics were not successfully retrived');
+      response.isSuccess = false;
+      response.message = 'statistics were not successfully retrived';
       res.status(400);
-      res.send({ message: 'statistics were not successfully retrived' });
+      res.json(response);
     }
   }
 
   async removeMeme(memeId: string, userId: string, res: Response) {
     const isSuccess = await this.memeService.removeMeme(memeId, userId);
+    const response = new ApiResponse();
 
     if (isSuccess.length === 1 && isSuccess[0]) {
       logger.info(`Meme sucessfully deleted (id: ${memeId})`);
-      res.status(200)
-      res.send({ message: 'Meme sucessfully deleted' });
+      res.status(200);
+      response.message = 'Meme sucessfully deleted';
+      res.json(response);
     } else if (isSuccess.length > 1) {
       if (isSuccess.every((x) => x === true)) {
         logger.info(`Meme sucessfully deleted (id: ${memeId})`);
         res.status(200);
-        res.send({ message: 'Meme sucessfully deleted' });
+        response.message = 'Meme sucessfully deleted';
+        res.json(response);
       } else {
         logger.warn(`Failed to delete meme file or its thumbnail (id: ${memeId})`);
         res.status(400);
-        res.send({ message: 'Failed to delete meme file or its thumbnail' });
+        response.isSuccess = false;
+        response.message = 'Failed to delete meme file or its thumbnail';
+        res.json(response);
       }
     } else {
       logger.warn(`Failed to delete meme (id: ${memeId})`);
       res.status(400);
-      res.send({ message: 'Failed to delete meme' });
+      response.isSuccess = false;
+      response.message = 'Failed to delete meme';
+      res.json(response);
     }
   }
 }

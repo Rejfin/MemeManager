@@ -3,45 +3,36 @@ import SearchComponent from '../components/files_page/SearchComponent';
 import useFetch from '../hooks/useFetch';
 import noMemesImg from '../assets/no-memes.webp';
 import logo from '../assets/logo.webp';
-import UploadMemeDialog from '../components/files_page/UploadMemeDialog';
 import { Meme } from '../models/meme.model';
 import { useEffect, useRef, useState } from 'react';
-import { useModal } from '../utils/ModalProvider';
 import { useTranslation } from 'react-i18next';
-import EditMemeDialog from '../components/files_page/EditMemeDialog';
-import useSearchTag from '../hooks/useSearchTag';
-import { Tag } from '../models/tag.model';
+import { closeModal, openModal } from '../features/modal/modalSlice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import Button from '../components/global/Button';
 
 const FilesPage = () => {
-  const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
-  const [page, setPage] = useState(0);
   const { t } = useTranslation();
-  const { setModal } = useModal();
-  const listInnerRef = useRef<HTMLInputElement | null>(null);
-  const [searchText, setSearchText] = useState('');
-  const [isIndexedList, setIsIndexedList] = useState(true);
-  const [url, setUrl] = useState(`/memes?limit=20&page=${page}&countUnindexed=1&unindexed=0`);
-  const [unindexedCount, setUnindexedCount] = useState(0);
-  const [searchTags, setSearchTags] = useState<Tag[]>([]);
-  const [tagError, setTagError] = useState('');
+  const dispatch = useAppDispatch();
+  const searchTags = useAppSelector((state) => state.search.tags);
+  const isUnindexedList = useAppSelector((state) => state.search.isUnindexed);
 
-  const urlMap = new Map<string, string>();
-  urlMap.set('limit', '20');
-  urlMap.set('page', page.toString());
-  urlMap.set('countUnindexed', '1');
-  urlMap.set('unindexed', '0');
+  const [listOfFiles, setListOfFiles] = useState<Map<string, Meme[]>>(new Map());
+  const listInnerRef = useRef<HTMLInputElement | null>(null);
+
+  const [url, setUrl] = useState(`/memes?limit=20&page=0&unindexed=0`);
+
+  const urlParams = new Map<string, string>();
+  urlParams.set('limit', '20');
+  urlParams.set('page', '0');
+  urlParams.set('unindexed', '0');
 
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const latestMemes: { error: any; isPending: boolean; data: any } = useFetch(url);
-
-  const tags: { tagList: Tag[] } = useSearchTag(searchText);
+  const latestMemes: { error: string; isPending: boolean; data: any } = useFetch(url);
 
   const updateUrl = (forceRefresh = false) => {
     setUrl(
-      `/memes?limit=${urlMap.get('limit')}&page=${urlMap.get('page')}&countUnindexed=${urlMap.get(
-        'countUnindexed',
-      )}&unindexed=${urlMap.get('unindexed')}${
-        searchTags.length > 0 ? `&tags=${searchTags.map((x) => x.id).join(',')}` : ''
+      `/memes?limit=${urlParams.get('limit')}&page=${urlParams.get('page')}&unindexed=${isUnindexedList ? '1' : '0'}${
+        searchTags.length > 0 && !isUnindexedList ? `&tags=${searchTags.map((x) => x.id).join(',')}` : ''
       }${forceRefresh ? `&f=${Math.random() * 10000}` : ''}`,
     );
   };
@@ -62,8 +53,7 @@ const FilesPage = () => {
               (scrollTop + clientHeight) / scrollHeight >= 0.9)
           ) {
             if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
-              setPage(latestMemes.data.nextPage);
-              urlMap.set('page', latestMemes.data.nextPage.toString());
+              urlParams.set('page', latestMemes.data.nextPage);
               updateUrl();
             }
           }
@@ -78,8 +68,8 @@ const FilesPage = () => {
    * creates a list of files to be displayed by date
    */
   useEffect(() => {
-    if (latestMemes.data != null && latestMemes.data.rows != null) {
-      latestMemes.data.rows.forEach((meme: Meme) => {
+    if (latestMemes.isPending === false && latestMemes.data.isSuccess === true && latestMemes.data.data.items != null) {
+      latestMemes.data.data.items.forEach((meme: Meme) => {
         if (!listOfFiles.has(new Date(meme.modifiedDate).toDateString())) {
           listOfFiles.set(new Date(meme.modifiedDate).toDateString(), []);
         }
@@ -91,10 +81,6 @@ const FilesPage = () => {
         }
       });
       setListOfFiles(new Map(listOfFiles));
-
-      if (latestMemes.data.unindexedAmount != null) {
-        setUnindexedCount(latestMemes.data.unindexedAmount);
-      }
     }
     // eslint-disable-next-line
   }, [latestMemes.data]);
@@ -104,22 +90,17 @@ const FilesPage = () => {
    */
   const modalProps = {
     onUploadEnds: () => {
-      setModal(undefined);
+      dispatch(closeModal());
       setListOfFiles(new Map());
-      setPage(0);
-      urlMap.set('unindexed', isIndexedList ? '1' : '0');
+      urlParams.set('page', '0');
       updateUrl(true);
     },
     negativeButton: {
       text: t('cancel'),
       func: () => {
-        setModal(undefined);
+        dispatch(closeModal());
       },
     },
-  };
-
-  const showUploadModal = () => {
-    setModal(<UploadMemeDialog {...modalProps} />);
   };
 
   /**
@@ -132,10 +113,8 @@ const FilesPage = () => {
         if (listInnerRef && listInnerRef.current) {
           const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
           if ((scrollTop + clientHeight) / scrollHeight >= 0.8) {
-            setPage(latestMemes.data.nextPage);
-
-            urlMap.set('unindexed', isIndexedList ? '1' : '0');
-            urlMap.set('page', page.toString());
+            urlParams.set('unindexed', isUnindexedList ? '1' : '0');
+            urlParams.set('page', latestMemes.data.data.nextPage);
             updateUrl();
           }
         }
@@ -143,21 +122,15 @@ const FilesPage = () => {
     }
   };
 
-  const switchUnindexedMemes = () => {
-    setPage(0);
+  /**
+   * runs when user change from all meme to unindexed only and back
+   */
+  useEffect(() => {
     setListOfFiles(new Map());
-
-    urlMap.set('unindexed', isIndexedList ? '1' : '0');
-    urlMap.set('page', '0');
-
-    if (isIndexedList) {
-      setIsIndexedList(false);
-      setSearchTags([]);
-    } else {
-      setIsIndexedList(true);
-      updateUrl();
-    }
-  };
+    urlParams.set('unindexed', isUnindexedList ? '1' : '0');
+    urlParams.set('page', '0');
+    updateUrl();
+  }, [isUnindexedList]);
 
   const fileClickHandler = (
     fileId: string,
@@ -167,16 +140,16 @@ const FilesPage = () => {
     type: string,
     blurhash?: string,
   ) => {
-    setModal(
-      <EditMemeDialog
-        fileId={fileId}
-        src={src}
-        width={width}
-        height={height}
-        blurhash={blurhash}
-        type={type}
-        onClose={() => setModal(undefined)}
-      />,
+    dispatch(
+      openModal({
+        fileId: fileId,
+        src: src,
+        width: width,
+        height: height,
+        blurhash: blurhash,
+        type: type,
+        onClose: () => dispatch(closeModal()),
+      }),
     );
   };
 
@@ -184,79 +157,20 @@ const FilesPage = () => {
    * run every time search tags list changed
    */
   useEffect(() => {
-    if (searchTags.length > 0) {
-      setListOfFiles(new Map());
-      urlMap.set('unindexed', '0');
-      setIsIndexedList(true);
-    } else {
-      urlMap.set('unindexed', isIndexedList ? '0' : '1');
-      urlMap.set('page', '0');
-      setPage(0);
-      setListOfFiles(new Map());
-    }
+    setListOfFiles(new Map());
+    urlParams.set('page', '0');
     updateUrl();
   }, [searchTags]);
-
-  /**
-   * handle search tag function
-   */
-  const onSearch = () => {
-    const tag = tags.tagList.find((tag) => tag.name === searchText.toLowerCase());
-
-    if (tag) {
-      const mTag = searchTags.find((t) => t.id === tag.id);
-      if (!mTag) {
-        setSearchTags((oldTags) => [...oldTags, tag]);
-      }
-      setSearchText('');
-      setTagError('');
-    } else {
-      setTagError(t('files.tagDoesNotExist') || '');
-    }
-  };
-
-  const removeSearchTag = (name: string) => {
-    setSearchTags((oldTags) => [...oldTags.filter((tag) => tag.name !== name.toLowerCase())]);
-  };
 
   return (
     <div className='flex-row h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4'>
       <div className='pb-4 flex max-w-full'>
-        <SearchComponent
-          dataList={tags.tagList.map((x) => x.name)}
-          className='w-auto h-auto'
-          onChange={(text) => setSearchText(text)}
-          value={searchText}
-          onSearch={() => onSearch()}
-          error={tagError}
-        />
-        <button onClick={() => showUploadModal()} className='bg-primary-400 rounded-md p-2 text-backgroundSurface mx-2'>
+        <SearchComponent className='w-auto h-auto' />
+        <Button onClick={() => dispatch(openModal(modalProps))} className='min-w-fit max-h-[3.25rem] ms-2'>
           {t('files.addMeme')}
-        </button>
-        {unindexedCount > 0 && (
-          <button
-            onClick={switchUnindexedMemes}
-            className={`bg-primary-400 rounded-md p-2 text-backgroundSurface ${!isIndexedList && 'bg-primary-300'}`}
-          >
-            {t('files.unindexed')}
-            <div className='relative'>
-              <div className='absolute bottom-5 -right-5 w-6 h-6 rounded-full bg-videoColor'>{unindexedCount}</div>
-            </div>
-          </button>
-        )}
+        </Button>
       </div>
-      <div className='max-w-2xl my-2'>
-        {searchTags.map((tag) => (
-          <div
-            onClick={() => removeSearchTag(tag.name)}
-            key={tag.id}
-            className='px-2 bg-primary-400 rounded-lg ml-2 mt-2 inline-block cursor-pointer'
-          >
-            {tag.name}
-          </div>
-        ))}
-      </div>
-      <div className='h-[calc(100%-3.5rem)] w-full overflow-y-auto flex-row' ref={listInnerRef} onScroll={onListScroll}>
+      <div className='h-[calc(100%-6rem)] w-full overflow-y-auto flex-row' ref={listInnerRef} onScroll={onListScroll}>
         {latestMemes.isPending && listOfFiles.size === 0 ? (
           <div className='h-[calc(100%-3.5rem)] w-full'>
             <div className='h-[calc(100%-3.5rem)] w-full'>

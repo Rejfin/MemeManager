@@ -1,10 +1,9 @@
 import axios from 'axios';
 import TokenService from './token.service';
 
-console.log((window as any).ENV.API_ADDRESS);
-
 const instance = axios.create({
-  baseURL: (window as any).ENV.API_ADDRESS,
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  baseURL: (window as any).env.API_ADDRESS,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -39,7 +38,7 @@ instance.interceptors.response.use(
             refreshToken: TokenService.getLocalRefreshToken(),
           });
 
-          const { token } = rs.data;
+          const { token } = rs.data.data;
           TokenService.updateLocalAccessToken(token);
 
           return instance(originalConfig);
@@ -51,9 +50,8 @@ instance.interceptors.response.use(
       if (err.response.status === 400) {
         window.location.href = `login?expired_auth&next=${encodeURIComponent(window.location.pathname)}`;
       }
-    }else if(err.code === "ERR_NETWORK" && originalConfig.url !== '/auth/signin'){
-      window.location.href = `login`
-      console.log(err);
+    } else if (err.code === 'ERR_NETWORK' && originalConfig.url !== '/auth/signin') {
+      window.location.href = `login`;
     }
     
     return Promise.reject(err);

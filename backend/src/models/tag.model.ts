@@ -20,7 +20,7 @@ export class Tag extends Model {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)
-  id!: IntegerDataType;
+  id!: number;
 
   @Column(DataType.STRING)
   name!: string;

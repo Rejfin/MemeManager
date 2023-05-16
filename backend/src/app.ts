@@ -11,7 +11,6 @@ const upload = multer({ dest: global.DIR_ROOT + '/memes/' });
 import cors from 'cors';
 import logger from './config/logger';
 import { loggerMiddleware } from './middlewares/loggerMiddleware';
-import { AuthService } from './service/auth.service';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 class App {
@@ -69,6 +68,10 @@ class App {
       },
     );
 
+    this.express.delete('/api/auth/clear', [authMiddleware, validatorMiddleware(['password'])], (req:any, res: any) => {
+      this.authController.cleanAccount(req, res);
+    })
+
     this.express.get('/api/tags', authMiddleware, (req: any, res) => {
       this.tagController.getTags(req, res);
     });
@@ -82,7 +85,7 @@ class App {
     });
 
     this.express.get('/api/memes', authMiddleware, (req: any, res) => {
-      this.memeController.getMemes(req, res)
+      this.memeController.getMemes(req, res);
     });
 
     this.express.post('/api/memes', [authMiddleware, upload.single('meme'), fileMiddleware], (req: any, res: any) => {
@@ -102,7 +105,7 @@ class App {
     });
 
     this.express.put('/api/memes/:memeId', authMiddleware, (req: any, res) => {
-      this.memeController.updateMeme(req.params.memeId, req.user.userId, req.body.tags, res)
+      this.memeController.updateMeme(req.params.memeId, req.user.userId, req.body.tags, res);
     });
 
     this.express.get('/api/memes/file/:memeId', (req: any, res) => {

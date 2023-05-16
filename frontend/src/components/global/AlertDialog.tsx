@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import InputField, { InputFieldType } from './InputField';
 
-interface AlertProps {
+export interface IAlertProps {
   title: string;
   text: string;
   positiveButton: {
@@ -16,15 +16,30 @@ interface AlertProps {
     onChange?: (value: string) => void;
     inputType?: InputFieldType;
     placeholder?: string;
+    validationFunction?: (text: string) => [boolean, string?];
   };
 }
 
-const AlertDialog = (props: AlertProps) => {
+const AlertDialog = (props: IAlertProps) => {
   const [inputValue, setInputValue] = useState('');
+  const [inputError, setInputError] = useState('');
 
   const handleInputChange = (text: string) => {
     setInputValue(text);
     props.inputField?.onChange?.(text);
+  };
+
+  const handlePositiveClick = () => {
+    if (props.inputField?.validationFunction) {
+      const [isValid, errorText] = props.inputField?.validationFunction?.(inputValue) || [false, 'input error'];
+      if (isValid) {
+        props.positiveButton.func(inputValue);
+      } else {
+        setInputError(errorText || '');
+      }
+    } else {
+      props.positiveButton.func(inputValue);
+    }
   };
 
   return (
@@ -32,7 +47,7 @@ const AlertDialog = (props: AlertProps) => {
       <div className='min-w-[20rem] min-h-[10rem] max-w-xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md flex flex-col overflow-hidden'>
         <div className='m-6 flex flex-col items-center'>
           <h2 className='text-2xl text-textColor dark:text-textColor-dark text-center'>{props.title}</h2>
-          <p className='text-textColor dark:text-textColor-dark my-4 text-center'>{props.text}</p>
+          <p className='text-textColor dark:text-textColor-dark my-4 text-center whitespace-pre-line'>{props.text}</p>
         </div>
         {props.inputField && (
           <div className='w-full flex justify-center px-4 pb-4'>
@@ -42,6 +57,7 @@ const AlertDialog = (props: AlertProps) => {
               placeholder={props.inputField.placeholder || ''}
               value={inputValue}
               onChange={handleInputChange}
+              error={inputError}
             />
           </div>
         )}
@@ -55,7 +71,7 @@ const AlertDialog = (props: AlertProps) => {
             </button>
           )}
           <button
-            onClick={() => props.positiveButton.func(inputValue)}
+            onClick={() => handlePositiveClick()}
             className='w-fit rounded-md bg-primary-600 mb-4 ml-2 py-1 px-9 text-textColor-dark'
           >
             {props.positiveButton.text}

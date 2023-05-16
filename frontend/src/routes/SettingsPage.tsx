@@ -1,96 +1,161 @@
 import { useTranslation } from 'react-i18next';
-import AlertDialog from '../components/global/AlertDialog';
-import { useModal } from '../utils/ModalProvider';
 import { InputFieldType } from '../components/global/InputField';
-import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import AuthService from '../services/auth.service';
+import { useAppDispatch } from '../app/hooks';
+import { closeModal, openModal } from '../features/modal/modalSlice';
+import Button from '../components/global/Button';
+import SettingsItem from '../components/settings_page/SettingsItem';
+import { IAlertProps } from '../components/global/AlertDialog';
 
 const SettingsPage = () => {
   const { t } = useTranslation();
-  const { setModal } = useModal();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onRemoveAccount = () => {
-    const removeProps = {
+  const onRemoveOrClearAccountClick = (wantToRemove: boolean = false) => {
+    // modal props that warn user about account deletion or clean
+    const modalProps = {
       title: t('warning'),
-      text: t('settings.removeAccountMessage'),
+      text: t(wantToRemove ? 'settings.removeAccountMessage' : 'settings.clearAccountMessage'),
       positiveButton: {
         text: t('settings.iWantIt'),
         func: (text?: string) => {
-          api
-            .delete('/auth/deleteme', { data: { password: text } })
-            .then((data) => {
-              if (data.status == 200) {
-                setModal(
-                  <AlertDialog
-                    title={''}
-                    text={t('settings.accountHasBeenDeleted')}
-                    positiveButton={{
-                      text: t('ok'),
-                      func: () => {
-                        setModal(undefined);
-                        navigate('/login');
-                      },
-                    }}
-                  />,
-                );
-              } else {
-                setModal(
-                  <AlertDialog
-                    title={t('somethingWentWrong')}
-                    text={data.data.message}
-                    positiveButton={{
-                      text: t('ok'),
-                      func: () => {
-                        setModal(undefined);
-                      },
-                    }}
-                  />,
-                );
-              }
-            })
-            .catch(() => {
-              setModal(
-                <AlertDialog
-                  title={t('somethingWentWrong')}
-                  text={t('settings.accountFailedToDelete')}
-                  positiveButton={{
-                    text: t('ok'),
-                    func: () => {
-                      setModal(undefined);
-                    },
-                  }}
-                />,
-              );
-            });
-
-          setModal(undefined);
+          if (wantToRemove) {
+            removeAccount(text!)
+              .then((props: IAlertProps) => {
+                dispatch(closeModal());
+                dispatch(openModal(props));
+              })
+              .catch((props: IAlertProps) => {
+                dispatch(openModal(props));
+              });
+          } else {
+            cleanAccount(text!)
+              .then((props: IAlertProps) => {
+                dispatch(closeModal());
+                dispatch(openModal(props));
+              })
+              .catch((props: IAlertProps) => {
+                dispatch(openModal(props));
+              });
+          }
         },
       },
       negativeButton: {
         text: t('cancel'),
         func: () => {
-          setModal(undefined);
+          dispatch(closeModal());
         },
       },
       inputField: {
         placeholder: t('auth.password'),
         inputType: 'password' as InputFieldType,
+        validationFunction: (text: string): [boolean, string?] => {
+          return text ? [true] : [false, t('auth.emptyFieldError') || ''];
+        },
       },
     };
 
-    setModal(<AlertDialog {...removeProps} />);
+    dispatch(openModal(modalProps));
+  };
+
+  const removeAccount = async (password: string): Promise<IAlertProps> => {
+    const propsToReturn: IAlertProps = {
+      title: t(''),
+      text: t('settings.accountHasBeenDeleted'),
+      positiveButton: {
+        text: t('ok'),
+        func: function (): void {
+          dispatch(closeModal());
+          navigate('/login');
+        },
+      },
+    };
+
+    return new Promise<IAlertProps>((resolve, reject) => {
+      AuthService.removeAccount(password)
+        .then((data) => {
+          if (data.status == 200) {
+            resolve(propsToReturn);
+          } else {
+            propsToReturn.title = t('somethingWentWrong');
+            propsToReturn.text = data.data.message;
+            propsToReturn.positiveButton.func = () => {
+              dispatch(closeModal());
+            };
+            reject(propsToReturn);
+          }
+        })
+        .catch(() => {
+          propsToReturn.title = t('somethingWentWrong');
+          propsToReturn.text = t('settings.accountFailedToDelete');
+          propsToReturn.positiveButton.func = () => {
+            dispatch(closeModal());
+          };
+          reject(propsToReturn);
+        });
+    });
+  };
+
+  const cleanAccount = async (password: string): Promise<IAlertProps> => {
+    const propsToReturn: IAlertProps = {
+      title: '',
+      text: (''),
+      positiveButton: {
+        text: t('ok'),
+        func: function (): void {
+          dispatch(closeModal());
+        },
+      },
+    };
+
+    return new Promise<IAlertProps>((resolve, reject) => {
+      AuthService.clearAccount(password)
+        .then((data) => {
+          if (data.status === 200) {
+            propsToReturn.text = t('settings.accountHasBeenCleared', {memesCount: data.data.data[0].value, tagsCount: data.data.data[1].value})
+            resolve(propsToReturn);
+          } else {
+            propsToReturn.title = t('somethingWentWrong');
+            propsToReturn.text = data.data.message;
+            propsToReturn.positiveButton.func = () => {
+              dispatch(closeModal());
+            };
+            reject(propsToReturn);
+          }
+        })
+        .catch(() => {
+          propsToReturn.title = t('somethingWentWrong');
+          propsToReturn.text = t('settings.accountFailedToClean');
+          propsToReturn.positiveButton.func = () => {
+            dispatch(closeModal());
+          };
+          reject(propsToReturn);
+        });
+    });
   };
 
   return (
     <div className='flex-row h-full bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md p-4'>
       <div className='pb-4 flex flex-col max-w-full'>
-        <button
-          onClick={onRemoveAccount}
-          className='w-full bg-errorColor rounded-md p-2 text-textColor-dark bg-opacity-60 flex justify-center hover:bg-opacity-50'
-        >
-          remove account
-        </button>
+        <SettingsItem
+          className='mb-7'
+          title={t('settings.blurhash')}
+          description={t('settings.blurhashDesc') || ''}
+          isChecked={true}
+          onToggleChange={() => {}}
+        />
+
+        <p className='text-textColor dark:text-textColor-dark'>{t('settings.advancedSettings')}</p>
+        <div className='bg-secondaryTextColor w-full h-[0.1rem] rounded-md mb-3'></div>
+
+        <Button className='w-full my-3' buttonStyle='warning' onClick={() => onRemoveOrClearAccountClick(false)}>
+          {t('settings.clearAccount')}
+        </Button>
+        <Button className='w-full' buttonStyle='warning' onClick={() => onRemoveOrClearAccountClick(true)}>
+          {t('settings.removeAccount')}
+        </Button>
       </div>
     </div>
   );

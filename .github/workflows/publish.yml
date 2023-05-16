@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+      - 'dev-*'
 
 env:
   API_IMAGE_NAME: meme-manager-api
@@ -27,12 +28,14 @@ jobs:
         id: meta-api
         uses: docker/metadata-action@v4
         with:
+          flavor: |
+            latest=false
           images: |
             rejfin/${{ env.API_IMAGE_NAME }}
             ghcr.io/rejfin/${{ env.API_IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}}
-            type=raw,value=latest
+            type=ref,event=tag
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
 
       - name: Build API docker image
         uses: docker/build-push-action@v4
@@ -66,12 +69,14 @@ jobs:
         id: meta-ui
         uses: docker/metadata-action@v4
         with:
+          flavor: |
+            latest=false
           images: |
             rejfin/${{ env.UI_IMAGE_NAME }}
             ghcr.io/rejfin/${{ env.UI_IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}}
-            type=raw,value=latest
+            type=ref,event=tag
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
 
       - name: Build UI docker image
         uses: docker/build-push-action@v4

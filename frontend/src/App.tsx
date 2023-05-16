@@ -5,8 +5,9 @@ import HomePage from './routes/HomePage';
 import FilesPage from './routes/FilesPage';
 import ErrorPage from './routes/ErrorPage';
 import SettingsPage from './routes/SettingsPage';
-import ProfilePage from './routes/ProfilePage';
 import AuthPage from './routes/AuthPage';
+import Button from './components/global/Button';
+import { ReactComponent as Icon } from './assets/icon-files.svg';
 
 function App() {
   return (
@@ -16,12 +17,19 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path='dashboard' element={<HomePage />} />
           <Route path='files' element={<FilesPage />} />
-          <Route path='profile' element={<ProfilePage />} />
           <Route path='settings' element={<SettingsPage />} />
           <Route path='*' element={<ErrorPage />} />
         </Route>
         <Route path='login' element={<AuthPage isRegisterPage={false} />} />
         <Route path='register' element={<AuthPage isRegisterPage={true} />} />
+        <Route
+          path='test'
+          element={
+            <div className='p-5'>
+              <Button icon={<Icon />}>Test</Button>
+            </div>
+          }
+        />
       </Routes>
     </div>
   );

@@ -1,7 +1,5 @@
-const { rootCertificates } = require('tls');
-
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   darkMode: "class",
   theme: {
@@ -53,8 +51,8 @@ module.exports = {
         dark: "#F0F0F0"
       },
       secondaryTextColor:{
-        DEFAULT: "#F3F3F3",
-        dark: "#383838"
+        DEFAULT: "#A5A5A5",
+        dark: "#979797"
       },
       videoColor:"#fcd31a",
       gifsColor:"#46e4ff",
@@ -62,9 +60,10 @@ module.exports = {
       navigationIconColor: "#777777",
       errorColor: "#DA4747",
       inputBorderColor: "#747474",
-      disableColor: "#DDDDD5",
+      disableColor: "#E7E7E7",
       disableDarkColor: "#CECEC9"
     }
   },
   plugins: [],
 }
+

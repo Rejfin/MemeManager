@@ -15,8 +15,8 @@ const login = (login: string, password: string) => {
       password: password,
     })
     .then((response) => {
-      if (response.data.token) {
-        TokenService.setUser(response.data);
+      if(response.data.isSuccess){
+        TokenService.setUser(response.data.data);
       }
 
       return response.data;
@@ -31,11 +31,21 @@ const getCurrentUser = () => {
   return JSON.parse(localStorage.getItem('user') || '');
 };
 
+const removeAccount = (password: string) => {
+  return api.delete('/auth/deleteme', { data: { password: password } });
+};
+
+const clearAccount = (password: string) => {
+  return api.delete('/auth/clear', {data: {password: password}});
+}
+
 const AuthService = {
   register,
   login,
   logout,
   getCurrentUser,
+  removeAccount,
+  clearAccount
 };
 
 export default AuthService;

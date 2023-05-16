@@ -5,7 +5,6 @@ import Logo from '../../assets/logo.webp';
 import { ReactComponent as Control } from '../../assets/icon-control-navigation.svg';
 import { ReactComponent as DashboardIcon } from '../../assets/icon-dashboard.svg';
 import { ReactComponent as SettingsIcon } from '../../assets/icon-settings.svg';
-import { ReactComponent as ProfileIcon } from '../../assets/icon-profile.svg';
 import { ReactComponent as LogoutIcon } from '../../assets/icon-logout.svg';
 import { ReactComponent as FilesIcon } from '../../assets/icon-files.svg';
 import { ReactComponent as DarkModeIcon } from '../../assets/icon-dark-mode.svg';
@@ -25,13 +24,13 @@ const NavElement = (props: { navEntry: NavEntry; navOpen: boolean }) => {
   return (
     <NavLink
       className={({ isActive }) =>
-        `flex p-2 pl-4 rounded-xl ${
+        `flex p-2 pl-4 rounded-xl whitespace-nowrap overflow-hidden ${
           isActive && props.navEntry.path != null ? 'bg-primary-300 text-textColor-dark' : ''
         } ${
           !isActive || props.navEntry.path == null
             ? 'hover:bg-primary-100 hover:dark:bg-background-dark hover:dark:opacity-80'
             : ''
-        }`
+        } duration-200 origin-left ${!props.navOpen && 'md:scale-0'}`
       }
       to={props.navEntry.path || location.pathname}
       onClick={props.navEntry.func || (() => undefined)}
@@ -76,11 +75,6 @@ const SideNavigation = () => {
       title: t('navigation.files'),
       icon: FilesIcon,
       path: 'files',
-    } as NavEntry,
-    {
-      title: t('navigation.profile'),
-      icon: ProfileIcon,
-      path: 'profile',
     } as NavEntry,
     {
       title: t('navigation.settings'),
@@ -138,7 +132,7 @@ const SideNavigation = () => {
         <img src={Logo} alt='Logo' className={`w-12 rounded-full duration-500 ${isNavOpen && 'rotate-[360deg]'}`} />
 
         <h1
-          className={`text-textColor dark:text-textColor-dark origin-left font-medium text-xl duration-200 ${
+          className={`text-textColor whitespace-nowrap overflow-hidden dark:text-textColor-dark origin-left font-medium text-xl duration-200 ${
             !isNavOpen && 'md:scale-0'
           }`}
         >
@@ -146,7 +140,7 @@ const SideNavigation = () => {
         </h1>
       </div>
 
-      <ul className='pt-6 pb-6 flex flex-col flex-1 h-[calc(100%-2rem)] [&>*:nth-last-child(2)]:mt-auto'>
+      <ul className={`pt-6 pb-6 flex flex-col flex-1 h-[calc(100%-2rem)] [&>*:nth-last-child(2)]:mt-auto`}>
         {menu.map((entry) => (
           <NavElement navEntry={entry} navOpen={isNavOpen} key={entry.title} />
         ))}
