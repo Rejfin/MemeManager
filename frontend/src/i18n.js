@@ -19,6 +19,7 @@ i18n.use(initReactI18next).init({
         ok: 'OK',
         warning: 'Warning',
         somethingWentWrong: 'Something went wrong :/',
+        copyToClipboard: 'Link copied to clipboard',
         storageStats: {
           title: 'Storage Statistics',
           images: 'Images',

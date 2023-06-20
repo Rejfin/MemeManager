@@ -7,15 +7,28 @@ import EditMemeDialog, { IEditMemeDialogProps } from '../components/files_page/E
 const ModalHost = () => {
   const isModalOpen = useAppSelector((state: RootState) => state.modal.isOpen);
   const modalProps = useAppSelector((state: RootState) => state.modal.modalProps);
+
+  const getModal = () => {
+    if(modalProps && modalProps[0]){
+      if('title' in modalProps[0]){
+        return (<AlertDialog {...(modalProps[0] as IAlertProps)} />)
+      }else if('onUploadEnds' in modalProps[0]){
+        return (<UploadMemeDialog {...(modalProps[0] as IUploadMemeModalProps)} />)
+      }else if('fileId' in modalProps[0]){
+        return (<EditMemeDialog {...(modalProps[0] as IEditMemeDialogProps)} />)
+      }
+    }
+  }
+
   return (
     <>
-      {isModalOpen && (
-        <div className='fixed flex items-center justify-center w-full h-full bg-textColor bg-opacity-60 z-50'>
-          {'title' in modalProps[0] && <AlertDialog {...(modalProps[0] as IAlertProps)} />}
-          {'onUploadEnds' in modalProps[0] && <UploadMemeDialog {...(modalProps[0] as IUploadMemeModalProps)} />}
-          {'fileId' in modalProps[0] && <EditMemeDialog {...(modalProps[0] as IEditMemeDialogProps)} />}
-        </div>
-      )}
+      <div
+        className={`fixed flex items-center justify-center w-full h-full bg-textColor bg-opacity-60 z-50 transition duration-300 ${
+          isModalOpen ? ' scale-100 opacity-100' : 'scale-0 opacity-0'
+        }`}
+      >
+        {getModal()}
+      </div>
     </>
   );
 };
