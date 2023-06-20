@@ -16,6 +16,7 @@ interface FileToUpload {
   file: File;
   progress: number;
   error?: '';
+  finished: boolean;
 }
 
 const UploadMemeDialog = (props: IUploadMemeModalProps) => {
@@ -42,6 +43,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
     const filesToUpload = [...(event.target.files || [])].map((file: File) => ({
       file: file,
       progress: 0,
+      finished: false
     }));
     setFileToUploadList((oldFiles) => [...oldFiles, ...filesToUpload]);
   };
@@ -62,7 +64,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
   const updateFileOnList = (index: number, file: FileToUpload) => {
     const newList = fileToUploadList.map((f, i) => {
       if (i === index) {
-        return { file: file.file, progress: file.progress, error: file.error };
+        return { file: file.file, progress: file.progress, error: file.error, finished: file.finished };
       }
       return f;
     });
@@ -106,6 +108,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
       const filesToUpload = [...event.dataTransfer.files].map((file: File) => ({
         file: file,
         progress: 0,
+        finished: false
       }));
       setFileToUploadList((oldFiles) => [...oldFiles, ...filesToUpload]);
     }
@@ -129,10 +132,14 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
         file.progress = Math.round((progress.loaded * 100) / progress.total);
         file.error = '';
         updateFileOnList(uploadingIndex, file);
-        if (file.progress === 100) {
-          setUploadingIndex(uploadingIndex + 1);
-        }
-      }).catch((data) => {
+      })
+      .then(() => {
+        const mFile = file;
+        mFile.finished = true;
+        updateFileOnList(uploadingIndex, mFile);
+        setUploadingIndex(uploadingIndex + 1);
+      })
+      .catch((data) => {
         const mFile = file;
         mFile.error = data.data.message;
         updateFileOnList(uploadingIndex, mFile);
@@ -187,8 +194,13 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
                 file.error ? ' bg-errorColor' : ' bg-primary-500 '
               }`}
             ></div>
-            <div className='w-full flex flex-row'>
-              <div className='my-auto ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark'>
+            <div className='group w-full flex flex-row relative'>
+              <div className={`hidden ${isUplading && 'group-hover:block'} absolute top-1/2 -translate-y-1/2 ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}>
+                {file.progress > 1 && file.progress < 100 && !file.finished ? t('files.uploading') : ''}
+                {file.progress == 100 && !file.finished ? t('files.saving') : ''}
+                {file.finished ? t('files.uploaded'): ''}
+              </div>
+              <div className={`${isUplading && file.progress > 1 ? 'group-hover:collapse' : ''} my-auto ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}>
                 {index + 1}. {file.file.name}
               </div>
               <div className='flex w-1/12 h-full align-middle justify-center mx-2'>

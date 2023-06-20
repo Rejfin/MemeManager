@@ -1,4 +1,4 @@
-import { KeyboardEvent, ReactElement } from 'react';
+import { KeyboardEvent, ReactElement, useEffect, useRef } from 'react';
 
 export type InputFieldType = 'text' | 'password' | 'email' | 'number';
 
@@ -16,6 +16,7 @@ interface IInputFieldProps {
   autocomplete?: string;
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   required?: any;
+  focus?: boolean;
   onEnterClick?: () => void;
   onIconClick?: () => void;
 }
@@ -31,6 +32,13 @@ const InputField = (props: IInputFieldProps) => {
       props.onEnterClick?.();
     }
   };
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(()=>{
+    if (props.focus && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputRef])
 
   return (
     <div className='flex flex-col w-full h-full'>
@@ -44,6 +52,7 @@ const InputField = (props: IInputFieldProps) => {
           </div>
         )}
         <input
+          ref={inputRef}
           id={props.id}
           disabled={props.disabled}
           list={`${props.id}-option-list`}

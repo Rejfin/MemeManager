@@ -70,6 +70,9 @@ i18n.use(initReactI18next).init({
           videoNotSupported: 'Video not supported',
           tagDoesNotExist: 'tag does not exist :/',
           searchForTags: 'search for tags...',
+          uploading: 'uploading...',
+          saving: 'saving...',
+          uploaded: 'UPLOADED'
         },
         settings: {
           removeAccount: 'Remove Account',

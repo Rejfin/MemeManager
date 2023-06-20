@@ -36,6 +36,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
           positiveButton: {
             text: t('ok'),
             func: () => {
+              setDialogText('');
               dispatch(closeModal());
             },
           },
@@ -147,6 +148,7 @@ const AuthPage = (props: { isRegisterPage: boolean }) => {
             inputType={'text'}
             placeholder={t('auth.login')}
             value={login}
+            focus={true}
             error={loginError}
             onChange={(value) => {
               setLogin(value);
