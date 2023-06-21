@@ -15,11 +15,11 @@ interface IButtonProps {
 
 const Button = (props: IButtonProps) => {
   const buttonStyle: ButtonStyle = props.buttonStyle || 'default';
-  let buttonColors: string = '';
-  let buttonTextColors: string = '';
+  let buttonColors = '';
+  let buttonTextColors = '';
   if (props.disabled) {
-    buttonColors = 'bg-disableColor dark:bg-opacity-40 border-disableColor dark:border-opacity-0'
-    buttonTextColors = 'text-textColor text-opacity-40 dark:text-opacity-50'
+    buttonColors = 'bg-disableColor dark:bg-opacity-40 border-disableColor dark:border-opacity-0';
+    buttonTextColors = 'text-textColor text-opacity-40 dark:text-opacity-50';
   } else if (buttonStyle == 'default') {
     buttonColors = 'bg-primary-500 outline-primary-600 hover:bg-backgroundSurface border-primary-500';
     buttonTextColors = 'text-textColor-dark group-hover:text-primary-500';
@@ -29,7 +29,6 @@ const Button = (props: IButtonProps) => {
   }
 
   return (
-    
     <button
       disabled={props.disabled}
       onClick={(e) => props.onClick?.(e)}

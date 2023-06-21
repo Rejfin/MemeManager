@@ -30,7 +30,7 @@ jest.mock('../../../service/auth.service', () => ({
 }));
 
 let mockResponse: Response;
-let controller = new AuthController();
+const controller = new AuthController();
 
 beforeEach(() => {
   mockResponse = {

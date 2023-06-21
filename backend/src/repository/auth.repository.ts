@@ -3,8 +3,6 @@ import { RefreshToken } from '../models/refreshToken.model';
 import { User } from '../models/user.model';
 import bcrypt from 'bcrypt';
 import logger from '../config/logger';
-import { MemeRepository } from './meme.repository';
-import { TagRepository } from './tag.repository';
 import { Repository } from 'sequelize-typescript';
 import { Meme } from '../models/meme.model';
 import { Tag } from '../models/tag.model';
@@ -64,7 +62,9 @@ export class AuthRepository {
     try {
       const user = await this.authRespository.findOne({ where: { id: userId } });
       const mToken = await this.tokenRepository.create({ token: token, userId: userId });
-      user!.$add('tokens', mToken.id);
+      if (user) {
+        user.$add('tokens', mToken.id);
+      }
       return true;
     } catch (err) {
       logger.error(err);
@@ -84,7 +84,9 @@ export class AuthRepository {
   async signOutUser(token: string) {
     try {
       const rToken = await this.tokenRepository.findOne({ where: { token: token } });
-      await rToken!.destroy();
+      if (rToken) {
+        await rToken.destroy();
+      }
     } catch (err) {
       logger.error(err);
     }

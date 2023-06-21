@@ -33,7 +33,7 @@ jest.mock('../../../service/meme.service', () => ({
 }));
 
 let mockResponse: Response;
-let controller = new MemeController();
+const controller = new MemeController();
 
 beforeEach(() => {
   mockResponse = {

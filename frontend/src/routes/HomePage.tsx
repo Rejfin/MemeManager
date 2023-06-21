@@ -40,8 +40,6 @@ const HomePage = () => {
   }, [statsData.data]);
 
   const fileClickHandler = (file: Meme) => {
-    console.dir(file);
-
     dispatch(
       openModal({
         fileId: file.id,

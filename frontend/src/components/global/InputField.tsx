@@ -34,11 +34,11 @@ const InputField = (props: IInputFieldProps) => {
   };
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(()=>{
+  useEffect(() => {
     if (props.focus && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [inputRef])
+  }, [inputRef]);
 
   return (
     <div className='flex flex-col w-full h-full'>

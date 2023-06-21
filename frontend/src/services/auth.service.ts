@@ -15,7 +15,7 @@ const login = (login: string, password: string) => {
       password: password,
     })
     .then((response) => {
-      if(response.data.isSuccess){
+      if (response.data.isSuccess) {
         TokenService.setUser(response.data.data);
       }
 
@@ -36,8 +36,8 @@ const removeAccount = (password: string) => {
 };
 
 const clearAccount = (password: string) => {
-  return api.delete('/auth/clear', {data: {password: password}});
-}
+  return api.delete('/auth/clear', { data: { password: password } });
+};
 
 const AuthService = {
   register,
@@ -45,7 +45,7 @@ const AuthService = {
   logout,
   getCurrentUser,
   removeAccount,
-  clearAccount
+  clearAccount,
 };
 
 export default AuthService;

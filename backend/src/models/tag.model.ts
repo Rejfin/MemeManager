@@ -1,4 +1,3 @@
-import { IntegerDataType } from 'sequelize';
 import {
   Table,
   PrimaryKey,

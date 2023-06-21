@@ -14,7 +14,9 @@ const SettingsItem = (props: ISettingsItemProps) => {
     <div className={props.className}>
       <div className='flex w-full items-center'>
         <div className='w-full h-fit'>
-          <p className='text-textColor dark:text-textColor-dark text-lg font-medium whitespace-nowrap overflow-hidden text-ellipsis'>{props.title}</p>
+          <p className='text-textColor dark:text-textColor-dark text-lg font-medium whitespace-nowrap overflow-hidden text-ellipsis'>
+            {props.title}
+          </p>
           <p
             className={`${
               props.description && 'block'
@@ -24,7 +26,14 @@ const SettingsItem = (props: ISettingsItemProps) => {
           </p>
         </div>
         {props.onToggleChange && (
-          <ToggleButton isChecked={props.isChecked || false} onChange={() => props.onToggleChange!()} />
+          <ToggleButton
+            isChecked={props.isChecked || false}
+            onChange={() => {
+              if (props.onToggleChange) {
+                props.onToggleChange();
+              }
+            }}
+          />
         )}
       </div>
     </div>
