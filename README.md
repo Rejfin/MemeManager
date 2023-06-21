@@ -8,6 +8,10 @@
 A meme collection management application. 
 Thanks to the application the user can tag every file sent to the server, and then when he needs it he can search for it using the appropriate tag.
 
+[Working version of app](https://basedev.pl/login)</br>
+login: tester</br>
+password: test123!
+
 ## Instalation
 The recommended form of installation is to use docker images and docker compose
 
@@ -41,7 +45,7 @@ services:
     networks:
       - meme-network
     depends_on:
-      - db:
+      db:
         condition: service_healthy
     env_file:
       - api.env
