@@ -34,10 +34,10 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
 
-    var corsOptions = {
+    const corsOptions = {
       origin: '*',
-      optionsSuccessStatus: 200
-    }
+      optionsSuccessStatus: 200,
+    };
 
     this.express.use(cors(corsOptions));
     this.express.use(loggerMiddleware);
@@ -68,9 +68,13 @@ class App {
       },
     );
 
-    this.express.delete('/api/auth/clear', [authMiddleware, validatorMiddleware(['password'])], (req:any, res: any) => {
-      this.authController.cleanAccount(req, res);
-    })
+    this.express.delete(
+      '/api/auth/clear',
+      [authMiddleware, validatorMiddleware(['password'])],
+      (req: any, res: any) => {
+        this.authController.cleanAccount(req, res);
+      },
+    );
 
     this.express.get('/api/tags', authMiddleware, (req: any, res) => {
       this.tagController.getTags(req, res);

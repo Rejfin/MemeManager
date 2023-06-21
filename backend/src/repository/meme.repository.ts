@@ -18,7 +18,7 @@ export class MemeRepository {
   }
 
   async getMemes(userId: string, limit: number, page: number, latest?: boolean, tagList?: number[]) {
-    try {      
+    try {
       const memes = await this.memeRepository.findAndCountAll({
         where: { userId: userId },
         limit: limit,
@@ -162,10 +162,10 @@ export class MemeRepository {
       });
       const [memeList, count] = await Promise.all([memes, this.countUnindexed(userId)]);
 
-      return { count: count, rows: memeList};
+      return { count: count, rows: memeList };
     } catch (err) {
       logger.error(err);
-      return { count: 0, rows: []};
+      return { count: 0, rows: [] };
     }
   }
 

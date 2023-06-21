@@ -13,7 +13,7 @@ const SettingsPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onRemoveOrClearAccountClick = (wantToRemove: boolean = false) => {
+  const onRemoveOrClearAccountClick = (wantToRemove = false) => {
     // modal props that warn user about account deletion or clean
     const modalProps = {
       title: t('warning'),
@@ -21,8 +21,8 @@ const SettingsPage = () => {
       positiveButton: {
         text: t('settings.iWantIt'),
         func: (text?: string) => {
-          if (wantToRemove) {
-            removeAccount(text!)
+          if (wantToRemove && text) {
+            removeAccount(text)
               .then((props: IAlertProps) => {
                 dispatch(closeModal());
                 dispatch(openModal(props));
@@ -31,7 +31,7 @@ const SettingsPage = () => {
                 dispatch(openModal(props));
               });
           } else {
-            cleanAccount(text!)
+            cleanAccount(text || '')
               .then((props: IAlertProps) => {
                 dispatch(closeModal());
                 dispatch(openModal(props));
@@ -101,7 +101,7 @@ const SettingsPage = () => {
   const cleanAccount = async (password: string): Promise<IAlertProps> => {
     const propsToReturn: IAlertProps = {
       title: '',
-      text: (''),
+      text: '',
       positiveButton: {
         text: t('ok'),
         func: function (): void {
@@ -114,7 +114,10 @@ const SettingsPage = () => {
       AuthService.clearAccount(password)
         .then((data) => {
           if (data.status === 200) {
-            propsToReturn.text = t('settings.accountHasBeenCleared', {memesCount: data.data.data[0].value, tagsCount: data.data.data[1].value})
+            propsToReturn.text = t('settings.accountHasBeenCleared', {
+              memesCount: data.data.data[0].value,
+              tagsCount: data.data.data[1].value,
+            });
             resolve(propsToReturn);
           } else {
             propsToReturn.title = t('somethingWentWrong');
@@ -144,7 +147,9 @@ const SettingsPage = () => {
           title={t('settings.blurhash')}
           description={t('settings.blurhashDesc') || ''}
           isChecked={true}
-          onToggleChange={() => {}}
+          onToggleChange={() => {
+            /* use it later */
+          }}
         />
 
         <p className='text-textColor dark:text-textColor-dark'>{t('settings.advancedSettings')}</p>

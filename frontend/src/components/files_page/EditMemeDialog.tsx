@@ -155,25 +155,33 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
               )}
             </div>
             <InfoIcon
-              className={`w-6 h-6 cursor-pointer dark:fill-navigationIconColor ${memeData.data ? 'opacity-100 cursor-pointer ' : 'opacity-20'}`}
+              className={`w-6 h-6 cursor-pointer dark:fill-navigationIconColor ${
+                memeData.data ? 'opacity-100 cursor-pointer ' : 'opacity-20'
+              }`}
               onClick={() => onInfoClick()}
             />
           </div>
 
           <div>
-          <div
+            <div
               className={`absolute z-[60] right-1 left-auto origin-bottom-right -translate-y-full transition duration-500 ${
                 copyInfo ? ' scale-100 opacity-100' : 'scale-0 opacity-0'
               }`}
             >
-              <div className='bg-backgroundSurface dark:bg-backgroundSurface-dark p-1 rounded-md text-ellipsis whitespace-nowrap overflow-hidden text-textColor dark:text-textColor-dark'>{t('copyToClipboard')}</div>
+              <div className='bg-backgroundSurface dark:bg-backgroundSurface-dark p-1 rounded-md text-ellipsis whitespace-nowrap overflow-hidden text-textColor dark:text-textColor-dark'>
+                {t('copyToClipboard')}
+              </div>
             </div>
-            <ShareIcon className='w-6 h-6 mx-4 cursor-pointer dark:fill-navigationIconColor' onClick={() => onShareClick()} />
+            <ShareIcon
+              className='w-6 h-6 mx-4 cursor-pointer dark:fill-navigationIconColor'
+              onClick={() => onShareClick()}
+            />
           </div>
-          
 
           <DownloadIcon
-            className={`w-8 h-6 dark:fill-navigationIconColor ${memeData.data ? 'opacity-100 cursor-pointer ' : 'opacity-20'}`}
+            className={`w-8 h-6 dark:fill-navigationIconColor ${
+              memeData.data ? 'opacity-100 cursor-pointer ' : 'opacity-20'
+            }`}
             onClick={() => onDownloadClick()}
           />
         </div>

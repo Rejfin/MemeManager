@@ -25,7 +25,7 @@ jest.mock('../../../service/tag.service', () => ({
 }));
 
 let mockResponse: Response;
-let controller = new TagController();
+const controller = new TagController();
 
 beforeEach(() => {
   mockResponse = {

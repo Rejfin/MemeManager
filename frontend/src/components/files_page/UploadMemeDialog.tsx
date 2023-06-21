@@ -43,7 +43,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
     const filesToUpload = [...(event.target.files || [])].map((file: File) => ({
       file: file,
       progress: 0,
-      finished: false
+      finished: false,
     }));
     setFileToUploadList((oldFiles) => [...oldFiles, ...filesToUpload]);
   };
@@ -108,7 +108,7 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
       const filesToUpload = [...event.dataTransfer.files].map((file: File) => ({
         file: file,
         progress: 0,
-        finished: false
+        finished: false,
       }));
       setFileToUploadList((oldFiles) => [...oldFiles, ...filesToUpload]);
     }
@@ -133,17 +133,17 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
         file.error = '';
         updateFileOnList(uploadingIndex, file);
       })
-      .then(() => {
-        const mFile = file;
-        mFile.finished = true;
-        updateFileOnList(uploadingIndex, mFile);
-        setUploadingIndex(uploadingIndex + 1);
-      })
-      .catch((data) => {
-        const mFile = file;
-        mFile.error = data.data.message;
-        updateFileOnList(uploadingIndex, mFile);
-      });
+        .then(() => {
+          const mFile = file;
+          mFile.finished = true;
+          updateFileOnList(uploadingIndex, mFile);
+          setUploadingIndex(uploadingIndex + 1);
+        })
+        .catch((data) => {
+          const mFile = file;
+          mFile.error = data.data.message;
+          updateFileOnList(uploadingIndex, mFile);
+        });
     }
     // eslint-disable-next-line
   }, [uploadingIndex, isUplading, props]);
@@ -195,12 +195,20 @@ const UploadMemeDialog = (props: IUploadMemeModalProps) => {
               }`}
             ></div>
             <div className='group w-full flex flex-row relative'>
-              <div className={`hidden ${isUplading && 'group-hover:block'} absolute top-1/2 -translate-y-1/2 ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}>
+              <div
+                className={`hidden ${
+                  isUplading && 'group-hover:block'
+                } absolute top-1/2 -translate-y-1/2 ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}
+              >
                 {file.progress > 1 && file.progress < 100 && !file.finished ? t('files.uploading') : ''}
                 {file.progress == 100 && !file.finished ? t('files.saving') : ''}
-                {file.finished ? t('files.uploaded'): ''}
+                {file.finished ? t('files.uploaded') : ''}
               </div>
-              <div className={`${isUplading && file.progress > 1 ? 'group-hover:collapse' : ''} my-auto ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}>
+              <div
+                className={`${
+                  isUplading && file.progress > 1 ? 'group-hover:collapse' : ''
+                } my-auto ml-4 text-ellipsis whitespace-nowrap overflow-hidden w-11/12 text-textColor dark:text-textColor-dark`}
+              >
                 {index + 1}. {file.file.name}
               </div>
               <div className='flex w-1/12 h-full align-middle justify-center mx-2'>

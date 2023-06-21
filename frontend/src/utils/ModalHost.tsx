@@ -9,16 +9,16 @@ const ModalHost = () => {
   const modalProps = useAppSelector((state: RootState) => state.modal.modalProps);
 
   const getModal = () => {
-    if(modalProps && modalProps[0]){
-      if('title' in modalProps[0]){
-        return (<AlertDialog {...(modalProps[0] as IAlertProps)} />)
-      }else if('onUploadEnds' in modalProps[0]){
-        return (<UploadMemeDialog {...(modalProps[0] as IUploadMemeModalProps)} />)
-      }else if('fileId' in modalProps[0]){
-        return (<EditMemeDialog {...(modalProps[0] as IEditMemeDialogProps)} />)
+    if (modalProps && modalProps[0]) {
+      if ('title' in modalProps[0]) {
+        return <AlertDialog {...(modalProps[0] as IAlertProps)} />;
+      } else if ('onUploadEnds' in modalProps[0]) {
+        return <UploadMemeDialog {...(modalProps[0] as IUploadMemeModalProps)} />;
+      } else if ('fileId' in modalProps[0]) {
+        return <EditMemeDialog {...(modalProps[0] as IEditMemeDialogProps)} />;
       }
     }
-  }
+  };
 
   return (
     <>
