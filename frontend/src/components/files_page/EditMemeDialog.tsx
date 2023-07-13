@@ -11,7 +11,9 @@ import SearchComponent from './SearchComponent';
 import { ReactComponent as DownloadIcon } from '../../assets/icon-download.svg';
 import { ReactComponent as InfoIcon } from '../../assets/icon-info.svg';
 import { ReactComponent as ShareIcon } from '../../assets/icon-share.svg';
+import { ReactComponent as DeleteIcon } from '../../assets/icon-delete.svg';
 import FileInfoComponent from './FileInfoComponent';
+import { closeModal, openModal } from '../../features/modal/modalSlice';
 
 export interface IEditMemeDialogProps {
   fileId: string;
@@ -21,6 +23,7 @@ export interface IEditMemeDialogProps {
   type: string;
   blurhash?: string;
   onClose: () => void;
+  onFileRemoved?: (fileId: string) => void;
 }
 
 const EditMemeDialog = (props: IEditMemeDialogProps) => {
@@ -116,6 +119,46 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
     }, 1200);
   };
 
+  const onDeleteClick = async () => {
+    dispatch(
+      openModal({
+        title: '',
+        text: t('files.doYouWantToRemove'),
+        positiveButton: {
+          text: t('yes'),
+          func: () => {
+            //close asking dialog and close info dialog
+            dispatch(closeModal());
+            dispatch(closeModal());
+            
+            FileService.removeFile(props.fileId)
+              .then(() => {
+                props.onFileRemoved?.(props.fileId);
+              })
+              .catch(() => {
+                dispatch(openModal({
+                  title: t('error'),
+                  text: t('files.removeingFailed'),
+                  positiveButton: {
+                    text: t('ok'),
+                    func: () => {
+                      dispatch(closeModal());
+                    },
+                  },
+                }));
+              });
+          },
+        },
+        negativeButton: {
+          text: t('no'),
+          func: () => {
+            dispatch(closeModal());
+          },
+        },
+      }),
+    );
+  };
+
   return (
     <div className='min-w-[20rem] min-h-[10rem] w-4/5 max-w-xl bg-backgroundSurface dark:bg-backgroundSurface-dark rounded-md flex flex-col overflow-hidden'>
       <div className='m-6 flex flex-col items-center justify-center'>
@@ -140,7 +183,7 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
           </p>
           <div>
             <div
-              className={`absolute z-[60] w-[calc(100%-5.5rem)] right-[5.5rem] -bottom-[7.5rem] left-auto origin-bottom-right -translate-y-full transition duration-500 ${
+              className={`absolute z-[60] w-full translate-x-[5.5rem] md:translate-x-0 md:w-[calc(100%-5.5rem)] right-[5.5rem] -bottom-[7.5rem] left-auto origin-bottom-right -translate-y-full transition duration-500 ${
                 showInfo ? ' scale-100 opacity-100' : 'scale-0 opacity-0'
               }`}
             >
@@ -179,10 +222,15 @@ const EditMemeDialog = (props: IEditMemeDialogProps) => {
           </div>
 
           <DownloadIcon
-            className={`w-8 h-6 dark:fill-navigationIconColor ${
+            className={`w-11 md:w-8 h-6 dark:fill-navigationIconColor ${
               memeData.data ? 'opacity-100 cursor-pointer ' : 'opacity-20'
             }`}
             onClick={() => onDownloadClick()}
+          />
+
+          <DeleteIcon
+            className='w-11 md:w-7 h-6 ms-4 dark:fill-navigationIconColor cursor-pointer'
+            onClick={() => onDeleteClick()}
           />
         </div>
         <div className='bg-backgroundSurface-dark dark:bg-background-dark bg-opacity-40 w-full h-[2px] mt-3'></div>

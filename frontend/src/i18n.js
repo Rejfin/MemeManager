@@ -20,6 +20,9 @@ i18n.use(initReactI18next).init({
         warning: 'Warning',
         somethingWentWrong: 'Something went wrong :/',
         copyToClipboard: 'Link copied to clipboard',
+        yes: 'Yes',
+        no: 'No',
+        error: 'Error',
         storageStats: {
           title: 'Storage Statistics',
           images: 'Images',
@@ -74,6 +77,8 @@ i18n.use(initReactI18next).init({
           uploading: 'uploading...',
           saving: 'saving...',
           uploaded: 'UPLOADED',
+          removeingFailed: 'An attempt to delete the file failed',
+          doYouWantToRemove: 'Are you sure you want to delete the selected file?\nThe operation is not reversible'
         },
         settings: {
           removeAccount: 'Remove Account',

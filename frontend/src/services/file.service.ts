@@ -16,9 +16,14 @@ const updateTags = (fileId: string, tags: Tag[]) => {
   return api.put(`memes/${fileId}`, { tags: tags });
 };
 
+const removeFile = (fileId: string) => {
+  return api.delete(`/memes/${fileId}`);
+};
+
 const FileService = {
   uploadFile,
   updateTags,
+  removeFile,
 };
 
 export default FileService;

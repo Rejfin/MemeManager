@@ -138,6 +138,7 @@ const FilesPage = () => {
     width: number,
     height: number,
     type: string,
+    date: Date,
     blurhash?: string,
   ) => {
     dispatch(
@@ -149,6 +150,17 @@ const FilesPage = () => {
         blurhash: blurhash,
         type: type,
         onClose: () => dispatch(closeModal()),
+        onFileRemoved: (fileId: string) => {
+          if (listOfFiles.has(date.toDateString())) {
+            let filesOfDate = listOfFiles.get(date.toDateString());
+
+            filesOfDate = filesOfDate?.filter((file) => file.id != fileId);
+            if (filesOfDate) {
+              listOfFiles.set(date.toDateString(), filesOfDate);
+            }
+          }
+          setListOfFiles(new Map(listOfFiles));
+        },
       }),
     );
   };
@@ -192,7 +204,7 @@ const FilesPage = () => {
                     files={data[1]}
                     date={new Date(data[0])}
                     onFileClick={(id, src, width, height, type, blurhash) =>
-                      fileClickHandler(id, src, width, height, type, blurhash)
+                      fileClickHandler(id, src, width, height, type, new Date(data[0]), blurhash)
                     }
                   />
                 ))}

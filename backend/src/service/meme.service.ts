@@ -83,7 +83,7 @@ export class MemeService {
       });
       promises.push(filePromise);
 
-      if (removedMeme.name !== removedMeme.thumbnailName) {
+      if (removedMeme.name !== removedMeme.thumbnailName && removedMeme.thumbnailName != null) {
         const thumbnailPromise = new Promise<boolean>((res) => {
           unlink(`${global.DIR_ROOT}/memes/${userId}/${removedMeme.thumbnailName}`, (err) => {
             if (err) {
