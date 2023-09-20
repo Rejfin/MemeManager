@@ -17,13 +17,16 @@ version: "3"
 
 services:
   db:
-    image: postgres:15
+    image: postgres:15.2
     environment:
       - POSTGRES_DB=meme-manager
       - POSTGRES_USER=postgres # set your database user
       - POSTGRES_PASSWORD=postgres # set your database password
+      - PGPORT=2139 # database port
     networks:
       - meme-network
+    volumes:
+      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -34,7 +37,7 @@ services:
     image: rejfin/meme-manager-api:latest
     hostname: meme-api
     ports:
-      - "3070:3070"
+      - "2137:2137"
     volumes:
       - "./logs:/app/build/logs"
       - "./memes:/app/build/memes"
@@ -53,15 +56,15 @@ services:
       - meme-network
     depends_on:
       - api
-    volumes:
-      - ./config.js:/usr/share/nginx/html/config.js
 networks:
   meme-network:
     driver: bridge
+volumes:
+  db-data:
 ```
 2. Create an api.env file in the same folder as docker-compose.yml and complete it like this:
 ```env
-API_PORT=3070
+API_PORT=2138
 
 # DATABASE CONFIG
 
@@ -74,13 +77,13 @@ PG_PASSWORD="postgres"
 # database name (same as POSTGRES_DB in docker-compose.yml)
 PG_DB="meme-manager"
 # database port
-PG_PORT=8001
+PG_PORT=2139
 
 # API CONFIG
 
-# string used to generate JWT token (change it to your)
+# string used to generate JWT token (change it to yours)
 TOKEN_SECRET="426b41c78f4911f06484f4d377c604cd5f4f63a961599791e83f"
-# string used to generate refresh token (change it to your)
+# string used to generate refresh token (change it to yours)
 TOKEN_REFRESH_SECRET="426b41c78fhgnfhr587hen5i8gn4g4578gn4g1e83f"
 # jwt token expiration time
 JWT_EXP="12h"
@@ -90,13 +93,8 @@ JWT_REFRESH_EXP="90d"
 LOG_LEVEL="info"
 NODE_ENV=production
 ```
-3. Create config.js file in the same folder as docker-compose.yml and make sure it has the exact structure:
-```js
-window.env = {
-    "API_ADDRESS":"http://mmapi.{your_domain}/api"
-}
-```
-4. Start app using `docker compose up -d` command.
+
+3. Start app using `docker compose up -d` command.
 
 ## Screenshots
 <br><img src="https://user-images.githubusercontent.com/64009728/220725415-a5417898-94ac-405e-b423-7f1541489eec.png" width="320" height="180">

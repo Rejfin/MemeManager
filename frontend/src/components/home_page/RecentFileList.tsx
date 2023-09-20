@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Meme } from '../../models/meme.model';
 import { convertSize } from '../../utils/sizeConverter';
 import Image from '../global/Image';
+import { baseUrl } from '../../services/api';
 
 export interface FileListProps {
   files: Meme[];
@@ -12,8 +13,6 @@ export interface FileListProps {
  * Crates entry element for list of recent files
  */
 const ListItem = (props: Meme, secondBackground: boolean, onFileClick: (file: Meme) => void) => {
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const baseUrl = (window as any).env.API_ADDRESS;
   return (
     <li
       onClick={() => onFileClick(props)}
@@ -27,7 +26,7 @@ const ListItem = (props: Meme, secondBackground: boolean, onFileClick: (file: Me
         <Image
           id={props.id}
           className='justify-center self-center text-center block h-10 max-w-[80px]'
-          src={`${baseUrl}/memes/file/${props.id}`}
+          src={`${baseUrl}/api/memes/file/${props.id}`}
           alt={props.name}
           type={props.type}
           width={props.width || 60}

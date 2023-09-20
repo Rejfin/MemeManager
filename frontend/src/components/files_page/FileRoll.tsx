@@ -1,4 +1,5 @@
 import { Meme } from '../../models/meme.model';
+import { baseUrl } from '../../services/api';
 import Image from '../global/Image';
 
 export interface FileListHistoryProps {
@@ -9,7 +10,6 @@ export interface FileListHistoryProps {
 
 const FileRoll = (props: FileListHistoryProps) => {
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const baseUrl = (window as any).env.API_ADDRESS;
   return (
     <div className='w-full'>
       <div className='flex'>
@@ -30,7 +30,7 @@ const FileRoll = (props: FileListHistoryProps) => {
               type={file.type}
               id={file.id}
               blurHash={file.blurHash}
-              src={`${baseUrl}/memes/file/${file.id}`}
+              src={`${baseUrl}/api/memes/file/${file.id}`}
               alt={file.name}
               className='inline-block pr-2 cursor-pointer max-w-[180px] h-[120px] md:max-w-[250px] md:h-[150px]'
               width={file.width || 120}

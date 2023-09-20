@@ -1,9 +1,16 @@
 import axios from 'axios';
 import TokenService from './token.service';
 
+const hostname = window.location.hostname;
+var baseUrl = location.protocol + "//mmapi." + hostname;
+baseUrl = location.port ? location.protocol + "//mmapi." + hostname + ":" + (parseInt(location.port) - 1) : location.protocol + "//mmapi." + hostname;
+export { baseUrl }
+//console.log(location.protocol ? "" : location.port);
+
+console.log(baseUrl)
 const instance = axios.create({
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  baseURL: (window as any).env.API_ADDRESS,
+  baseURL: baseUrl + "/api",
   headers: {
     'Content-Type': 'application/json',
   },

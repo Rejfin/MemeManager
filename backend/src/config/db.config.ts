@@ -10,12 +10,14 @@ export const connect = () => {
   const userName = process.env.PG_USER || 'postgres';
   const password = process.env.PG_PASSWORD || 'postgres';
   const database = process.env.PG_DB || 'meme-manager';
+  const port = parseInt(process.env.PG_PORT || '2139') || 2139;
   const dialect = 'postgres';
 
   const sequelize = new Sequelize(database, userName, password, {
     host: hostName,
     dialect: dialect,
     repositoryMode: true,
+    port: port,
     logging: (str: string) => {
       if (process.env.NODE_ENV !== 'production') {
         console.log(str);

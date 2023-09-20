@@ -5,6 +5,7 @@ import StorageStats from '../components/home_page/StorageStats';
 import { closeModal, openModal } from '../features/modal/modalSlice';
 import useFetch from '../hooks/useFetch';
 import { Meme } from '../models/meme.model';
+import { baseUrl } from '../services/api';
 
 interface statsData {
   sizes: { total?: number; video?: number; image?: number; other?: number };
@@ -12,8 +13,6 @@ interface statsData {
 }
 
 const HomePage = () => {
-  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-  const baseUrl = (window as any).env.API_ADDRESS;
   const dispatch = useAppDispatch();
   // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   const latestMemes: { error: string; isPending: boolean; data: any } = useFetch('/memes?latest=1');
@@ -43,7 +42,7 @@ const HomePage = () => {
     dispatch(
       openModal({
         fileId: file.id,
-        src: `${baseUrl}/memes/file/${file.id}`,
+        src: `${baseUrl}/api/memes/file/${file.id}`,
         width: file.width,
         height: file.height,
         blurhash: file.blurHash,

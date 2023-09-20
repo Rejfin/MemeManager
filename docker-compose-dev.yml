@@ -2,15 +2,18 @@ version: "3"
 
 services:
   db:
-    image: postgres:15
+    image: postgres:15.2
     environment:
       - POSTGRES_DB=meme-manager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGPORT=2139
     networks:
       - private
     ports:
-      - "5432:5432"
+      - "2139:2139"
+    volumes:
+      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -24,7 +27,7 @@ services:
     volumes:
       - ./backend/src:/app/src
     ports:
-      - "3070:3070"
+      - "2137:2137"
     networks:
       - private
     depends_on:
@@ -40,10 +43,12 @@ services:
     networks:
       - private
     ports:
-      - "3000:3000"
+      - "2138:2138"
     depends_on:
       - api
     environment:
       - WATCHPACK_POLLING=true
 networks:
   private:
+volumes:
+  db-data:

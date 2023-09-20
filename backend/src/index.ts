@@ -13,7 +13,7 @@ config.config({ path: path.join(global.DIR_ROOT, '.env') });
 
 import logger from './config/logger';
 
-const port = process.env.API_PORT || 3070;
+const port = process.env.API_PORT || 2137;
 
 const pad = (num: number) => (num > 9 ? '' : '0') + num;
 /* eslint-disable @typescript-eslint/no-explicit-any */
