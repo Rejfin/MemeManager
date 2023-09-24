@@ -7,11 +7,12 @@ services:
       - POSTGRES_DB=meme-manager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres
       - PGPORT=2139
     networks:
       - private
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - "./db:/data/postgres"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -24,7 +25,7 @@ services:
       dockerfile: Api.Dockerfile.production
     hostname: meme-api
     ports:
-      - "21378:2137"
+      - "2137:2137"
     volumes:
       - "./backend/logs:/app/build/logs"
       - "./backend/memes:/app/build/memes"
@@ -46,5 +47,3 @@ services:
       - api
 networks:
   private:
-volumes:
-  db-data:

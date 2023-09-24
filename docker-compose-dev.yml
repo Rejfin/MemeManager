@@ -7,13 +7,12 @@ services:
       - POSTGRES_DB=meme-manager
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGDATA=/data/postgres
       - PGPORT=2139
     networks:
       - private
     ports:
       - "2139:2139"
-    volumes:
-      - db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -25,7 +24,7 @@ services:
       context: backend
       dockerfile: Api.Dockerfile.dev
     volumes:
-      - ./backend/src:/app/src
+      - "./backend/src:/app/src"
     ports:
       - "2137:2137"
     networks:
@@ -50,5 +49,3 @@ services:
       - WATCHPACK_POLLING=true
 networks:
   private:
-volumes:
-  db-data:

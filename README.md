@@ -22,11 +22,12 @@ services:
       - POSTGRES_DB=meme-manager
       - POSTGRES_USER=postgres # set your database user
       - POSTGRES_PASSWORD=postgres # set your database password
+      - PGDATA=/data/postgres
       - PGPORT=2139 # database port
     networks:
       - meme-network
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - "./db:/data/postgres"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -59,12 +60,10 @@ services:
 networks:
   meme-network:
     driver: bridge
-volumes:
-  db-data:
 ```
 2. Create an api.env file in the same folder as docker-compose.yml and complete it like this:
 ```env
-API_PORT=2138
+API_PORT=2137
 
 # DATABASE CONFIG
 

@@ -1,7 +1,18 @@
 import axios from 'axios';
 import TokenService from './token.service';
 
-const hostname = window.location.hostname;
+
+var remove_sub_domain=function(v:string){
+  var is_co=v.match(/\.co\./)
+  var v1=v.split('.')
+  v1=v1.slice(is_co ? -3: -2)
+  v=v1.join('.')
+  return v
+}
+
+
+
+const hostname = remove_sub_domain(window.location.hostname);
 var baseUrl = location.protocol + "//mmapi." + hostname;
 baseUrl = location.port ? location.protocol + "//mmapi." + hostname + ":" + (parseInt(location.port) - 1) : location.protocol + "//mmapi." + hostname;
 export { baseUrl }
